@@ -1,14 +1,9 @@
-import { getWorkflow } from "../models/pgService.js";
-export const getTriggerNode = async (workflowId) => {
-  const data = await getWorkflow(workflowId);
-  return data.nodes.filter((node) => {
-    return node.type === "trigger";
-  })[0];
+//takes a workflow object and return the trigger node
+export const getTriggerNode = (workflowObj) => {
+  return workflowObj.nodes.find((node) => node.type === "trigger");
 };
 
-export const getNode = async (workflowId, nodeID) => {
-  const data = await getWorkflow(workflowId);
-  return data.nodes.filter((node) => {
-    return node.id === nodeID;
-  })[0];
+//takes a workflow object and node id and return the node
+export const getNode = (workflowObj, nodeID) => {
+  return workflowObj.nodes.find((node) => node.id === nodeID);
 };

@@ -2,6 +2,7 @@ import express from "express";
 import { startCron, stopCron } from "../utils/scheduleExec.js";
 import { runJSCode } from "../utils/jsCodeExec.js";
 import { getNode } from "../utils/node.js";
+import { getWorkflow } from "../models/pgService.js";
 const router = express.Router();
 
 router.get("/workflow/:id", (req, res) => {
@@ -27,12 +28,14 @@ router.get("/stopworkflow/:id", (req, res) => {
 router.post("/node", async (req, res) => {
   try {
     const { workflowID, nodeID } = req.body;
-    const node = await getNode(workflowID, nodeID);
+    const workflowObj = await getWorkflow(workflowID);
+    const nodeObj = getNode(workflowObj, nodeID);
+
     let resData;
-    if (node.type === "transform") {
-      resData = await runJSCode(workflowID, node);
-    } else if (node.type === "load") {
-    } else if (node.type === "extract") {
+    if (nodeObj.type === "transform") {
+      resData = await runJSCode(workflowObj, nodeObj);
+    } else if (nodeObj.type === "load") {
+    } else if (nodeObj.type === "extract") {
     }
     res.status(200).send(resData);
   } catch (e) {

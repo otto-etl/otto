@@ -1,14 +1,21 @@
 import cron from "node-cron";
 import { getTriggerNode } from "./node.js";
+import {
+  getWorkflow,
+  activateWorkflow,
+  deactivateWorkflow,
+} from "../models/pgService.js";
 const runningWorkFlows = {};
 
 export const startCron = async (workflowID) => {
   const currentTime = Date.now();
-  const { data } = await getTriggerNode(workflowID);
-  let { startTime, intervalInMinutes } = data;
+  const workflowObj = await getWorkflow(workflowID);
+
+  let { startTime, intervalInMinutes } = getTriggerNode(workflowObj).data;
   console.log("dbStartTime", startTime);
-  startTime = "27 Jun 2023 13:58:00 CDT";
+  startTime = "27 Jun 2023 18:23:00 CDT";
   startTime = Date.parse(startTime);
+
   console.log(
     "parsedStartTime",
     startTime,
@@ -27,12 +34,12 @@ export const startCron = async (workflowID) => {
     const task = cron.schedule(`*/${intervalInMinutes} * * * *`, () => {
       console.log("running workflow", workflowID);
     });
+    activateWorkflow(workflowID);
     runningWorkFlows[workflowID] = task;
   }, startTime - currentTime - intervalInMinutes * 60000);
 };
 
 export const stopCron = (workflowID) => {
-  console.log(runningWorkFlows);
   const task = runningWorkFlows[workflowID];
   if (task) {
     task.stop();
@@ -40,5 +47,6 @@ export const stopCron = (workflowID) => {
   } else {
     throw new Error("no workflow to stop yet");
   }
-  console.log(runningWorkFlows);
+  deactivateWorkflow(workflowID);
+  console.log("running workflow", runningWorkFlows);
 };
