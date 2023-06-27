@@ -97,7 +97,6 @@ const Workflow = () => {
   }, []);
 
   const openModal = (data) => {
-    console.log(data);
     setModalIsOpen(true);
     setModalData(data);
   };
@@ -150,6 +149,26 @@ const Workflow = () => {
     [edges, nodes, setEdges, setNodes, modalIsOpen]
   ); // Linter says modalIsOpen is unnecessary but it is load-bearing here, need to nail down why
 
+  const onEditNodeData = useCallback(
+  (currentId, updatedData) => {
+    let currentNode = nodes.find((node) => node.data.id === currentId);
+	let newNodes = nodes.map((node) => {
+	  if (node.id !== currentId) {
+	    return node;
+	  }
+	  let newNode = { ...node };
+	  let newData = { ...node.data };
+      let newPosition = { ...node.position };
+      Object.keys(updatedData).forEach(key => {
+	    newData[key] = updatedData[key];
+	  });
+	  newNode.data = updatedData;
+	  newNode.position = newPosition;	 	  
+	  return newNode;
+	});
+	setNodes(newNodes);
+  }, [modalIsOpen]);
+
   const onNodeClick = useCallback((event, object) => {
     let contents;
     switch (object.type) {
@@ -195,6 +214,7 @@ const Workflow = () => {
             nodeObj={modalData}
             setModalIsOpen={setModalIsOpen}
             onUpdateNextOutput={onUpdateNextOutput}
+			onEditNodeData={onEditNodeData}
           />
         ) : null}
       </ReactFlow>
