@@ -1,14 +1,19 @@
 {
-  "name": "client",
+  "name": "drag",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "immutability-helper": "^3.1.1",
     "react": "^18.2.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
+    "react-draggable": "^4.4.5",
     "react-scripts": "5.0.1",
+    "reactflow": "^11.7.4",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
