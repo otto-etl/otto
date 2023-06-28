@@ -35,16 +35,21 @@ router.post("/node", async (req, res) => {
     //execution
     const workflowObj = await getWorkflow(workflowID);
     const nodeObj = getNode(workflowObj, nodeID);
+    console.log("EXTRACT");
 
     let resData;
-    if (nodeObj.type === "transform") {
-      resData = await runJSCode(workflowObj, nodeObj);
-    } else if (nodeObj.type === "load") {
-      resData = await runPSQLCode(workflowObj, nodeObj);
-    } else if (nodeObj.type === "extract") {
+    if (nodeObj.type === "extract") {
       console.log("nodeObj :", nodeObj);
       resData = await runAPI(workflowObj, nodeObj);
+    } else if (nodeObj.type === "transform") {
+      resData = await runJSCode(workflowObj, nodeObj);
+    } else if (nodeObj.type === "load") {
+      console.log("load fired");
+      resData = await runPSQLCode(workflowObj, nodeObj);
+    } else {
+      res.status(403).send({ error: "Invalid node type" });
     }
+
     res.status(200).send(resData);
   } catch (e) {
     res.status(500).send({ error: e.message });

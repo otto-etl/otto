@@ -9,7 +9,7 @@ app.use(express.json());
 app.use("/workflows", workflowRoutes);
 app.use("/execute", executeRoutes);
 
-const PORT = 3002;
+const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);

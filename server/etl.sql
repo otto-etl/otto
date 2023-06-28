@@ -1,3 +1,10 @@
+CREATE DATABASE dog;
+
+CREATE TABLE dog (
+  breed TEXT, 
+  count TEXT
+  ); 
+
 CREATE DATABASE etl;
 
 CREATE TABLE workflow (
@@ -69,8 +76,8 @@ INSERT INTO workflow VALUES (
     "data": {
       "prev": "3",
       "label": "POSTGRES",
-      "userName": "postgres",
-      "password": "password",
+      "userName": "jwebster",
+      "password": "2129",
       "port": "5432",
       "dbName": "dog",
       "sqlCode": "INSERT INTO dog(breed, count) VALUES(${breed}, ${num})",
