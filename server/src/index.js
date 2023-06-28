@@ -7,9 +7,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/workflows", workflowRoutes);
-app.use("/executes", executeRoutes);
+app.use("/execute", executeRoutes);
 
-const PORT = 3001;
+const PORT = 3002;
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);

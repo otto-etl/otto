@@ -1,6 +1,8 @@
 import express from "express";
 import { startCron, stopCron } from "../utils/scheduleExec.js";
 import { runJSCode } from "../utils/jsCodeExec.js";
+import { runAPI } from "../utils/apiExec.js";
+import { runPSQLCode } from "../utils/psqlExec.js";
 import { getNode } from "../utils/node.js";
 import { getWorkflow } from "../models/pgService.js";
 const router = express.Router();
@@ -27,7 +29,10 @@ router.get("/stopworkflow/:id", (req, res) => {
 
 router.post("/node", async (req, res) => {
   try {
-    const { workflowID, nodeID } = req.body;
+    const { workflowID, nodeID, nodes, edges } = req.body;
+    //add pgService function that updates the nodes and edges fields of the database
+
+    //execution
     const workflowObj = await getWorkflow(workflowID);
     const nodeObj = getNode(workflowObj, nodeID);
 
@@ -35,7 +40,10 @@ router.post("/node", async (req, res) => {
     if (nodeObj.type === "transform") {
       resData = await runJSCode(workflowObj, nodeObj);
     } else if (nodeObj.type === "load") {
+      resData = await runPSQLCode(workflowObj, nodeObj);
     } else if (nodeObj.type === "extract") {
+      console.log("nodeObj :", nodeObj);
+      resData = await runAPI(workflowObj, nodeObj);
     }
     res.status(200).send(resData);
   } catch (e) {
