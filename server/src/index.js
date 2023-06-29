@@ -1,11 +1,15 @@
+import "dotenv/config";
 import express from "express";
-
+import cors from "cors";
+import workflowRoutes from "./routes/workflow.js";
+import executeRoutes from "./routes/execute.js";
 const app = express();
-const PORT = 3001;
+app.use(cors());
+app.use(express.json());
+app.use("/workflows", workflowRoutes);
+app.use("/execute", executeRoutes);
 
-app.get("/ping", (req, res) => {
-  res.send("Pong");
-});
+const PORT = process.env.PORT || 3001;
 
 app.get("/mock/workflows/:id", (req, res) => {
   const workflowObject = {
