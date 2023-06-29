@@ -1,6 +1,11 @@
 import "./Workflow.css";
 import React, { useState, useEffect, useCallback } from "react";
-import ReactFlow, { ReactFlowProvider, useNodesState, useEdgesState, addEdge } from "reactflow";
+import ReactFlow, {
+  ReactFlowProvider,
+  useNodesState,
+  useEdgesState,
+  addEdge,
+} from "reactflow";
 import "reactflow/dist/style.css";
 import axios from "axios";
 
@@ -84,17 +89,27 @@ const Workflow = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalData, setModalData] = useState("");
 
+  const updateInputs = (resNodes) => {
+    resNodes.forEach((node) => {
+      if (node.data.prev) {
+        const prev = resNodes.find((othNode) => othNode.id === node.data.prev);
+        node.data.input = prev.data.output;
+      }
+    });
+  };
+
   useEffect(() => {
     const getWorkflow = async () => {
       const response = await axios.get(
         "http://localhost:3001/mock/workflows/1"
       );
-      setNodes(response.data.workflow);
+      updateInputs(response.data.nodes);
+      setNodes(response.data.nodes);
       setEdges(response.data.edges);
     };
     getWorkflow();
   }, []);
-  
+
   const openModal = (nodeData) => {
     setModalIsOpen(true);
     setModalData(nodeData);
@@ -111,7 +126,7 @@ const Workflow = () => {
       ),
     []
   );
-  
+
   const onSaveExecute = async (currentId, updatedNodeData) => {
     let newNodesArray = updateNodeObject(currentId, updatedNodeData);
     await runExecution(currentId, newNodesArray); // mutates newNodesArray
@@ -120,40 +135,50 @@ const Workflow = () => {
 
   const updateNodeObject = (currentId, updatedData) => {
     let nextNode = nodes.find((node) => node.data.prev === currentId);
-    return nodes.map((node) => { 
-      if (node.id !== currentId &&
-          (!nextNode || (nextNode && node.id !== nextNode.id))) {
+    return nodes.map((node) => {
+      if (
+        node.id !== currentId &&
+        (!nextNode || (nextNode && node.id !== nextNode.id))
+      ) {
         return node;
       }
-      let newNode = { ...node }; 
-      let newData = { ...node.data }; 
+      let newNode = { ...node };
+      let newData = { ...node.data };
       if (nextNode && node.id === nextNode.id) {
         newNode.data = newData;
         return newNode;
       }
-      Object.keys(updatedData).forEach(key => { 
+      Object.keys(updatedData).forEach((key) => {
         newData[key] = updatedData[key];
       });
-      newNode.data = updatedData;  
+      newNode.data = updatedData;
       return newNode;
     });
   };
-  
+
   const runExecution = async (currentId, newNodesArray) => {
-    let payload = { nodeID: currentId, workflowID: 1, nodes: newNodesArray, edges: edges };
-    let executionResult = await axios.post("http://localhost:3001/mock/execute/node", payload);
+    let payload = {
+      nodeID: currentId,
+      workflowID: 1,
+      nodes: newNodesArray,
+      edges: edges,
+    };
+    let executionResult = await axios.post(
+      "http://localhost:3001/mock/execute/node",
+      payload
+    );
     let currentNode = newNodesArray.find((node) => node.id === currentId);
-    let nextNode = newNodesArray.find((node) => node.data.prev === currentId);    
+    let nextNode = newNodesArray.find((node) => node.data.prev === currentId);
     currentNode.data.output = executionResult.data;
     if (nextNode) {
       nextNode.data.input = executionResult.data;
     }
   };
-  
+
   const onNodeClick = useCallback((event, object) => {
     let contents;
     switch (object.type) {
-      case "trigger": 
+      case "trigger":
         contents = "Trigger modal goes here";
         break;
       case "extract":
@@ -168,9 +193,30 @@ const Workflow = () => {
       default:
         break;
     }
+
+    axios.put("http://localhost:3001/mock/workflows/1", {
+      nodes,
+      edges,
+    });
+
     openModal({ ...object, contents: contents });
   });
-  
+
+  const handleExecuteAll = async (e) => {
+    e.preventDefault();
+    const res = await axios.post(
+      "http://localhost:3001/mock/execute/workflow/1",
+      {
+        workflowID: 1,
+        nodes,
+        edges,
+      }
+    );
+    updateInputs(res.data.nodes);
+    setNodes(res.data.nodes);
+    setEdges(res.data.edges);
+  };
+
   /* ReactFlow throws a console warning here:
   
   It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them.
@@ -178,32 +224,33 @@ const Workflow = () => {
   */
   return (
     <div className="grid">
-    <ReactFlowProvider>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onNodeClick={onNodeClick}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        connectionLineStyle={connectionLineStyle}
-        snapToGrid={true}
-        snapGrid={snapGrid}
-        defaultViewport={defaultViewport}
-        fitView
-        attributionPosition="bottom-left"
-      >
-        {modalIsOpen ? (
-          <NodeModal
-            nodeObj={modalData}
-            setModalIsOpen={setModalIsOpen}
-            onSaveExecute={onSaveExecute}
-            runExecution={runExecution}
-          />
-        ) : null}
-      </ReactFlow>
-    </ReactFlowProvider>
+      <ReactFlowProvider>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onNodeClick={onNodeClick}
+          onConnect={onConnect}
+          nodeTypes={nodeTypes}
+          connectionLineStyle={connectionLineStyle}
+          snapToGrid={true}
+          snapGrid={snapGrid}
+          defaultViewport={defaultViewport}
+          fitView
+          attributionPosition="bottom-left"
+        >
+          {modalIsOpen ? (
+            <NodeModal
+              nodeObj={modalData}
+              setModalIsOpen={setModalIsOpen}
+              onSaveExecute={onSaveExecute}
+              runExecution={runExecution}
+            />
+          ) : null}
+        </ReactFlow>
+        <button onClick={handleExecuteAll}>Save and Execute</button>
+      </ReactFlowProvider>
     </div>
   );
 };

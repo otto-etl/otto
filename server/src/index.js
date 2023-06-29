@@ -1,5 +1,5 @@
 import express from "express";
-import cors from 'cors';
+import cors from "cors";
 
 const app = express();
 const PORT = 3001;
@@ -11,9 +11,123 @@ app.get("/ping", (req, res) => {
   res.send("Pong");
 });
 
+const workflowObject = {
+  nodes: [
+    {
+      id: "1",
+      type: "trigger",
+      data: {
+        label: "Schedule",
+        startTime: "26 Jun 2023 7:16:00 CST",
+        intervalInMinutes: "1",
+        output: "schedule output",
+      },
+      position: {
+        x: 0,
+        y: 50,
+      },
+      sourcePosition: "right",
+    },
+    {
+      id: "2",
+      type: "extract",
+      data: {
+        prev: "1",
+        label: "Extract",
+        url: "https://dog.ceo/api/breeds/list/all",
+        httpVerb: "GET",
+        jsonBody: {},
+        output: "",
+      },
+      position: {
+        x: 210,
+        y: 90,
+      },
+      targetPosition: "left",
+    },
+    {
+      id: "3",
+      type: "transform",
+      data: {
+        prev: "2",
+        label: "Transform",
+        jsCode: "",
+        output: "",
+      },
+      position: {
+        x: 425,
+        y: 5,
+      },
+      targetPosition: "left",
+    },
+    {
+      id: "4",
+      type: "load",
+      data: {
+        prev: "3",
+        label: "Load",
+        userName: "postgres",
+        password: "password",
+        port: "5432",
+        sqlCode: "INSERT INTO breed() VALUES()",
+        output: "",
+      },
+      position: {
+        x: 650,
+        y: 75,
+      },
+      targetPosition: "left",
+    },
+  ],
+  edges: [
+    {
+      id: "e1-2",
+      source: "1",
+      target: "2",
+      animated: false,
+      style: {
+        stroke: "#000033",
+      },
+    },
+    {
+      id: "e2-3",
+      source: "2",
+      target: "3",
+      animated: false,
+      style: {
+        stroke: "#000033",
+      },
+    },
+    {
+      id: "e3-4",
+      source: "3",
+      target: "4",
+      animated: false,
+      style: {
+        stroke: "#000033",
+      },
+    },
+  ],
+};
+
 app.get("/mock/workflows/:id", (req, res) => {
-  const workflowObject = {
-    workflow: [
+  res.status(200).json(workflowObject);
+});
+
+app.put("/mock/workflows/:id", (req, res) => {
+  res.status(200).json(req.body);
+});
+
+app.post("/mock/execute/node", (req, res) => {
+  res.status(200).send("test");
+});
+
+app.post("/mock/execute/workflow/:id", (req, res) => {
+  console.log("Got the request");
+  console.log(req.body.nodes[0].position);
+
+  const newWorkflowObject = {
+    nodes: [
       {
         id: "1",
         type: "trigger",
@@ -38,7 +152,7 @@ app.get("/mock/workflows/:id", (req, res) => {
           url: "https://dog.ceo/api/breeds/list/all",
           httpVerb: "GET",
           jsonBody: {},
-          output: "",
+          output: "extraction output",
         },
         position: {
           x: 210,
@@ -53,7 +167,7 @@ app.get("/mock/workflows/:id", (req, res) => {
           prev: "2",
           label: "Transform",
           jsCode: "",
-          output: "",
+          output: "transformation output",
         },
         position: {
           x: 425,
@@ -71,7 +185,7 @@ app.get("/mock/workflows/:id", (req, res) => {
           password: "password",
           port: "5432",
           sqlCode: "INSERT INTO breed() VALUES()",
-          output: "",
+          output: "load output",
         },
         position: {
           x: 650,
@@ -111,15 +225,7 @@ app.get("/mock/workflows/:id", (req, res) => {
     ],
   };
 
-  res.status(200).json(workflowObject);
-});
-
-app.put("/mock/workflows/:id", (req, res) => {
-  res.status(200).json(req.body);
-});
-
-app.post("/mock/execute/node", (req, res) => {
-  res.status(200).send("test");
+  res.status(200).send(newWorkflowObject);
 });
 
 app.listen(PORT, () => {
