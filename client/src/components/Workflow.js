@@ -7,7 +7,6 @@ import ReactFlow, {
   addEdge,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import axios from "axios";
 
 import TriggerNode from "./TriggerNode";
 import ExtractNode from "./ExtractNode";
@@ -15,6 +14,12 @@ import TransformNode from "./TransformNode";
 import LoadNode from "./LoadNode";
 import NodeModal from "./NodeModal";
 import { updateInputs } from "../utils/utils";
+import {
+  getWorkflowAPI,
+  postNodeChanges,
+  saveWorkflow,
+  saveAndExecuteWorkflow,
+} from "../services/api";
 
 import "../index.css";
 
@@ -38,12 +43,10 @@ const Workflow = () => {
 
   useEffect(() => {
     const getWorkflow = async () => {
-      const response = await axios.get(
-        "http://localhost:3001/mock/workflows/1"
-      );
-      updateInputs(response.data.nodes);
-      setNodes(response.data.nodes);
-      setEdges(response.data.edges);
+      const response = await getWorkflowAPI(1);
+      updateInputs(response.nodes);
+      setNodes(response.nodes);
+      setEdges(response.edges);
     };
     getWorkflow();
   }, []);
@@ -101,15 +104,12 @@ const Workflow = () => {
       nodes: newNodesArray,
       edges: edges,
     };
-    let executionResult = await axios.post(
-      "http://localhost:3001/mock/execute/node",
-      payload
-    );
+    let executionResult = await postNodeChanges(payload);
     let currentNode = newNodesArray.find((node) => node.id === currentId);
     let nextNode = newNodesArray.find((node) => node.data.prev === currentId);
-    currentNode.data.output = executionResult.data;
+    currentNode.data.output = executionResult;
     if (nextNode) {
-      nextNode.data.input = executionResult.data;
+      nextNode.data.input = executionResult;
     }
   };
 
@@ -132,27 +132,21 @@ const Workflow = () => {
         break;
     }
 
-    axios.put("http://localhost:3001/mock/workflows/1", {
-      nodes,
-      edges,
-    });
+    saveWorkflow(1, { nodes, edges });
 
     openModal({ ...object, contents: contents });
   });
 
   const handleExecuteAll = async (e) => {
     e.preventDefault();
-    const res = await axios.post(
-      "http://localhost:3001/mock/execute/workflow/1",
-      {
-        workflowID: "1",
-        nodes,
-        edges,
-      }
-    );
-    updateInputs(res.data.nodes);
-    setNodes(res.data.nodes);
-    setEdges(res.data.edges);
+    const res = await saveAndExecuteWorkflow(1, {
+      workflowID: "1",
+      nodes,
+      edges,
+    });
+    updateInputs(res.nodes);
+    setNodes(res.nodes);
+    setEdges(res.edges);
   };
 
   /* ReactFlow throws a console warning here:
