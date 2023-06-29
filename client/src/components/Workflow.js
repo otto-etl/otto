@@ -45,6 +45,7 @@ const Workflow = () => {
     const getWorkflow = async () => {
       const response = await getWorkflowAPI(1);
       updateInputs(response.nodes);
+      console.log(Array.isArray(response.nodes));
       setNodes(response.nodes);
       setEdges(response.edges);
     };
@@ -154,35 +155,34 @@ const Workflow = () => {
   It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them.
   The thing is we did define it outside of the component -- that was directly from the tutorial -- so I need to look into why this is still happening
   */
+  console.log(nodes);
   return (
     <div className="grid">
-      <ReactFlowProvider>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onNodeClick={onNodeClick}
-          onConnect={onConnect}
-          nodeTypes={nodeTypes}
-          connectionLineStyle={connectionLineStyle}
-          snapToGrid={true}
-          snapGrid={snapGrid}
-          defaultViewport={defaultViewport}
-          fitView
-          attributionPosition="bottom-left"
-        >
-          {modalIsOpen ? (
-            <NodeModal
-              nodeObj={modalData}
-              setModalIsOpen={setModalIsOpen}
-              onSaveExecute={onSaveExecute}
-              runExecution={runExecution}
-            />
-          ) : null}
-        </ReactFlow>
-        <button onClick={handleExecuteAll}>Save and Execute</button>
-      </ReactFlowProvider>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onNodeClick={onNodeClick}
+        onConnect={onConnect}
+        nodeTypes={nodeTypes}
+        connectionLineStyle={connectionLineStyle}
+        snapToGrid={true}
+        snapGrid={snapGrid}
+        defaultViewport={defaultViewport}
+        fitView
+        attributionPosition="bottom-left"
+      >
+        {modalIsOpen ? (
+          <NodeModal
+            nodeObj={modalData}
+            setModalIsOpen={setModalIsOpen}
+            onSaveExecute={onSaveExecute}
+            runExecution={runExecution}
+          />
+        ) : null}
+      </ReactFlow>
+      <button onClick={handleExecuteAll}>Save and Execute</button>
     </div>
   );
 };

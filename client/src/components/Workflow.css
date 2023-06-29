@@ -52,8 +52,8 @@
   width: 40%;
   height: 50%;
   box-sizing: border-box;
-  background-color: #CCCCCC;
-  border: 2px solid #333355;  
+  background-color: #cccccc;
+  border: 2px solid #333355;
   border-radius: 3px;
   position: relative;
   line-height: 18px;
@@ -69,17 +69,17 @@
 
 .react-flow {
   border: 3px solid #333355;
-  border-radius: 10px;  
+  border-radius: 10px;
 }
 
 .react-flow__renderer {
-  background-color: #EEEEEE;
+  background-color: #eeeeee;
   display: flex;
   align-items: center;
   justify-content: center;
- }
- 
-.react-flow__pane { 
+}
+
+.react-flow__pane {
   box-shadow: 0px 0px 3px 2px inset #999999;
 }
 
@@ -88,22 +88,22 @@
   justify-content: center;
   margin: 0 2px 0 2px;
   align-items: center;
-  color: #FFFFFF;
+  color: #ffffff;
   height: 150px;
   width: 150px;
   font-size: 14px;
   font-weight: 400;
   padding: 0px 10px 0px 10px;
-  border-radius: 6px;  
+  border-radius: 6px;
   text-align: center;
   cursor: move;
+  overflow: auto;
 }
 
 .react-flow__node-trigger {
   background-color: #660000;
   border: 2px solid #553333;
 }
-
 
 .react-flow__node-extract {
   background-color: #660066;
