@@ -20,20 +20,27 @@ const NodeModal = (props) => {
   const updateOutput = (event) => {
     setOutput(event.target.value);
   };
-  
-  const handleEditNode = async (event) => {
+ 
+  const handleSaveExecuteNode = (event) => {
     event.preventDefault();
+    handleSaveNode();
+    //handleExecuteNode();
+    props.setModalIsOpen(false);
+  }
+  
+  const handleSaveNode = () => {
+    props.onSaveExecute(props.nodeObj.id, JSON.parse(keyValues));   
+  }
+ 
+  /*const handleSaveNode = async () => {
     const response = await axios.put(
       "http://localhost:3001/mock/workflows/1", JSON.parse(keyValues));
-	props.onEditNodeData(props.nodeObj.id, response.data);
-	props.setModalIsOpen(false);
+    props.onEditNodeData(props.nodeObj.id, response.data);
   };
 
-  const handleExecuteNode = (event) => {
-    event.preventDefault();
-    props.onUpdateNextOutput(props.nodeObj.id, output);
-    props.setModalIsOpen(false);
-  };
+  const handleExecuteNode = () => {
+    props.runExecution(props.nodeObj.id);
+  };*/
 
   return ReactDom.createPortal(
     <div id="modal-container" ref={modalRef} onClick={closeModal}>
@@ -47,25 +54,11 @@ const NodeModal = (props) => {
           <strong>Previous output:</strong>{" "}
           {props.nodeObj.data.output ? props.nodeObj.data.output : "N/A"}
         </p>
-		<form onSubmit={handleEditNode}>
-		  <p><label htmlFor="node-data">Update current node info:</label></p>
-		  <input size="25" name="node-data" type="text" value={keyValues} onChange={updateKeyValues} />
-		  <button type="submit">Update</button>
-		</form>
-        <form onSubmit={handleExecuteNode}>
-          <p>
-            <label htmlFor="output">Mock execution:</label>
-          </p>
-          <input
-            name="output"
-            type="text"
-            value={output}
-            onChange={updateOutput}
-          />
-          <p>
-            <button type="submit">Execute</button>
-          </p>
-        </form>
+    <form onSubmit={handleSaveExecuteNode}>
+      <p><label htmlFor="node-data">Current node data:</label></p>
+          <textarea style={{resize: "none"}} cols="50" rows="3" type="text" value={keyValues} onChange={updateKeyValues} />
+      <p><button type="submit">Save and execute</button></p>
+    </form>
       </div>
     </div>,
     document.getElementById("portal")

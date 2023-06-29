@@ -34,7 +34,7 @@ app.get("/mock/workflows/:id", (req, res) => {
         type: "extract",
         data: {
           prev: "1",
-          label: "API",
+          label: "Extract",
           url: "https://dog.ceo/api/breeds/list/all",
           httpVerb: "GET",
           jsonBody: {},
@@ -51,7 +51,7 @@ app.get("/mock/workflows/:id", (req, res) => {
         type: "transform",
         data: {
           prev: "2",
-          label: "QUERY",
+          label: "Transform",
           jsCode: "",
           output: "",
         },
@@ -66,7 +66,7 @@ app.get("/mock/workflows/:id", (req, res) => {
         type: "load",
         data: {
           prev: "3",
-          label: "POSTGRES",
+          label: "Load",
           userName: "postgres",
           password: "password",
           port: "5432",
@@ -115,9 +115,11 @@ app.get("/mock/workflows/:id", (req, res) => {
 });
 
 app.put("/mock/workflows/:id", (req, res) => {
-  console.log(req);
-  console.log(req.body); 
   res.status(200).json(req.body);
+});
+
+app.post("/mock/execute/node", (req, res) => {
+  res.status(200).send("test");
 });
 
 app.listen(PORT, () => {

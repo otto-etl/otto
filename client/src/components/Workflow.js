@@ -1,6 +1,6 @@
 import "./Workflow.css";
 import React, { useState, useEffect, useCallback } from "react";
-import ReactFlow, { useNodesState, useEdgesState, addEdge } from "reactflow";
+import ReactFlow, { ReactFlowProvider, useNodesState, useEdgesState, addEdge } from "reactflow";
 import "reactflow/dist/style.css";
 import axios from "axios";
 
@@ -92,13 +92,12 @@ const Workflow = () => {
       setNodes(response.data.workflow);
       setEdges(response.data.edges);
     };
-
     getWorkflow();
   }, []);
-
-  const openModal = (data) => {
+  
+  const openModal = (nodeData) => {
     setModalIsOpen(true);
-    setModalData(data);
+    setModalData(nodeData);
   };
 
   // Not implemented yet, from tutorial, throws a warning about no dependencies in dependency array, need to check how loadbearing that is
@@ -112,66 +111,51 @@ const Workflow = () => {
       ),
     []
   );
+  
+  const onSaveExecute = async (currentId, updatedNodeData) => {
+    let newNodesArray = updateNodeObject(currentId, updatedNodeData);
+    await runExecution(currentId, newNodesArray); // mutates newNodesArray
+    setNodes(newNodesArray);
+  };
 
-  const onUpdateNextOutput = useCallback(
-    (currentId, newOutput) => {
-      let currentNode = nodes.find((node) => node.data.id === currentId);
-      let nextNode = nodes.find((node) => node.data.prev === currentId);
-      let nextEdge = edges.find((edge) => edge.source === currentId);
-      let newNodes = nodes.map((node) => {
-        if (
-          node.id !== currentId &&
-          (!nextNode || (nextNode && node.id !== nextNode.id))
-        ) {
-          return node;
-        }
-        let newNode = { ...node };
-        let newData = { ...node.data };
-        let newPosition = { ...node.position };
-        node.id === currentId
-          ? (newData.output = newOutput)
-          : (newData.input = newOutput);
-        newData.position = newPosition;
+  const updateNodeObject = (currentId, updatedData) => {
+    let nextNode = nodes.find((node) => node.data.prev === currentId);
+    return nodes.map((node) => { 
+      if (node.id !== currentId &&
+          (!nextNode || (nextNode && node.id !== nextNode.id))) {
+        return node;
+      }
+      let newNode = { ...node }; 
+      let newData = { ...node.data }; 
+      if (nextNode && node.id === nextNode.id) {
         newNode.data = newData;
         return newNode;
+      }
+      Object.keys(updatedData).forEach(key => { 
+        newData[key] = updatedData[key];
       });
-      let newEdges = edges.map((edge) => {
-        if (!nextEdge || edge.source !== currentId) {
-          return edge;
-        }
-        let newEdge = { ...edge };
-        newEdge.animated = true;
-        return newEdge;
-      });
-      setNodes(newNodes);
-      setEdges(newEdges);
-    },
-    [edges, nodes, setEdges, setNodes, modalIsOpen]
-  ); // Linter says modalIsOpen is unnecessary but it is load-bearing here, need to nail down why
-
-  const onEditNodeData = useCallback(
-  (currentId, updatedData) => {
-    let currentNode = nodes.find((node) => node.data.id === currentId);
-	let newNodes = nodes.map((node) => {
-	  if (node.id !== currentId) {
-	    return node;
-	  }
-	  let newNode = { ...node };
-	  let newData = { ...node.data };
-      let newPosition = { ...node.position };
-      Object.keys(updatedData).forEach(key => {
-	    newData[key] = updatedData[key];
-	  });
-	  newNode.data = updatedData;
-	  newNode.position = newPosition;	 	  
-	  return newNode;
-	});
-	setNodes(newNodes);
-  }, [modalIsOpen]);
-
+      newNode.data = updatedData;  
+      return newNode;
+    });
+  };
+  
+  const runExecution = async (currentId, newNodesArray) => {
+    let payload = { nodeID: currentId, workflowID: 1, nodes: newNodesArray, edges: edges };
+    let executionResult = await axios.post("http://localhost:3001/mock/execute/node", payload);
+    let currentNode = newNodesArray.find((node) => node.id === currentId);
+    let nextNode = newNodesArray.find((node) => node.data.prev === currentId);    
+    currentNode.data.output = executionResult.data;
+    if (nextNode) {
+      nextNode.data.input = executionResult.data;
+    }
+  };
+  
   const onNodeClick = useCallback((event, object) => {
     let contents;
     switch (object.type) {
+      case "trigger": 
+        contents = "Trigger modal goes here";
+        break;
       case "extract":
         contents = "Extract modal goes here";
         break;
@@ -186,7 +170,7 @@ const Workflow = () => {
     }
     openModal({ ...object, contents: contents });
   });
-
+  
   /* ReactFlow throws a console warning here:
   
   It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them.
@@ -194,6 +178,7 @@ const Workflow = () => {
   */
   return (
     <div className="grid">
+    <ReactFlowProvider>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -213,11 +198,12 @@ const Workflow = () => {
           <NodeModal
             nodeObj={modalData}
             setModalIsOpen={setModalIsOpen}
-            onUpdateNextOutput={onUpdateNextOutput}
-			onEditNodeData={onEditNodeData}
+            onSaveExecute={onSaveExecute}
+            runExecution={runExecution}
           />
         ) : null}
       </ReactFlow>
+    </ReactFlowProvider>
     </div>
   );
 };
