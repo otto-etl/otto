@@ -4,7 +4,7 @@ import { runJSCode } from "../utils/jsCodeExec.js";
 import { runAPI } from "../utils/apiExec.js";
 import { runPSQLCode } from "../utils/psqlExec.js";
 import { getNode } from "../utils/node.js";
-import { getWorkflow } from "../models/pgService.js";
+import { getWorkflow, updateNodesEdges } from "../models/pgService.js";
 const router = express.Router();
 
 router.get("/workflow/:id", (req, res) => {
@@ -13,7 +13,7 @@ router.get("/workflow/:id", (req, res) => {
     startCron(id);
     res.status(200).send();
   } catch (e) {
-    res.status(500).send({ error: e.message });
+    res.status(500).json({ error: e.message });
   }
 });
 
@@ -23,36 +23,39 @@ router.get("/stopworkflow/:id", (req, res) => {
     stopCron(id);
     res.status(200).send();
   } catch (e) {
-    res.status(500).send({ error: e.message });
+    res.status(500).json({ error: e.message });
   }
 });
 
 router.post("/node", async (req, res) => {
   try {
     const { workflowID, nodeID, nodes, edges } = req.body;
-    //add pgService function that updates the nodes and edges fields of the database
 
-    //execution
+    //update nodes and edges by workflowID
+    await updateNodesEdges({
+      workflowID,
+      nodes: JSON.stringify(nodes),
+      edges: JSON.stringify(edges),
+    });
+
+    //get workflow object
     const workflowObj = await getWorkflow(workflowID);
     const nodeObj = getNode(workflowObj, nodeID);
-    console.log("EXTRACT");
 
+    //execute node according to node type
     let resData;
     if (nodeObj.type === "extract") {
-      console.log("nodeObj :", nodeObj);
       resData = await runAPI(workflowObj, nodeObj);
     } else if (nodeObj.type === "transform") {
       resData = await runJSCode(workflowObj, nodeObj);
     } else if (nodeObj.type === "load") {
-      console.log("load fired");
       resData = await runPSQLCode(workflowObj, nodeObj);
     } else {
-      res.status(403).send({ error: "Invalid node type" });
+      res.status(403).json({ error: "Invalid node type" });
     }
-
-    res.status(200).send(resData);
+    res.status(200).json(resData);
   } catch (e) {
-    res.status(500).send({ error: e.message });
+    res.status(500).json({ error: e.message });
   }
 });
 

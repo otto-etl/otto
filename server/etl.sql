@@ -76,11 +76,11 @@ INSERT INTO workflow VALUES (
     "data": {
       "prev": "3",
       "label": "POSTGRES",
-      "userName": "jwebster",
-      "password": "2129",
+      "userName": "postgres",
+      "password": "password",
       "port": "5432",
       "dbName": "dog",
-      "sqlCode": "INSERT INTO dog(breed, count) VALUES(${breed}, ${num})",
+      "sqlCode": "INSERT INTO dog(breed, count) VALUES(${breed}, ${num});",
       "output": ""
     },
     "position": {

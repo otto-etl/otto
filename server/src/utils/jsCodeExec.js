@@ -1,6 +1,6 @@
 import vm from "vm";
 import { getNode } from "./node.js";
-import { updateWorkflowNodes } from "../models/pgService.js";
+import { updateNodes } from "../models/pgService.js";
 
 export const runJSCode = async (workflowObj, nodeObj) => {
   const prevNodeID = nodeObj.data.prev;
@@ -13,6 +13,6 @@ export const runJSCode = async (workflowObj, nodeObj) => {
   vm.createContext(inputData);
   vm.runInContext(customCode, inputData);
   nodeObj.data.output = inputData;
-  await updateWorkflowNodes(workflowObj);
+  await updateNodes(workflowObj);
   return inputData;
 };

@@ -1,4 +1,4 @@
-import { updateWorkflowNodes } from "../models/pgService.js";
+import { updateNodes } from "../models/pgService.js";
 import axios from "axios";
 
 const sendAPI = async ({ method, url, data }) => {
@@ -14,6 +14,6 @@ export const runAPI = async (workflowObj, nodeObj) => {
   };
   const data = await sendAPI(input);
   nodeObj.data.output = { data };
-  await updateWorkflowNodes(workflowObj);
+  await updateNodes(workflowObj);
   return { data };
 };

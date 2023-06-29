@@ -1,6 +1,6 @@
 import pgPromise from "pg-promise";
 import { getNode } from "./node.js";
-import { updateWorkflowNodes } from "../models/pgService.js";
+import { updateNodes } from "../models/pgService.js";
 const pgp = pgPromise();
 
 let db;
@@ -17,7 +17,7 @@ export const runPSQLCode = async (workflowObj, nodeObj) => {
   try {
     const prevNodeID = nodeObj.data.prev;
     const previousNode = getNode(workflowObj, prevNodeID);
-    const { userName, password, dbName, sqlCode } = nodeObj.data;
+    let { userName, password, dbName, sqlCode } = nodeObj.data;
 
     if (!db) {
       db = await connectPSQL({ userName, password, dbName });
@@ -32,9 +32,18 @@ export const runPSQLCode = async (workflowObj, nodeObj) => {
       return returnedData[1];
     });
 
+    //add returning statement if the code doesn't have one
+    sqlCode = addReturnStr(sqlCode);
+    let returnValues = [];
+
     for (const obj of dataToInsert) {
-      await db.any(sqlCode, matchDataPropsWithVarNames(insertFields, obj));
+      const returnValue = await db.any(
+        sqlCode,
+        matchDataPropsWithVarNames(insertFields, obj)
+      );
+      returnValues = returnValues.concat(returnValue);
     }
+    return returnValues;
   } catch (error) {
     console.error("Error running PSQL code:", error);
   }
@@ -44,4 +53,14 @@ const matchDataPropsWithVarNames = (insertFields, obj) => {
   const result = {};
   insertFields.forEach((field) => (result[field] = obj[field]));
   return result;
+};
+
+const addReturnStr = (sqlCode) => {
+  if (sqlCode.toUpperCase().includes("RETURNING")) {
+    return sqlCode;
+  } else if (!sqlCode.includes(";")) {
+    return sqlCode + "RETURNING * ;";
+  } else {
+    return sqlCode.replace(";", " RETURNING * ;");
+  }
 };
