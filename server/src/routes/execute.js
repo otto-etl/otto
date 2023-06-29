@@ -30,6 +30,7 @@ router.get("/stopworkflow/:id", (req, res) => {
 router.post("/node", async (req, res) => {
   try {
     let { workflowID, nodeID, nodes, edges } = req.body;
+    console.log(nodes[0]);
     nodes = JSON.stringify(nodes);
     edges = JSON.stringify(edges);
     //update nodes and edges in DB by workflowID
@@ -51,10 +52,10 @@ router.post("/node", async (req, res) => {
       resData = await runJSCode(workflowObj, nodeObj);
     } else if (nodeObj.type === "load") {
       resData = await runPSQLCode(workflowObj, nodeObj);
-    } else {
-      res.status(403).json({ error: "Invalid node type" });
     }
-    console.log(resData);
+    // else {
+    //   res.status(403).json({ error: "Invalid node type" });
+    // }
     res.status(200).json(resData);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -82,9 +83,10 @@ router.post("/workflow/:id", async (req, res) => {
         await runJSCode(workflowObj, nodeObj);
       } else if (nodeObj.type === "load") {
         await runPSQLCode(workflowObj, nodeObj);
-      } else {
-        res.status(403).json({ error: "Invalid node type" });
       }
+      // else {
+      //   res.status(403).json({ error: "Invalid node type" });
+      // }
     }
     const workflowObjNew = await getWorkflow(String(workflowID));
     res
