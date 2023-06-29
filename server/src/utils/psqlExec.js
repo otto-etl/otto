@@ -5,6 +5,7 @@ const pgp = pgPromise();
 
 let db;
 
+// connect to PSQL with user credentials
 export const connectPSQL = async ({ userName, password, dbName }) => {
   try {
     return pgp(`postgres://${userName}:${password}@localhost:5432/${dbName}`);
@@ -26,7 +27,12 @@ export const runPSQLCode = async (workflowObj, nodeObj) => {
       console.log("Using existing database connection.");
     }
 
-    const dataToInsert = previousNode.data.output.data;
+    //if no input data throw an error
+    const inputData = previousNode.data.output.data;
+    if (inputData.length === 0) {
+      throw new Error("No data from previous node");
+    }
+
     const regex = /\$\{([^}]+)\}/g;
     const insertFields = [...sqlCode.matchAll(regex)].map((returnedData) => {
       return returnedData[1];
@@ -36,13 +42,16 @@ export const runPSQLCode = async (workflowObj, nodeObj) => {
     sqlCode = addReturnStr(sqlCode);
     let returnValues = [];
 
-    for (const obj of dataToInsert) {
+    //for each role in the input dataset insert into db
+    for (const obj of inputData) {
       const returnValue = await db.any(
         sqlCode,
         matchDataPropsWithVarNames(insertFields, obj)
       );
       returnValues = returnValues.concat(returnValue);
     }
+    nodeObj.data.output = returnValues;
+    await updateNodes(workflowObj);
     return returnValues;
   } catch (error) {
     console.error("Error running PSQL code:", error);

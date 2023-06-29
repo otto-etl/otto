@@ -3,7 +3,7 @@ import { startCron, stopCron } from "../utils/scheduleExec.js";
 import { runJSCode } from "../utils/jsCodeExec.js";
 import { runAPI } from "../utils/apiExec.js";
 import { runPSQLCode } from "../utils/psqlExec.js";
-import { getNode } from "../utils/node.js";
+import { getNode, getAllNodesInOrder } from "../utils/node.js";
 import { getWorkflow, updateNodesEdges } from "../models/pgService.js";
 const router = express.Router();
 
@@ -31,7 +31,7 @@ router.post("/node", async (req, res) => {
   try {
     const { workflowID, nodeID, nodes, edges } = req.body;
 
-    //update nodes and edges by workflowID
+    //update nodes and edges in DB by workflowID
     await updateNodesEdges({
       workflowID,
       nodes: JSON.stringify(nodes),
@@ -54,6 +54,49 @@ router.post("/node", async (req, res) => {
       res.status(403).json({ error: "Invalid node type" });
     }
     res.status(200).json(resData);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+/*POST /execute/workflow/:id**
+
+- Description
+    - save the current nodes and edges
+    - execute all nodes in order
+    - update the output at extract, transform and load nodes
+- input: { workflowID: 1, nodes: [], edges[]}
+- Return Value: { nodes:[] edges:[] }
+*/
+
+router.post("/workflow/:id", async (req, res) => {
+  try {
+    const workflowID = req.params.id;
+    const { nodes, edges } = req.body;
+
+    //update nodes and edges in DB by workflowID
+    await updateNodesEdges({
+      workflowID,
+      nodes: JSON.stringify(nodes),
+      edges: JSON.stringify(edges),
+    });
+
+    //get workflow object
+    const workflowObj = await getWorkflow(workflowID);
+    const nodesToExecute = getAllNodesInOrder(workflowObj);
+    for (const nodeObj of nodesToExecute) {
+      if (nodeObj.type === "extract") {
+        await runAPI(workflowObj, nodeObj);
+      } else if (nodeObj.type === "transform") {
+        await runJSCode(workflowObj, nodeObj);
+      } else if (nodeObj.type === "load") {
+        await runPSQLCode(workflowObj, nodeObj);
+      } else {
+        res.status(403).json({ error: "Invalid node type" });
+      }
+    }
+    const workflowObjNew = await getWorkflow(workflowID);
+    res.status(200).json(workflowObjNew);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }

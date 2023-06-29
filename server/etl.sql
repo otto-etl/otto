@@ -39,6 +39,21 @@ INSERT INTO workflow VALUES (
     "sourcePosition": "right"
   },
   {
+    "id": "3",
+    "type": "transform",
+    "data": {
+      "prev": "2",
+      "label": "QUERY",
+      "jsCode": "for(const prop in data.message) {if (!data.message.breed) {data.message.breed=[{breed:prop, num:data.message[prop].length}]} else {data.message.breed.push({breed:prop, num:data.message[prop].length})}} data = data.message.breed;",
+      "output": ""
+    },
+    "position": {
+      "x": 425,
+      "y": 5
+    },
+    "targetPosition": "left"
+  },
+    {
     "id": "2",
     "type": "extract",
     "data": {
@@ -52,21 +67,6 @@ INSERT INTO workflow VALUES (
     "position": {
       "x": 210,
       "y": 90
-    },
-    "targetPosition": "left"
-  },
-  {
-    "id": "3",
-    "type": "transform",
-    "data": {
-      "prev": "2",
-      "label": "QUERY",
-      "jsCode": "for(const prop in data.message) {if (!data.message.breed) {data.message.breed=[{breed:prop, num:data.message[prop].length}]} else {data.message.breed.push({breed:prop, num:data.message[prop].length})}} data = data.message.breed;",
-      "output": ""
-    },
-    "position": {
-      "x": 425,
-      "y": 5
     },
     "targetPosition": "left"
   },
