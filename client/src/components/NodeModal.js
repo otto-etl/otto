@@ -51,11 +51,15 @@ const NodeModal = (props) => {
         <p>{props.nodeObj.contents}</p>
         <p>
           <strong>Previous input:</strong>{" "}
-          {props.nodeObj.data.input ? props.nodeObj.data.input : "N/A"}
+          {props.nodeObj.data.input
+            ? JSON.stringify(props.nodeObj.data.input)
+            : "N/A"}
         </p>
         <p>
           <strong>Previous output:</strong>{" "}
-          {props.nodeObj.data.output ? props.nodeObj.data.output : "N/A"}
+          {props.nodeObj.data.output
+            ? JSON.stringify(props.nodeObj.data.output)
+            : "N/A"}
         </p>
         <form onSubmit={handleSaveExecuteNode}>
           <p>
