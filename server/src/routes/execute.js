@@ -29,13 +29,14 @@ router.get("/stopworkflow/:id", (req, res) => {
 
 router.post("/node", async (req, res) => {
   try {
-    const { workflowID, nodeID, nodes, edges } = req.body;
-
+    let { workflowID, nodeID, nodes, edges } = req.body;
+    nodes = JSON.stringify(nodes);
+    edges = JSON.stringify(edges);
     //update nodes and edges in DB by workflowID
     await updateNodesEdges({
       workflowID,
-      nodes: JSON.stringify(nodes),
-      edges: JSON.stringify(edges),
+      nodes,
+      edges,
     });
 
     //get workflow object
@@ -53,6 +54,7 @@ router.post("/node", async (req, res) => {
     } else {
       res.status(403).json({ error: "Invalid node type" });
     }
+    console.log(resData);
     res.status(200).json(resData);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -63,8 +65,6 @@ router.post("/workflow/:id", async (req, res) => {
   try {
     const workflowID = req.params.id;
     const { nodes, edges } = req.body;
-    console.log("nodes:", nodes);
-    console.log("edges", edges);
     //update nodes and edges in DB by workflowID
     await updateNodesEdges({
       workflowID,

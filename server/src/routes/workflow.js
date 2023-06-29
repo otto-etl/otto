@@ -10,9 +10,10 @@ router.get("/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const { nodes, edges } = await getWorkflow(id);
-    res.status(200).json({ id, nodes, edges });
+    console.log(nodes, edges);
+    res.status(200).send({ id, nodes, edges });
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    res.status(500).send({ error: e.message });
   }
 });
 
@@ -29,7 +30,11 @@ router.put("/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const { nodes, edges } = req.body;
-    await updateNodesEdges({ workflowID: id, nodes, edges });
+    await updateNodesEdges({
+      workflowID: id,
+      nodes: JSON.stringify(nodes),
+      edges: JSON.stringify(edges),
+    });
     res.sendStatus(200);
   } catch (e) {
     res.status(500).json({ error: e.message });

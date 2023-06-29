@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const host = "http://localhost:3001/mock";
+const host = "http://localhost:3001";
 
 export const getWorkflowAPI = async (id) => {
   const res = await axios.get(`${host}/workflows/${id}`);
@@ -13,6 +13,8 @@ export const postNodeChanges = async (payload) => {
 };
 
 export const saveWorkflow = async (id, payload) => {
+  console.log("id", id);
+  console.log("payload", payload);
   await axios.put(`${host}/workflows/${id}`, payload);
 };
 

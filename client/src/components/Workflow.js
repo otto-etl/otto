@@ -72,6 +72,7 @@ const Workflow = () => {
     let newNodesArray = updateNodeObject(currentId, updatedNodeData);
     await runExecution(currentId, newNodesArray); // mutates newNodesArray
     setNodes(newNodesArray);
+    console.log("on save execute");
   };
 
   const updateNodeObject = (currentId, updatedData) => {
