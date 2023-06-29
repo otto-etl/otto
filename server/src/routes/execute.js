@@ -11,7 +11,7 @@ router.get("/workflow/:id", (req, res) => {
   try {
     const id = req.params.id;
     startCron(id);
-    res.status(200).send();
+    res.sendStatus(200);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -21,7 +21,7 @@ router.get("/stopworkflow/:id", (req, res) => {
   try {
     const id = req.params.id;
     stopCron(id);
-    res.status(200).send();
+    res.sendStatus(200);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -59,21 +59,12 @@ router.post("/node", async (req, res) => {
   }
 });
 
-/*POST /execute/workflow/:id**
-
-- Description
-    - save the current nodes and edges
-    - execute all nodes in order
-    - update the output at extract, transform and load nodes
-- input: { workflowID: 1, nodes: [], edges[]}
-- Return Value: { nodes:[] edges:[] }
-*/
-
 router.post("/workflow/:id", async (req, res) => {
   try {
     const workflowID = req.params.id;
     const { nodes, edges } = req.body;
-
+    console.log("nodes:", nodes);
+    console.log("edges", edges);
     //update nodes and edges in DB by workflowID
     await updateNodesEdges({
       workflowID,
@@ -95,8 +86,10 @@ router.post("/workflow/:id", async (req, res) => {
         res.status(403).json({ error: "Invalid node type" });
       }
     }
-    const workflowObjNew = await getWorkflow(workflowID);
-    res.status(200).json(workflowObjNew);
+    const workflowObjNew = await getWorkflow(String(workflowID));
+    res
+      .status(200)
+      .json({ nodes: workflowObjNew.nodes, edges: workflowObjNew.edges });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
