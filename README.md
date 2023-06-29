@@ -2,10 +2,10 @@
 The .env file in the server folder should contain the following environment variables: your local postgres username, password, workflow database name and port.
 You don't need to change the database name or the port, just modify the PGUSER and PGPASSWORD to match you local db credentials
 
-PGUSER=postgres
-PGPASSWORD=password
-DBNAME=etl
-PORT=3001
+- PGUSER=postgres
+- PGPASSWORD=password
+- DBNAME=etl
+- PORT=3001
 
 ### create databse and tables
 run the create database and create table queries in the etl.sql file (in the root of the server folder) in your local postgres
