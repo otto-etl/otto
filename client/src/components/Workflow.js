@@ -30,60 +30,6 @@ const nodeTypes = {
 const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 
 const Workflow = () => {
-  // const initialNodes = [
-  //   {
-  //     id: "1",
-  //     type: "trigger",
-  //     data: { label: "Trigger", input: "(none)", output: "" },
-  //     position: { x: 0, y: 50 },
-  //     sourcePosition: "right",
-  //   },
-  //   {
-  //     id: "2",
-  //     type: "extract",
-  //     data: { prev: "1", label: "Extract", input: "", output: "" },
-  //     position: { x: 210, y: 90 },
-  //     targetPosition: "left",
-  //   },
-  //   {
-  //     id: "3",
-  //     type: "transform",
-  //     data: { prev: "2", label: "Transform", input: "", output: "" },
-  //     position: { x: 425, y: 5 },
-  //     targetPosition: "left",
-  //   },
-  //   {
-  //     id: "4",
-  //     type: "load",
-  //     data: { prev: "3", label: "Load", input: "", output: "" },
-  //     position: { x: 650, y: 75 },
-  //     targetPosition: "left",
-  //   },
-  // ];
-
-  // const initialEdges = [
-  //   {
-  //     id: "e1-2",
-  //     source: "1",
-  //     target: "2",
-  //     animated: false,
-  //     style: { stroke: "#000033" },
-  //   },
-  //   {
-  //     id: "e2-3",
-  //     source: "2",
-  //     target: "3",
-  //     animated: false,
-  //     style: { stroke: "#000033" },
-  //   },
-  //   {
-  //     id: "e3-4",
-  //     source: "3",
-  //     target: "4",
-  //     animated: false,
-  //     style: { stroke: "#000033" },
-  //   },
-  // ];
   const [nodes, setNodes, onNodesChange] = useNodesState([]); // useNodesState, useEdgesState are React Flow-specific
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -159,7 +105,7 @@ const Workflow = () => {
   const runExecution = async (currentId, newNodesArray) => {
     let payload = {
       nodeID: currentId,
-      workflowID: 1,
+      workflowID: "1",
       nodes: newNodesArray,
       edges: edges,
     };
@@ -207,7 +153,7 @@ const Workflow = () => {
     const res = await axios.post(
       "http://localhost:3001/mock/execute/workflow/1",
       {
-        workflowID: 1,
+        workflowID: "1",
         nodes,
         edges,
       }
