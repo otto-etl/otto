@@ -14,6 +14,7 @@ import ExtractNode from "./ExtractNode";
 import TransformNode from "./TransformNode";
 import LoadNode from "./LoadNode";
 import NodeModal from "./NodeModal";
+import { updateInputs } from "../utils/utils";
 
 import "../index.css";
 
@@ -34,15 +35,6 @@ const Workflow = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalData, setModalData] = useState("");
-
-  const updateInputs = (resNodes) => {
-    resNodes.forEach((node) => {
-      if (node.data.prev) {
-        const prev = resNodes.find((othNode) => othNode.id === node.data.prev);
-        node.data.input = prev.data.output;
-      }
-    });
-  };
 
   useEffect(() => {
     const getWorkflow = async () => {
