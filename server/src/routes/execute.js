@@ -8,21 +8,29 @@ import { getWorkflow, updateNodesEdges } from "../models/pgService.js";
 import { runWorkflow } from "../utils/workflowExec.js";
 const router = express.Router();
 
-router.get("/workflow/:id", (req, res) => {
+router.get("/workflow/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    startCron(id);
-    res.status(200).send(`workflow ${id} started`);
+    const workflowObj = await getWorkflow(workflowID);
+    if (workflowObj.active === true) {
+      throw new Error("work flow already active");
+    }
+    startCron(workflowObj);
+    res.status(200).send(`workflow${id} schedule triggered`);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
 
-router.get("/stopworkflow/:id", (req, res) => {
+router.get("/stopworkflow/:id", async (req, res) => {
   try {
     const id = req.params.id;
+    const workflowObj = await getWorkflow(id);
+    if (workflowObj.active === false) {
+      throw new Error("work flow already deactivated");
+    }
     stopCron(id);
-    res.status(200).send(`workflow ${id} stopped`);
+    res.status(200).send(`workflow${id} schedule stopped`);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -53,7 +61,7 @@ router.post("/node", async (req, res) => {
     } else if (nodeObj.type === "load") {
       resData = await runPSQLCode(workflowObj, nodeObj);
     } else if (nodeObj.type !== "trigger") {
-      res.status(403).json({ error: "Invalid node type" });
+      res.status(403).json({ error: `Invalid node type: ${nodeObj.type}` });
     }
     res.status(200).json(resData);
   } catch (e) {

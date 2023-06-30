@@ -9,8 +9,8 @@ export const getAllWorkflows = async () => {
   return await db.many("SELECT * FROM workflow");
 };
 
-export const getActiveWorkflowIDs = async () => {
-  return await db.many("SELECT id FROM workflow WHERE active = true");
+export const getActiveWorkflows = async () => {
+  return await db.many("SELECT * FROM workflow WHERE active = true");
 };
 
 export const getWorkflow = async (id) => {
@@ -27,12 +27,11 @@ export const updateNodes = async (workflowObj) => {
   );
 };
 
-export const activateWorkflow = async (workflowID, startTime) => {
+export const activateWorkflow = async (workflowID) => {
   return await db.any(
-    "UPDATE workflow SET active=true, start_time=${startTime}, updated_at = NOW() WHERE id = ${workflowID}",
+    "UPDATE workflow SET active=true, updated_at = NOW() WHERE id = ${workflowID}",
     {
       workflowID: workflowID,
-      startTime: startTime,
     }
   );
 };

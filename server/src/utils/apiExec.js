@@ -12,7 +12,13 @@ export const runAPI = async (workflowObj, nodeObj) => {
     method: nodeObj.data.httpVerb,
     data: nodeObj.jsonBody,
   };
-  const data = await sendAPI(input);
+  let data;
+  try {
+    data = await sendAPI(input);
+  } catch (e) {
+    throw new Error(`API call failed with error ${e.message}`);
+  }
+
   nodeObj.data.output = { data };
   await updateNodes(workflowObj);
   return { data };
