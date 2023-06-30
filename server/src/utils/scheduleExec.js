@@ -5,48 +5,55 @@ import {
   activateWorkflow,
   deactivateWorkflow,
 } from "../models/pgService.js";
-const runningWorkFlows = {};
+import { runWorkflow } from "./workflowExec.js";
+
+const startedWorkflows = {};
+const pendingWorkflows = {};
 
 export const startCron = async (workflowID) => {
+  if (pendingWorkflows[workflowID]) {
+    throw new Error("workflow already pending");
+  }
+  if (startedWorkflows[workflowID]) {
+    throw new Error("workflow already running");
+  }
+
   const currentTime = Date.now();
   const workflowObj = await getWorkflow(workflowID);
-
   let { startTime, intervalInMinutes } = getTriggerNode(workflowObj).data;
-  console.log("dbStartTime", startTime);
-  startTime = "27 Jun 2023 18:23:00 CDT";
   startTime = Date.parse(startTime);
 
   console.log(
-    "parsedStartTime",
-    startTime,
-    "currentTime",
-    currentTime,
-    "interval",
-    intervalInMinutes,
-    "timediff",
-    startTime - currentTime
+    "cron job triggered starting in",
+    (startTime - currentTime) / 60000,
+    " mins"
   );
   /* after the cron job function is called,
   the first cron job starts after the defined interval amount of time,
   therefore we subtract intervalInMinutes * 60000 from the start time
   */
-  setTimeout(() => {
+  const timeoutID = setTimeout(() => {
     const task = cron.schedule(`*/${intervalInMinutes} * * * *`, () => {
-      console.log("running workflow", workflowID);
+      runWorkflow(workflowObj);
     });
     activateWorkflow(workflowID);
-    runningWorkFlows[workflowID] = task;
+    startedWorkflows[workflowID] = task;
+    pendingWorkflows[workflowID] = null;
   }, startTime - currentTime - intervalInMinutes * 60000);
+  pendingWorkflows[workflowID] = timeoutID;
 };
 
 export const stopCron = (workflowID) => {
-  const task = runningWorkFlows[workflowID];
+  const task = startedWorkflows[workflowID];
+  const timeoutID = pendingWorkflows[workflowID];
   if (task) {
     task.stop();
-    runningWorkFlows[workflowID] = null;
+    startedWorkflows[workflowID] = null;
+  } else if (pendingWorkflows[workflowID]) {
+    clearTimeout(timeoutID);
+    pendingWorkflows[workflowID] = null;
   } else {
     throw new Error("no workflow to stop yet");
   }
   deactivateWorkflow(workflowID);
-  console.log("running workflow", runningWorkFlows);
 };
