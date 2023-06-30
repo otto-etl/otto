@@ -14,7 +14,8 @@ export const runWorkflow = async (workflowObj) => {
     } else if (nodeObj.type === "load") {
       await runPSQLCode(workflowObj, nodeObj);
     } else if (nodeObj.type !== "trigger") {
-      res.status(403).json({ error: "Invalid node type" });
+      throw new Error("Invalid Node Type");
     }
   }
+  console.log("workflow completed", workflowObj.id);
 };
