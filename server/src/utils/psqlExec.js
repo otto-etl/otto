@@ -15,34 +15,38 @@ export const connectPSQL = async ({ userName, password, dbName }) => {
 };
 
 export const runPSQLCode = async (workflowObj, nodeObj) => {
-  try {
-    const prevNodeID = nodeObj.data.prev;
-    const previousNode = getNode(workflowObj, prevNodeID);
-    let { userName, password, dbName, sqlCode } = nodeObj.data;
+  const prevNodeID = nodeObj.data.prev;
+  const previousNode = getNode(workflowObj, prevNodeID);
+  let { userName, password, dbName, sqlCode } = nodeObj.data;
 
-    if (!db) {
+  if (!db) {
+    try {
       db = await connectPSQL({ userName, password, dbName });
       console.log("Connection to the database established.");
-    } else {
-      console.log("Using existing database connection.");
+    } catch (e) {
+      throw new Error(`Unable to connect to database with error ${e.message}`);
     }
+  } else {
+    console.log("Using existing database connection.");
+  }
 
-    //if no input data throw an error
-    const inputData = previousNode.data.output.data;
-    if (inputData.length === 0) {
-      throw new Error("No data from previous node");
-    }
+  //if no input data throw an error
+  const inputData = previousNode.data.output.data;
+  if (inputData.length === 0) {
+    throw new Error(`No data from previous node: ${previousNode.type}`);
+  }
 
-    const regex = /\$\{([^}]+)\}/g;
-    const insertFields = [...sqlCode.matchAll(regex)].map((returnedData) => {
-      return returnedData[1];
-    });
+  const regex = /\$\{([^}]+)\}/g;
+  const insertFields = [...sqlCode.matchAll(regex)].map((returnedData) => {
+    return returnedData[1];
+  });
 
-    //add returning statement if the code doesn't have one
-    sqlCode = addReturnStr(sqlCode);
-    let returnValues = [];
+  //add returning statement if the code doesn't have one
+  sqlCode = addReturnStr(sqlCode);
+  let returnValues = [];
 
-    //for each role in the input dataset insert into db
+  //for each role in the input dataset insert into db
+  try {
     for (const obj of inputData) {
       const returnValue = await db.any(
         sqlCode,
@@ -50,12 +54,13 @@ export const runPSQLCode = async (workflowObj, nodeObj) => {
       );
       returnValues = returnValues.concat(returnValue);
     }
-    nodeObj.data.output = returnValues;
-    await updateNodes(workflowObj);
-    return returnValues;
-  } catch (error) {
-    console.error("Error running PSQL code:", error);
+  } catch (e) {
+    throw new Error(`Error running psql code ${error.message}`);
   }
+
+  nodeObj.data.output = returnValues;
+  await updateNodes(workflowObj);
+  return returnValues;
 };
 
 const matchDataPropsWithVarNames = (insertFields, obj) => {
