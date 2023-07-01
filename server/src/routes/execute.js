@@ -11,7 +11,7 @@ const router = express.Router();
 router.get("/workflow/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    const workflowObj = await getWorkflow(workflowID);
+    const workflowObj = await getWorkflow(id);
     if (workflowObj.active === true) {
       throw new Error("work flow already active");
     }

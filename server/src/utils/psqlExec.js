@@ -27,7 +27,6 @@ export const runPSQLCode = async (workflowObj, nodeObj) => {
 
   if (!db) {
     try {
-      console.log(host, userName, password);
       db = await connectPSQL({ userName, password, dbName, host, port });
       console.log("Connection to the database established.");
     } catch (e) {
