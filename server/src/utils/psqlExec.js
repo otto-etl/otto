@@ -6,9 +6,15 @@ const pgp = pgPromise();
 let db;
 
 // connect to PSQL with user credentials
-export const connectPSQL = async ({ userName, password, dbName }) => {
+export const connectPSQL = async ({
+  userName,
+  host,
+  port,
+  password,
+  dbName,
+}) => {
   try {
-    return pgp(`postgres://${userName}:${password}@localhost:5432/${dbName}`);
+    return pgp(`postgres://${userName}:${password}@${host}:${port}/${dbName}`);
   } catch (error) {
     throw new Error(error.message);
   }
@@ -17,11 +23,11 @@ export const connectPSQL = async ({ userName, password, dbName }) => {
 export const runPSQLCode = async (workflowObj, nodeObj) => {
   const prevNodeID = nodeObj.data.prev;
   const previousNode = getNode(workflowObj, prevNodeID);
-  let { userName, password, dbName, sqlCode } = nodeObj.data;
+  let { userName, password, dbName, sqlCode, host, port } = nodeObj.data;
 
   if (!db) {
     try {
-      db = await connectPSQL({ userName, password, dbName });
+      db = await connectPSQL({ userName, password, dbName, host, port });
       console.log("Connection to the database established.");
     } catch (e) {
       throw new Error(`Unable to connect to database with error ${e.message}`);
