@@ -175,14 +175,16 @@ const Workflow = () => {
         fitView
         attributionPosition="bottom-left"
       >
-        <Modal
-          modalIsOpen={modalIsOpen}
-          handleOpen={() => setModalIsOpen(true)}
-          handleClose={() => setModalIsOpen(false)}
-          onSaveExecute={onSaveExecute}
-          runExecution={runExecution}
-          nodeObj={modalData}
-        />
+        {modalIsOpen ? (
+          <Modal
+            modalIsOpen={modalIsOpen}
+            handleOpen={() => setModalIsOpen(true)}
+            handleClose={() => setModalIsOpen(false)}
+            onSaveExecute={onSaveExecute}
+            runExecution={runExecution}
+            nodeObj={modalData}
+          />
+        ) : null}
       </ReactFlow>
       <button onClick={handleExecuteAll}>Save and Execute</button>
     </div>

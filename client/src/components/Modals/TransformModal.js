@@ -8,7 +8,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 
-const ScheduleModal = ({ nodeObj, handleSubmit }) => {
+const TransfromModal = ({ nodeObj, handleSubmit }) => {
   const [name, setName] = useState(nodeObj.data.label);
   const [dateAndTime, setDateAndTime] = useState(dayjs(nodeObj.data.startTime));
   const [interval, setInterval] = useState(
@@ -62,4 +62,4 @@ const ScheduleModal = ({ nodeObj, handleSubmit }) => {
   );
 };
 
-export default ScheduleModal;
+export default TransfromModal;

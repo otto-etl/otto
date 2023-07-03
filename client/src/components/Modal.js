@@ -1,17 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
-import dayjs from "dayjs";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-
+import JsonView from "react18-json-view";
+import "react18-json-view/src/style.css";
 import ScheduleModal from "./Modals/ScheduleModal";
 
 const boxStyle = {
@@ -27,12 +21,27 @@ const boxStyle = {
   p: 4,
 };
 
-function BasicModal({ modalIsOpen, handleOpen, handleClose, nodeObj }) {
-  // const [open, setOpen] = useState(modalIsOpen);
-  // const handleOpen = () => setOpen(true);
-  // const handleClose = () => setOpen(false);
+function BasicModal({
+  modalIsOpen,
+  handleOpen,
+  handleClose,
+  nodeObj,
+  onSaveExecute,
+  runExecution,
+}) {
+  const handleSaveExecuteNode = (event, formValues) => {
+    event.preventDefault();
+    handleSaveNode(formValues);
+    //handleExecuteNode();
+    handleClose();
+  };
 
-  console.log(nodeObj);
+  const handleSaveNode = (formValues) => {
+    console.log(formValues);
+    onSaveExecute(nodeObj.id, formValues);
+  };
+
+  console.log("nodeObj.data insde basicModal", nodeObj.data);
 
   return (
     <div>
@@ -48,25 +57,44 @@ function BasicModal({ modalIsOpen, handleOpen, handleClose, nodeObj }) {
             <Container maxWidth="sm">
               <p>Input</p>
               <Box sx={{ bgcolor: "#cfe8fc" }}>
-                {/* {JSON.stringify(nodeObj.data.input)} */}
+                {nodeObj.data ? <JsonView src={nodeObj.data.input} /> : null}
               </Box>
             </Container>
             <Container maxWidth="sm">
               <p>Details</p>
-
-              {nodeObj.type === "trigger" ? <ScheduleModal /> : null}
+              {nodeObj.type === "trigger" ? (
+                <ScheduleModal
+                  nodeObj={nodeObj}
+                  handleSubmit={handleSaveExecuteNode}
+                />
+              ) : null}
+              {nodeObj.type === "extract" ? (
+                <ScheduleModal
+                  nodeObj={nodeObj}
+                  handleSubmit={handleSaveExecuteNode}
+                />
+              ) : null}
+              {nodeObj.type === "transform" ? (
+                <ScheduleModal
+                  nodeObj={nodeObj}
+                  handleSubmit={handleSaveExecuteNode}
+                />
+              ) : null}
+              {nodeObj.type === "load" ? (
+                <ScheduleModal
+                  nodeObj={nodeObj}
+                  handleSubmit={handleSaveExecuteNode}
+                />
+              ) : null}
             </Container>
             <Container maxWidth="sm">
               <p>Output</p>
               <Box sx={{ bgcolor: "#cfe8fc" }}>
-                {/* {nodeObj.data.output
-                  ? JSON.stringify(nodeObj.data.output)
-                  : null} */}
+                {console.log(nodeObj.data)}
+                {nodeObj.data ? <JsonView src={nodeObj.data.output} /> : null}
               </Box>
             </Container>
           </Stack>
-
-          {/* <p>{JSON.stringify(nodeObj)}</p> */}
         </Box>
       </Modal>
     </div>
