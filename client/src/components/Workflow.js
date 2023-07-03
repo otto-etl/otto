@@ -8,6 +8,7 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 
+import Modal from "./Modal";
 import TriggerNode from "./TriggerNode";
 import ExtractNode from "./ExtractNode";
 import TransformNode from "./TransformNode";
@@ -45,7 +46,7 @@ const Workflow = () => {
     const getWorkflow = async () => {
       const response = await getWorkflowAPI(1);
       updateInputs(response.nodes);
-      console.log(Array.isArray(response.nodes));
+      // console.log(Array.isArray(response.nodes));
       setNodes(response.nodes);
       setEdges(response.edges);
     };
@@ -115,23 +116,24 @@ const Workflow = () => {
   };
 
   const onNodeClick = useCallback((event, object) => {
+    console.log("Inside of onNodeClick");
     let contents;
-    switch (object.type) {
-      case "trigger":
-        contents = "Trigger modal goes here";
-        break;
-      case "extract":
-        contents = "Extract modal goes here";
-        break;
-      case "transform":
-        contents = "Transform IDE goes here";
-        break;
-      case "load":
-        contents = "Load modal goes here";
-        break;
-      default:
-        break;
-    }
+    // switch (object.type) {
+    //   case "trigger":
+    //     contents = "Trigger modal goes here";
+    //     break;
+    //   case "extract":
+    //     contents = "Extract modal goes here";
+    //     break;
+    //   case "transform":
+    //     contents = "Transform IDE goes here";
+    //     break;
+    //   case "load":
+    //     contents = "Load modal goes here";
+    //     break;
+    //   default:
+    //     break;
+    // }
 
     saveWorkflow(1, { nodes, edges });
 
@@ -155,7 +157,7 @@ const Workflow = () => {
   It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them.
   The thing is we did define it outside of the component -- that was directly from the tutorial -- so I need to look into why this is still happening
   */
-  console.log(nodes);
+  // console.log(nodes);
   return (
     <div className="grid">
       <ReactFlow
@@ -174,11 +176,13 @@ const Workflow = () => {
         attributionPosition="bottom-left"
       >
         {modalIsOpen ? (
-          <NodeModal
-            nodeObj={modalData}
-            setModalIsOpen={setModalIsOpen}
+          <Modal
+            modalIsOpen={modalIsOpen}
+            handleOpen={() => setModalIsOpen(true)}
+            handleClose={() => setModalIsOpen(false)}
             onSaveExecute={onSaveExecute}
             runExecution={runExecution}
+            nodeObj={modalData}
           />
         ) : null}
       </ReactFlow>

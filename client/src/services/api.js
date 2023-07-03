@@ -13,8 +13,8 @@ export const postNodeChanges = async (payload) => {
 };
 
 export const saveWorkflow = async (id, payload) => {
-  console.log("id", id);
-  console.log("payload", payload);
+  // console.log("id", id);
+  // console.log("payload", payload);
   await axios.put(`${host}/workflows/${id}`, payload);
 };
 

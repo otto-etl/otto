@@ -1,3 +1,4 @@
+import * as React from "react";
 import Workflow from "./components/Workflow";
 
 const App = () => {
