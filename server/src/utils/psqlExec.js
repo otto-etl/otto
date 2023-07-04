@@ -20,10 +20,14 @@ export const connectPSQL = async ({
     console.log("use existing", cnStr);
     return dbs[cnStr];
   } else {
-    console.log("create new", cnStr);
-    db = await pgp(cnStr);
-    dbs[cnStr] = db;
-    return db;
+    try {
+      console.log("create new", cnStr);
+      db = await pgp(cnStr);
+      dbs[cnStr] = db;
+      return db;
+    } catch (e) {
+      throw new Error(`Unable to connect to database with error ${e.message}`);
+    }
   }
 };
 

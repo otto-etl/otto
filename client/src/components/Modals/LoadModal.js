@@ -2,20 +2,26 @@ import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import dayjs from "dayjs";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import CodeMirror from "@uiw/react-codemirror";
+import { sql, SQLConfig, StandardSQL } from "@codemirror/lang-sql";
 
 const LoadModal = ({ nodeObj, handleSubmit }) => {
   const [name, setName] = useState(nodeObj.data.label);
-  const [dateAndTime, setDateAndTime] = useState(dayjs(nodeObj.data.startTime));
-  const [interval, setInterval] = useState(
-    nodeObj.data.intervalInMinutes / 24 / 60
-  );
+  const [code, setCode] = useState(nodeObj.data.sqlCode);
+  const [userName, setUserName] = useState(nodeObj.data.userName);
+  const [password, setPassword] = useState(nodeObj.data.password);
+  const [host, setHost] = useState(nodeObj.data.host);
+  const [port, setPort] = useState(nodeObj.data.port);
+  const [dbName, setDBName] = useState(nodeObj.data.dbName);
 
-  console.log("Schedule modal");
+  const handleChange = React.useCallback((value, viewupdate) => {
+    setCode(value);
+  }, []);
+
+  const config = {
+    dialect: StandardSQL,
+    upperCaseKeywords: true,
+  };
 
   return (
     <Box>
@@ -24,9 +30,15 @@ const LoadModal = ({ nodeObj, handleSubmit }) => {
         onSubmit={(e) => {
           e.preventDefault();
           const newData = {
+            prev: nodeObj.data.prev,
+            input: nodeObj.data.input,
             label: name,
-            startTime: dateAndTime.$d,
-            intervalInMinutes: Number(interval) * 24 * 60,
+            userName: userName,
+            password: password,
+            host: host,
+            port: port,
+            dbName: dbName,
+            sqlCode: code,
           };
           console.log(newData);
           handleSubmit(e, newData);
@@ -38,24 +50,58 @@ const LoadModal = ({ nodeObj, handleSubmit }) => {
           value={name}
           onChange={(e) => setName(e.target.value)} // variant="outlined"
         />
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DemoContainer components={["DateTimePicker", "DateTimePicker"]}>
-            <DateTimePicker
-              label="Controlled picker"
-              value={dateAndTime}
-              onChange={(dateAndTime) => setDateAndTime(dateAndTime)}
-            />
-          </DemoContainer>
-        </LocalizationProvider>
+        <br></br>
+        <br></br>
         <TextField
           id="outlined-basic"
-          label="Interval in Days"
-          type={"number"}
-          value={interval}
-          onChange={(e) => setInterval(e.target.value)} // variant="outlined"
+          label="Username"
+          value={userName}
+          onChange={(e) => setUserName(e.target.value)} // variant="outlined"
         />
+        <br></br>
+        <br></br>
+        <TextField
+          id="outlined-basic"
+          label="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)} // variant="outlined"
+        />
+        <br></br>
+        <br></br>
+        <TextField
+          id="outlined-basic"
+          label="Host"
+          value={host}
+          onChange={(e) => setHost(e.target.value)} // variant="outlined"
+        />
+        <br></br>
+        <br></br>
+        <TextField
+          id="outlined-basic"
+          label="Port"
+          value={port}
+          onChange={(e) => setPort(e.target.value)} // variant="outlined"
+        />
+        <br></br>
+        <br></br>
+        <TextField
+          id="outlined-basic"
+          label="Database Name"
+          value={dbName}
+          onChange={(e) => setDBName(e.target.value)} // variant="outlined"
+        />
+        <br></br>
+        <br></br>
+        <CodeMirror
+          value={code}
+          height="200px"
+          extensions={[sql(config)]}
+          onChange={handleChange}
+        />
+        <br></br>
+        <br></br>
         <Button variant="contained" color="primary" type="submit">
-          Submit
+          Save and Execute
         </Button>
       </form>
     </Box>

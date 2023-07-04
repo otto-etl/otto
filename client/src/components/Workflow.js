@@ -17,7 +17,7 @@ import NodeModal from "./NodeModal";
 import { updateInputs } from "../utils/utils";
 import {
   getWorkflowAPI,
-  postNodeChanges,
+  saveAndExecuteNode,
   saveWorkflow,
   saveAndExecuteWorkflow,
 } from "../services/api";
@@ -106,7 +106,7 @@ const Workflow = () => {
       nodes: newNodesArray,
       edges: edges,
     };
-    let executionResult = await postNodeChanges(payload);
+    let executionResult = await saveAndExecuteNode(payload);
     let currentNode = newNodesArray.find((node) => node.id === currentId);
     let nextNode = newNodesArray.find((node) => node.data.prev === currentId);
     currentNode.data.output = executionResult;

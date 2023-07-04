@@ -4,7 +4,6 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
-import { EditorView } from "@codemirror/view";
 
 const TransformModal = ({ nodeObj, handleSubmit }) => {
   console.log(nodeObj.data);
