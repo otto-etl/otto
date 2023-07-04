@@ -21,7 +21,9 @@
     "react-scripts": "5.0.1",
     "react18-json-view": "^0.0.8",
     "reactflow": "^11.7.4",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "@uiw/codemirror-extensions-langs": "^4.21.7",
+    "@uiw/react-codemirror": "^4.21.7"
   },
   "scripts": {
     "start": "react-scripts start",

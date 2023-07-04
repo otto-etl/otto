@@ -3,7 +3,7 @@ import { getNode } from "./node.js";
 import { updateNodes } from "../models/pgService.js";
 const pgp = pgPromise();
 
-let db;
+let dbs = {};
 
 // connect to PSQL with user credentials
 export const connectPSQL = async ({
@@ -13,10 +13,17 @@ export const connectPSQL = async ({
   password,
   dbName,
 }) => {
-  try {
-    return pgp(`postgres://${userName}:${password}@${host}:${port}/${dbName}`);
-  } catch (error) {
-    throw new Error(error.message);
+  const cnStr = `postgres://${userName}:${password}@${host}:${port}/${dbName}`;
+  console.log(dbs, cnStr);
+  let db;
+  if (dbs[cnStr]) {
+    console.log("use existing", cnStr);
+    return dbs[cnStr];
+  } else {
+    console.log("create new", cnStr);
+    db = await pgp(cnStr);
+    dbs[cnStr] = db;
+    return db;
   }
 };
 
@@ -24,16 +31,11 @@ export const runPSQLCode = async (workflowObj, nodeObj) => {
   const prevNodeID = nodeObj.data.prev;
   const previousNode = getNode(workflowObj, prevNodeID);
   let { userName, password, dbName, sqlCode, host, port } = nodeObj.data;
-
-  if (!db) {
-    try {
-      db = await connectPSQL({ userName, password, dbName, host, port });
-      console.log("Connection to the database established.");
-    } catch (e) {
-      throw new Error(`Unable to connect to database with error ${e.message}`);
-    }
-  } else {
-    console.log("Using existing database connection.");
+  let db;
+  try {
+    db = await connectPSQL({ userName, password, dbName, host, port });
+  } catch (e) {
+    throw new Error(`Unable to connect to database with error ${e.message}`);
   }
 
   //if no input data throw an error

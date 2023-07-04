@@ -38,6 +38,8 @@ const ScheduleModal = ({ nodeObj, handleSubmit }) => {
           value={name}
           onChange={(e) => setName(e.target.value)} // variant="outlined"
         />
+        <br></br>
+        <br></br>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DemoContainer components={["DateTimePicker", "DateTimePicker"]}>
             <DateTimePicker
@@ -47,6 +49,8 @@ const ScheduleModal = ({ nodeObj, handleSubmit }) => {
             />
           </DemoContainer>
         </LocalizationProvider>
+        <br></br>
+        <br></br>
         <TextField
           id="outlined-basic"
           label="Interval in Days"
@@ -55,7 +59,7 @@ const ScheduleModal = ({ nodeObj, handleSubmit }) => {
           onChange={(e) => setInterval(e.target.value)} // variant="outlined"
         />
         <Button variant="contained" color="primary" type="submit">
-          Submit
+          Save
         </Button>
       </form>
     </Box>
