@@ -5,6 +5,7 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   addEdge,
+  Panel
 } from "reactflow";
 import "reactflow/dist/style.css";
 
@@ -14,6 +15,7 @@ import ExtractNode from "./ExtractNode";
 import TransformNode from "./TransformNode";
 import LoadNode from "./LoadNode";
 import NodeModal from "./NodeModal";
+import NodeCreationMenu from "./NodeCreationMenu";
 import { updateInputs } from "../utils/utils";
 import {
   getWorkflowAPI,
@@ -45,7 +47,9 @@ const Workflow = () => {
   useEffect(() => {
     const getWorkflow = async () => {
       const response = await getWorkflowAPI(1);
-      updateInputs(response.nodes);
+      if (response) {
+		  updateInputs(response.nodes);
+	  }
       // console.log(Array.isArray(response.nodes));
       setNodes(response.nodes);
       setEdges(response.edges);
@@ -115,8 +119,29 @@ const Workflow = () => {
     }
   };
 
+  const onCreateNode = async (nodeType) => {
+    let newNodeId = crypto.randomUUID();
+    let newNode = {
+	  id: newNodeId,
+	  type: nodeType,
+	  position: {x: 650, y: -125}, // Arbitrary hardcoded location, below menu
+	  data: {
+	    label: nodeType.toUpperCase(),
+        output: ""		
+	  }
+	};
+	let newNodes = [...nodes, newNode];
+    await saveWorkflow(1, { nodes: newNodes, edges });
+	setNodes(newNodes);
+  };
+  
+  const onDeleteNode = async (nodeId) => { 
+    let newNodes = nodes.filter(node => node.id !== nodeId);
+	await saveWorkflow(1, { nodes: newNodes, edges });	
+	setNodes(newNodes);
+  }
+
   const onNodeClick = useCallback((event, object) => {
-    console.log("Inside of onNodeClick");
     let contents;
     // switch (object.type) {
     //   case "trigger":
@@ -158,6 +183,7 @@ const Workflow = () => {
   The thing is we did define it outside of the component -- that was directly from the tutorial -- so I need to look into why this is still happening
   */
   // console.log(nodes);
+  
   return (
     <div className="grid">
       <ReactFlow
@@ -175,12 +201,16 @@ const Workflow = () => {
         fitView
         attributionPosition="bottom-left"
       >
+	  <Panel position="top-right">
+	    <NodeCreationMenu onCreateNode={onCreateNode} />
+	  </Panel>
         {modalIsOpen ? (
           <Modal
             modalIsOpen={modalIsOpen}
             handleOpen={() => setModalIsOpen(true)}
             handleClose={() => setModalIsOpen(false)}
             onSaveExecute={onSaveExecute}
+			onDeleteNode={onDeleteNode}
             runExecution={runExecution}
             nodeObj={modalData}
           />

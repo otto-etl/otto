@@ -8,7 +8,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 
-const LoadModal = ({ nodeObj, handleSubmit }) => {
+const LoadModal = ({ nodeObj, handleSubmit, handleDelete }) => {
   const [name, setName] = useState(nodeObj.data.label);
   const [dateAndTime, setDateAndTime] = useState(dayjs(nodeObj.data.startTime));
   const [interval, setInterval] = useState(
@@ -54,6 +54,7 @@ const LoadModal = ({ nodeObj, handleSubmit }) => {
           value={interval}
           onChange={(e) => setInterval(e.target.value)} // variant="outlined"
         />
+		<Button onClick={handleDelete}>Delete</Button>
         <Button variant="contained" color="primary" type="submit">
           Submit
         </Button>
