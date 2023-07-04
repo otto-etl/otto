@@ -5,7 +5,7 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   addEdge,
-  Panel
+  Panel,
 } from "reactflow";
 import "reactflow/dist/style.css";
 
@@ -16,7 +16,13 @@ import TransformNode from "./TransformNode";
 import LoadNode from "./LoadNode";
 import NodeModal from "./NodeModal";
 import NodeCreationMenu from "./NodeCreationMenu";
-import { updateInputs } from "../utils/utils";
+import {
+  updateInputs,
+  isExtractNode,
+  isTriggerNode,
+  isTransformNode,
+  isLoadNode,
+} from "../utils/utils";
 import {
   getWorkflowAPI,
   postNodeChanges,
@@ -48,8 +54,8 @@ const Workflow = () => {
     const getWorkflow = async () => {
       const response = await getWorkflowAPI(1);
       if (response) {
-		  updateInputs(response.nodes);
-	  }
+        updateInputs(response.nodes);
+      }
       // console.log(Array.isArray(response.nodes));
       setNodes(response.nodes);
       setEdges(response.edges);
@@ -63,16 +69,23 @@ const Workflow = () => {
   };
 
   // Not implemented yet, from tutorial, throws a warning about no dependencies in dependency array, need to check how loadbearing that is
-  const onConnect = useCallback(
-    (params) =>
-      setEdges((eds) =>
-        addEdge(
-          { ...params, animated: true, style: { stroke: "#000033" } },
-          eds
-        )
-      ),
-    []
-  );
+  const onConnect = useCallback((params) => {
+    // console.log(params);
+
+    return setEdges((eds) =>
+      addEdge({ ...params, animated: true, style: { stroke: "#000033" } }, eds)
+    );
+  }, []);
+
+  const handleIsValidConnection = (edge) => {
+    return (
+      (isTriggerNode(edge.source, nodes) &&
+        isExtractNode(edge.target, nodes)) ||
+      (isExtractNode(edge.source, nodes) &&
+        isTransformNode(edge.target, nodes)) ||
+      (isTransformNode(edge.source, nodes) && isLoadNode(edge.target, nodes))
+    );
+  };
 
   const onSaveExecute = async (currentId, updatedNodeData) => {
     let newNodesArray = updateNodeObject(currentId, updatedNodeData);
@@ -122,24 +135,29 @@ const Workflow = () => {
   const onCreateNode = async (nodeType) => {
     let newNodeId = crypto.randomUUID();
     let newNode = {
-	  id: newNodeId,
-	  type: nodeType,
-	  position: {x: 650, y: -125}, // Arbitrary hardcoded location, below menu
-	  data: {
-	    label: nodeType.toUpperCase(),
-        output: ""		
-	  }
-	};
-	let newNodes = [...nodes, newNode];
+      id: newNodeId,
+      type: nodeType,
+      position: { x: 650, y: -125 }, // Arbitrary hardcoded location, below menu
+      data: {
+        label: nodeType.toUpperCase(),
+        output: "",
+      },
+    };
+    let newNodes = [...nodes, newNode];
     await saveWorkflow(1, { nodes: newNodes, edges });
-	setNodes(newNodes);
+    setNodes(newNodes);
   };
-  
-  const onDeleteNode = async (nodeId) => { 
-    let newNodes = nodes.filter(node => node.id !== nodeId);
-	await saveWorkflow(1, { nodes: newNodes, edges });	
-	setNodes(newNodes);
-  }
+
+  const onDeleteNode = async (nodeId) => {
+    let newNodes = nodes.filter((node) => node.id !== nodeId);
+    let newEdges = edges.filter(
+      (edge) => nodeId !== edge.target && nodeId !== edge.source
+    );
+
+    await saveWorkflow(1, { nodes: newNodes, edges: newEdges });
+    setNodes(newNodes);
+    setEdges(newEdges);
+  };
 
   const onNodeClick = useCallback((event, object) => {
     let contents;
@@ -183,7 +201,10 @@ const Workflow = () => {
   The thing is we did define it outside of the component -- that was directly from the tutorial -- so I need to look into why this is still happening
   */
   // console.log(nodes);
-  
+
+  console.log(nodes);
+  console.log(edges);
+
   return (
     <div className="grid">
       <ReactFlow
@@ -200,17 +221,18 @@ const Workflow = () => {
         defaultViewport={defaultViewport}
         fitView
         attributionPosition="bottom-left"
+        isValidConnection={handleIsValidConnection}
       >
-	  <Panel position="top-right">
-	    <NodeCreationMenu onCreateNode={onCreateNode} />
-	  </Panel>
+        <Panel position="top-right">
+          <NodeCreationMenu onCreateNode={onCreateNode} />
+        </Panel>
         {modalIsOpen ? (
           <Modal
             modalIsOpen={modalIsOpen}
             handleOpen={() => setModalIsOpen(true)}
             handleClose={() => setModalIsOpen(false)}
             onSaveExecute={onSaveExecute}
-			onDeleteNode={onDeleteNode}
+            onDeleteNode={onDeleteNode}
             runExecution={runExecution}
             nodeObj={modalData}
           />
