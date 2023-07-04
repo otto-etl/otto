@@ -4,8 +4,10 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
+import { EditorView } from "@codemirror/view";
 
 const TransformModal = ({ nodeObj, handleSubmit }) => {
+  console.log(nodeObj.data);
   const [name, setName] = useState(nodeObj.data.label);
   const [code, setCode] = useState(nodeObj.data.jsCode);
 
@@ -20,6 +22,7 @@ const TransformModal = ({ nodeObj, handleSubmit }) => {
         onSubmit={(e) => {
           e.preventDefault();
           const newData = {
+            prev: nodeObj.data.prev,
             input: nodeObj.data.input,
             label: name,
             jsCode: code,
@@ -45,7 +48,7 @@ const TransformModal = ({ nodeObj, handleSubmit }) => {
         <br></br>
         <br></br>
         <Button variant="contained" color="primary" type="submit">
-          Submit
+          Save and Execute
         </Button>
       </form>
     </Box>

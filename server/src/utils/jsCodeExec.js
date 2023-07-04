@@ -3,6 +3,7 @@ import { getNode } from "./node.js";
 import { updateNodes } from "../models/pgService.js";
 
 export const runJSCode = async (workflowObj, nodeObj) => {
+  console.log("In runJSCode", workflowObj);
   const prevNodeID = nodeObj.data.prev;
   const previousNode = getNode(workflowObj, prevNodeID);
   const customCode = nodeObj.data.jsCode;
