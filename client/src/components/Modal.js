@@ -31,6 +31,7 @@ function BasicModal({
   nodeObj,
   onSaveExecute,
   runExecution,
+  active,
 }) {
   const handleSaveExecuteNode = (event, formValues) => {
     event.preventDefault();
@@ -69,24 +70,28 @@ function BasicModal({
                 <ScheduleModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
+                  active={active}
                 />
               ) : null}
               {nodeObj.type === "extract" ? (
                 <ExtractModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
+                  active={active}
                 />
               ) : null}
               {nodeObj.type === "transform" ? (
                 <TransformModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
+                  active={active}
                 />
               ) : null}
               {nodeObj.type === "load" ? (
                 <LoadModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
+                  active={active}
                 />
               ) : null}
             </Container>

@@ -5,7 +5,7 @@ import TextField from "@mui/material/TextField";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 
-const TransformModal = ({ nodeObj, handleSubmit }) => {
+const TransformModal = ({ nodeObj, handleSubmit, active }) => {
   console.log(nodeObj.data);
   const [name, setName] = useState(nodeObj.data.label);
   const [code, setCode] = useState(nodeObj.data.jsCode);
@@ -31,6 +31,7 @@ const TransformModal = ({ nodeObj, handleSubmit }) => {
         }}
       >
         <TextField
+          disabled={active ? true : false}
           id="outlined-basic"
           label="Name"
           value={name}
@@ -39,6 +40,7 @@ const TransformModal = ({ nodeObj, handleSubmit }) => {
         <br></br>
         <br></br>
         <CodeMirror
+          readOnly={active ? true : false}
           value={code}
           height="200px"
           extensions={[javascript({ jsx: true })]}
@@ -46,7 +48,12 @@ const TransformModal = ({ nodeObj, handleSubmit }) => {
         />
         <br></br>
         <br></br>
-        <Button variant="contained" color="primary" type="submit">
+        <Button
+          variant="contained"
+          color="primary"
+          type="submit"
+          disabled={active ? true : false}
+        >
           Save and Execute
         </Button>
       </form>

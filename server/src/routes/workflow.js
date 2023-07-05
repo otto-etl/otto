@@ -6,16 +6,18 @@ import {
   updateNodesEdges,
 } from "../models/pgService.js";
 
+//get one workflow data
 router.get("/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    const { nodes, edges } = await getWorkflow(id);
-    res.status(200).send({ id, nodes, edges });
+    const { nodes, edges, active, name } = await getWorkflow(id);
+    res.status(200).send({ id, nodes, edges, active, name });
   } catch (e) {
     res.status(500).send({ error: e.message });
   }
 });
 
+//get all workflow data
 router.get("/", async (req, res) => {
   try {
     const data = await getAllWorkflows();
