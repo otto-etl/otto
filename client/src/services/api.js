@@ -7,18 +7,31 @@ export const getWorkflowAPI = async (id) => {
   return res.data;
 };
 
-export const postNodeChanges = async (payload) => {
+export const getAllWorkflows = async () => {
+  const res = await axios.get(`${host}/workflows`);
+  return res.data;
+};
+
+export const saveAndExecuteNode = async (payload) => {
   const res = await axios.post(`${host}/execute/node`, payload);
   return res.data;
 };
 
 export const saveWorkflow = async (id, payload) => {
-  // console.log("id", id);
-  // console.log("payload", payload);
   await axios.put(`${host}/workflows/${id}`, payload);
 };
 
 export const saveAndExecuteWorkflow = async (id, payload) => {
   const res = await axios.post(`${host}/execute/workflow/${id}`, payload);
   return res.data;
+};
+
+export const toggleWorkflowStatus = async (id, active) => {
+  let res;
+  if (active) {
+    res = await axios.put(`${host}/execute/workflow/${id}`);
+  } else {
+    res = await axios.put(`${host}/execute/stopworkflow/${id}`);
+  }
+  return res.status;
 };

@@ -7,6 +7,9 @@ import Stack from "@mui/material/Stack";
 import JsonView from "react18-json-view";
 import "react18-json-view/src/style.css";
 import ScheduleModal from "./Modals/ScheduleModal";
+import ExtractModal from "./Modals/ExtractModal";
+import TransformModal from "./Modals/TransformModal";
+import LoadModal from "./Modals/LoadModal";
 
 const boxStyle = {
   position: "absolute",
@@ -29,6 +32,7 @@ function BasicModal({
   onSaveExecute,
   onDeleteNode,
   runExecution,
+  active,
 }) {
   const handleSaveExecuteNode = (event, formValues) => {
     event.preventDefault();
@@ -74,27 +78,31 @@ function BasicModal({
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
                   handleDelete={handleDelete}
+                  active={active}
                 />
               ) : null}
               {nodeObj.type === "extract" ? (
-                <ScheduleModal
+                <ExtractModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
                   handleDelete={handleDelete}
+                  active={active}
                 />
               ) : null}
               {nodeObj.type === "transform" ? (
-                <ScheduleModal
+                <TransformModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
-				  handleDelete={handleDelete}
+				          handleDelete={handleDelete}
+                  active={active}
                 />
               ) : null}
               {nodeObj.type === "load" ? (
-                <ScheduleModal
+                <LoadModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
-				  handleDelete={handleDelete}
+        				  handleDelete={handleDelete}
+                  active={active}
                 />
               ) : null}
             </Container>

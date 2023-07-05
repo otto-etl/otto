@@ -8,7 +8,10 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 
-const ScheduleModal = ({ nodeObj, handleSubmit, handleDelete }) => {
+
+
+
+const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
   const [name, setName] = useState(nodeObj.data.label);
   const [dateAndTime, setDateAndTime] = useState(dayjs(nodeObj.data.startTime));
   const [interval, setInterval] = useState(
@@ -33,30 +36,42 @@ const ScheduleModal = ({ nodeObj, handleSubmit, handleDelete }) => {
         }}
       >
         <TextField
+          disabled={active ? true : false}
           id="outlined-basic"
           label="Name"
           value={name}
           onChange={(e) => setName(e.target.value)} // variant="outlined"
         />
+        <br></br>
+        <br></br>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DemoContainer components={["DateTimePicker", "DateTimePicker"]}>
             <DateTimePicker
+              disabled={active ? true : false}
               label="Controlled picker"
               value={dateAndTime}
               onChange={(dateAndTime) => setDateAndTime(dateAndTime)}
             />
           </DemoContainer>
         </LocalizationProvider>
+        <br></br>
+        <br></br>
         <TextField
+          disabled={active ? true : false}
           id="outlined-basic"
           label="Interval in Days"
           type={"number"}
           value={interval}
           onChange={(e) => setInterval(e.target.value)} // variant="outlined"
         />
-		<Button onClick={handleDelete}>Delete</Button>
-        <Button variant="contained" color="primary" type="submit">
-          Submit
+		<Button onClick={handleDelete} disabled={active ? true : false}>Delete</Button>
+        <Button
+          variant="contained"
+          color="primary"
+          type="submit"
+          disabled={active ? true : false}
+        >
+          Save
         </Button>
       </form>
     </Box>

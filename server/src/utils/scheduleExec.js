@@ -86,6 +86,7 @@ export const startCron = async (workflowObj) => {
 };
 
 export const stopCron = async (workflowID) => {
+  console.log("stopping cron for wf ", workflowID);
   const task = startedWorkflows[workflowID];
   const timeoutID = pendingWorkflows[workflowID];
   if (task) {
