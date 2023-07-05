@@ -14,6 +14,7 @@ export default memo(({ data, isConnectable }) => {
         position={Position.Right}
         id="a"
         style={{ top: 50, background: '#555' }}
+        onConnect={(params) => console.log("handle onConnect on trigger node", params)}
         isConnectable={isConnectable}
       />
     </>
