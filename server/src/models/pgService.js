@@ -5,6 +5,14 @@ const db = pgp(
   `postgres://${process.env.PGUSER}:${process.env.PGPASSWORD}@localhost:5432/${process.env.DBNAME}`
 );
 
+try {
+  const connection = await db.connect();
+  console.log("workflow db connection success");
+  connection.done();
+} catch (e) {
+  throw new Error(`Unable to connect to workflow db with error ${e.message}`);
+}
+
 export const getAllWorkflows = async () => {
   return await db.many("SELECT * FROM workflow");
 };

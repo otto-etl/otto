@@ -6,28 +6,17 @@ const pgp = pgPromise();
 let dbs = {};
 
 // connect to PSQL with user credentials
-export const connectPSQL = async ({
-  userName,
-  host,
-  port,
-  password,
-  dbName,
-}) => {
+const connectPSQL = ({ userName, host, port, password, dbName }) => {
   const cnStr = `postgres://${userName}:${password}@${host}:${port}/${dbName}`;
-  console.log(dbs, cnStr);
   let db;
   if (dbs[cnStr]) {
-    console.log("use existing", cnStr);
+    console.log("use existing load DB connection: ", cnStr);
     return dbs[cnStr];
   } else {
-    try {
-      console.log("create new", cnStr);
-      db = await pgp(cnStr);
-      dbs[cnStr] = db;
-      return db;
-    } catch (e) {
-      throw new Error(`Unable to connect to database with error ${e.message}`);
-    }
+    console.log("create new load DB connection: ", cnStr);
+    db = pgp(cnStr);
+    dbs[cnStr] = db;
+    return db;
   }
 };
 
@@ -35,11 +24,16 @@ export const runPSQLCode = async (workflowObj, nodeObj) => {
   const prevNodeID = nodeObj.data.prev;
   const previousNode = getNode(workflowObj, prevNodeID);
   let { userName, password, dbName, sqlCode, host, port } = nodeObj.data;
-  let db;
+  const db = connectPSQL({ userName, password, dbName, host, port });
+
   try {
-    db = await connectPSQL({ userName, password, dbName, host, port });
+    const connection = await db.connect();
+    console.log("load db connection success");
+    connection.done();
   } catch (e) {
-    throw new Error(`Unable to connect to database with error ${e.message}`);
+    throw new Error(
+      `Unable to connect to load database with error ${e.message}`
+    );
   }
 
   //if no input data throw an error
