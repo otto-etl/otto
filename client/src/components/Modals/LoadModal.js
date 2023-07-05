@@ -5,7 +5,7 @@ import TextField from "@mui/material/TextField";
 import CodeMirror from "@uiw/react-codemirror";
 import { sql, SQLConfig, StandardSQL } from "@codemirror/lang-sql";
 
-const LoadModal = ({ nodeObj, handleSubmit }) => {
+const LoadModal = ({ nodeObj, handleSubmit, active }) => {
   const [name, setName] = useState(nodeObj.data.label);
   const [code, setCode] = useState(nodeObj.data.sqlCode);
   const [userName, setUserName] = useState(nodeObj.data.userName);
@@ -45,6 +45,7 @@ const LoadModal = ({ nodeObj, handleSubmit }) => {
         }}
       >
         <TextField
+          disabled={active ? true : false}
           id="outlined-basic"
           label="Name"
           value={name}
@@ -53,6 +54,7 @@ const LoadModal = ({ nodeObj, handleSubmit }) => {
         <br></br>
         <br></br>
         <TextField
+          disabled={active ? true : false}
           id="outlined-basic"
           label="Username"
           value={userName}
@@ -61,6 +63,7 @@ const LoadModal = ({ nodeObj, handleSubmit }) => {
         <br></br>
         <br></br>
         <TextField
+          disabled={active ? true : false}
           id="outlined-basic"
           label="Password"
           value={password}
@@ -69,6 +72,7 @@ const LoadModal = ({ nodeObj, handleSubmit }) => {
         <br></br>
         <br></br>
         <TextField
+          disabled={active ? true : false}
           id="outlined-basic"
           label="Host"
           value={host}
@@ -77,6 +81,7 @@ const LoadModal = ({ nodeObj, handleSubmit }) => {
         <br></br>
         <br></br>
         <TextField
+          disabled={active ? true : false}
           id="outlined-basic"
           label="Port"
           value={port}
@@ -85,6 +90,7 @@ const LoadModal = ({ nodeObj, handleSubmit }) => {
         <br></br>
         <br></br>
         <TextField
+          disabled={active ? true : false}
           id="outlined-basic"
           label="Database Name"
           value={dbName}
@@ -93,6 +99,7 @@ const LoadModal = ({ nodeObj, handleSubmit }) => {
         <br></br>
         <br></br>
         <CodeMirror
+          readOnly={active ? true : false}
           value={code}
           height="200px"
           extensions={[sql(config)]}
@@ -100,7 +107,12 @@ const LoadModal = ({ nodeObj, handleSubmit }) => {
         />
         <br></br>
         <br></br>
-        <Button variant="contained" color="primary" type="submit">
+        <Button
+          variant="contained"
+          color="primary"
+          type="submit"
+          disabled={active ? true : false}
+        >
           Save and Execute
         </Button>
       </form>

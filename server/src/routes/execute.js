@@ -8,7 +8,8 @@ import { getWorkflow, updateNodesEdges } from "../models/pgService.js";
 import { runWorkflow } from "../utils/workflowExec.js";
 const router = express.Router();
 
-router.get("/workflow/:id", async (req, res) => {
+//start cron job
+router.put("/workflow/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const workflowObj = await getWorkflow(id);
@@ -22,7 +23,8 @@ router.get("/workflow/:id", async (req, res) => {
   }
 });
 
-router.get("/stopworkflow/:id", async (req, res) => {
+//stop cron job
+router.put("/stopworkflow/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const workflowObj = await getWorkflow(id);
@@ -36,6 +38,7 @@ router.get("/stopworkflow/:id", async (req, res) => {
   }
 });
 
+//execute node
 router.post("/node", async (req, res) => {
   try {
     let { workflowID, nodeID, nodes, edges } = req.body;
@@ -69,6 +72,7 @@ router.post("/node", async (req, res) => {
   }
 });
 
+//execute workflow
 router.post("/workflow/:id", async (req, res) => {
   try {
     const workflowID = req.params.id;

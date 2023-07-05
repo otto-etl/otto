@@ -65,7 +65,7 @@ const StyledTextarea = styled(TextareaAutosize)(
   `
 );
 
-const ExtractModal = ({ nodeObj, handleSubmit }) => {
+const ExtractModal = ({ nodeObj, handleSubmit, active }) => {
   const [name, setName] = useState(nodeObj.data.label);
   const [url, setURL] = useState(nodeObj.data.url);
   const [actionType, setActionType] = useState(nodeObj.data.httpVerb);
@@ -90,6 +90,7 @@ const ExtractModal = ({ nodeObj, handleSubmit }) => {
         }}
       >
         <TextField
+          disabled={active ? true : false}
           id="outlined-basic"
           label="Name"
           value={name}
@@ -100,6 +101,7 @@ const ExtractModal = ({ nodeObj, handleSubmit }) => {
         <FormControl>
           <InputLabel id="action-type">Action Type</InputLabel>
           <Select
+            disabled={active ? true : false}
             labelId="action-type"
             id="action-type-select"
             value={actionType}
@@ -113,6 +115,7 @@ const ExtractModal = ({ nodeObj, handleSubmit }) => {
         <br></br>
         <br></br>
         <TextField
+          disabled={active ? true : false}
           id="outlined-basic"
           label="URL"
           value={url}
@@ -122,6 +125,7 @@ const ExtractModal = ({ nodeObj, handleSubmit }) => {
         <br></br>
         <FormControl>
           <StyledTextarea
+            disabled={active ? true : false}
             aria-label="json"
             minRows={5}
             placeholder="JSON"
@@ -133,7 +137,12 @@ const ExtractModal = ({ nodeObj, handleSubmit }) => {
         </FormControl>
         <br></br>
         <br></br>
-        <Button variant="contained" color="primary" type="submit">
+        <Button
+          variant="contained"
+          color="primary"
+          type="submit"
+          disabled={active ? true : false}
+        >
           Save and Execute
         </Button>
       </form>
