@@ -2,21 +2,20 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getAllWorkflows } from "../services/api";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
+import { useNavigate } from "react-router-dom";
 
 const columns = [
   {
     field: "id",
-    // headerName: "ID",
+    headerName: "ID",
     width: 70,
-    renderCell: (params) => {
-      return <Link to={`/workflow/${params.id}`}>{params.id}</Link>;
-    },
   },
   { field: "name", headerName: "Workflow Name", width: 130 },
   { field: "active", headerName: "Status", width: 90 },
 ];
 
 const Workflows = () => {
+  const navigate = useNavigate();
   const [workflows, setWorkflows] = useState([]);
   useEffect(() => {
     const getInitialData = async () => {
@@ -25,6 +24,9 @@ const Workflows = () => {
     };
     getInitialData();
   });
+  const handleRowClick = (params, event, details) => {
+    navigate(`/workflow/${params.row.id}`);
+  };
 
   return (
     <>
@@ -32,6 +34,7 @@ const Workflows = () => {
         <DataGrid
           rows={workflows}
           columns={columns}
+          onRowClick={handleRowClick}
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: 5 },
