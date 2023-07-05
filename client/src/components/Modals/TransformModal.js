@@ -5,7 +5,8 @@ import TextField from "@mui/material/TextField";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 
-const TransformModal = ({ nodeObj, handleSubmit, active }) => {
+
+const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
   console.log(nodeObj.data);
   const [name, setName] = useState(nodeObj.data.label);
   const [code, setCode] = useState(nodeObj.data.jsCode);
@@ -46,6 +47,7 @@ const TransformModal = ({ nodeObj, handleSubmit, active }) => {
           extensions={[javascript({ jsx: true })]}
           onChange={handleChange}
         />
+		<Button onClick={handleDelete} disabled={active ? true : false}>Delete Node</Button>
         <br></br>
         <br></br>
         <Button

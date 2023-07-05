@@ -65,7 +65,7 @@ const StyledTextarea = styled(TextareaAutosize)(
   `
 );
 
-const ExtractModal = ({ nodeObj, handleSubmit, active }) => {
+const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
   const [name, setName] = useState(nodeObj.data.label);
   const [url, setURL] = useState(nodeObj.data.url);
   const [actionType, setActionType] = useState(nodeObj.data.httpVerb);
@@ -121,6 +121,9 @@ const ExtractModal = ({ nodeObj, handleSubmit, active }) => {
           value={url}
           onChange={(e) => setURL(e.target.value)}
         />
+        <Button onClick={handleDelete} disabled={active ? true : false}>
+          Delete
+        </Button>
         <br></br>
         <br></br>
         <FormControl>

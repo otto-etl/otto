@@ -5,7 +5,7 @@ import TextField from "@mui/material/TextField";
 import CodeMirror from "@uiw/react-codemirror";
 import { sql, SQLConfig, StandardSQL } from "@codemirror/lang-sql";
 
-const LoadModal = ({ nodeObj, handleSubmit, active }) => {
+const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
   const [name, setName] = useState(nodeObj.data.label);
   const [code, setCode] = useState(nodeObj.data.sqlCode);
   const [userName, setUserName] = useState(nodeObj.data.userName);
@@ -105,6 +105,8 @@ const LoadModal = ({ nodeObj, handleSubmit, active }) => {
           extensions={[sql(config)]}
           onChange={handleChange}
         />
+            
+		<Button onClick={handleDelete} disabled={active ? true : false}>Delete</Button>
         <br></br>
         <br></br>
         <Button

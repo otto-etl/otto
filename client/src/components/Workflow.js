@@ -5,6 +5,8 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   addEdge,
+  updateEdge,
+  Panel,
 } from "reactflow";
 import { useParams } from "react-router-dom";
 import "reactflow/dist/style.css";
@@ -15,7 +17,14 @@ import ExtractNode from "./ExtractNode";
 import TransformNode from "./TransformNode";
 import LoadNode from "./LoadNode";
 import NodeModal from "./NodeModal";
-import { updateInputs } from "../utils/utils";
+import NodeCreationMenu from "./NodeCreationMenu";
+import {
+  updateInputs,
+  isExtractNode,
+  isTriggerNode,
+  isTransformNode,
+  isLoadNode,
+} from "../utils/utils";
 import {
   getWorkflowAPI,
   saveAndExecuteNode,
@@ -55,7 +64,11 @@ const Workflow = () => {
     const getWorkflow = async () => {
       const response = await getWorkflowAPI(wfID);
       console.log("active:", response.active);
-      updateInputs(response.nodes);
+      
+      if (response) {
+        updateInputs(response.nodes);
+      }
+      
       // console.log(Array.isArray(response.nodes));
       setNodes(response.nodes);
       setEdges(response.edges);
@@ -63,24 +76,52 @@ const Workflow = () => {
       setWfName(response.name);
     };
     getWorkflow();
-  }, []);
+  }, [setNodes, setEdges]);
 
   const openModal = (nodeData) => {
     setModalIsOpen(true);
     setModalData(nodeData);
   };
 
-  // Not implemented yet, from tutorial, throws a warning about no dependencies in dependency array, need to check how loadbearing that is
-  const onConnect = useCallback(
-    (params) =>
-      setEdges((eds) =>
-        addEdge(
-          { ...params, animated: true, style: { stroke: "#000033" } },
-          eds
-        )
-      ),
-    []
+  const onEdgeUpdate = useCallback((oldEdge, newConnection) => {  
+	  setEdges((els) => updateEdge(oldEdge, newConnection, els));
+	}, [setEdges]
   );
+
+  const onConnect = useCallback((params) => {
+	const targetNode = nodes.find(node => {
+	  return (node.id === params.target);
+	});
+	let newTargetNode = copyAndUpdateTargetNode(targetNode, params.source);
+	let newNodes = nodes.map(node => {
+	  if (node.id !== params.target) {
+	    return node;
+	  }
+	  return newTargetNode;
+	});
+	setNodes(newNodes);
+	let newEdge = { ...params, animated: true, style: { stroke: "#000033" } };
+    return setEdges((eds) =>
+      addEdge({ ...params, animated: true, style: { stroke: "#000033" } }, eds)
+    );
+  }, [nodes, edges]);
+  
+  const copyAndUpdateTargetNode = (targetNode, sourceId) => {
+	let newTargetNode = {...targetNode};
+	newTargetNode.data = {...targetNode.data};
+	newTargetNode.data.prev = sourceId; 
+    return newTargetNode;	
+  }
+
+  const handleIsValidConnection = (edge) => {
+    return (
+      (isTriggerNode(edge.source, nodes) &&
+        isExtractNode(edge.target, nodes)) ||
+      (isExtractNode(edge.source, nodes) &&
+        isTransformNode(edge.target, nodes)) ||
+      (isTransformNode(edge.source, nodes) && isLoadNode(edge.target, nodes))
+    );
+  };
 
   const onSaveExecute = async (currentId, updatedNodeData) => {
     let newNodesArray = updateNodeObject(currentId, updatedNodeData);
@@ -127,8 +168,77 @@ const Workflow = () => {
     }
   };
 
+  const onCreateNode = async (nodeType) => {
+    let newNodeId = crypto.randomUUID();
+    let newNode = {
+      id: newNodeId,
+      type: nodeType,
+      position: { x: 650, y: -125 }, // Arbitrary hardcoded location, below menu
+      data: {
+        label: nodeType.toUpperCase(),
+        output: "",
+      },
+    };
+	addExtraNodeProperties(newNode);
+	console.log(newNode);
+    let newNodes = [...nodes, newNode];
+    await saveWorkflow(1, { nodes: newNodes, edges });
+    setNodes(newNodes);
+  };
+  
+  const addExtraNodeProperties = (newNode) => {
+    // All of these values are hardcoded defaults, TODO: extract them to constants/decide what they are
+    switch (newNode.type) {
+	  case "trigger": {
+        newNode.data.startTime = "26 Jun 2023 5:16:00 EST";
+        newNode.data.intervalInMinutes = "1";
+		break;
+	  }
+	  case "extract": {
+        newNode.data.url = "https://dog.ceo/api/breeds/list/all";
+		newNode.data.json = {};
+		newNode.data.httpVerb = "GET";
+		break;
+	  }
+	  case "transform": {
+	    newNode.data.jscode = "for(const prop in data.message) { \
+		  if (!data.message.breed) { \
+			  data.message.breed=[{breed:prop, num:data.message[prop].length}] \
+ 			  } else { \
+				  data.message.breed.push({breed:prop, num:data.message[prop].length}) \
+				  }\
+				  }\
+			data = data.message.breed;";
+	    break;
+	  }
+	  case "load": {
+        newNode.data.userName = "INSERT YOUR USERNAME HERE";
+	    newNode.data.password = "INSERT YOUR PASSWORD HERE";
+	    newNode.data.tableName = "dog"; 
+	    newNode.data.host = "localhost";
+	    newNode.data.port = "5432";
+	    newNode.data.dbName = "dog";
+	    newNode.data.sqlCode = "INSERT INTO dog(breed, count) VALUES(${breed}, ${num})";
+	    break;
+	  }
+	  default: {
+	    break;
+	  }
+	}
+  }
+
+  const onDeleteNode = async (nodeId) => {
+    let newNodes = nodes.filter((node) => node.id !== nodeId);
+    let newEdges = edges.filter(
+      (edge) => nodeId !== edge.target && nodeId !== edge.source
+    );
+
+    await saveWorkflow(1, { nodes: newNodes, edges: newEdges });
+    setNodes(newNodes);
+    setEdges(newEdges);
+  };
+
   const onNodeClick = useCallback((event, object) => {
-    console.log("Inside of onNodeClick");
     let contents;
     // switch (object.type) {
     //   case "trigger":
@@ -195,7 +305,7 @@ const Workflow = () => {
   It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them.
   The thing is we did define it outside of the component -- that was directly from the tutorial -- so I need to look into why this is still happening
   */
-  // console.log(nodes);
+
   return (
     <div className="grid">
       <p>{wfName}</p>
@@ -231,6 +341,7 @@ const Workflow = () => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onNodeClick={onNodeClick}
+        onEdgeUpdate={onEdgeUpdate}
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         connectionLineStyle={connectionLineStyle}
@@ -239,13 +350,18 @@ const Workflow = () => {
         defaultViewport={defaultViewport}
         fitView
         attributionPosition="bottom-left"
+        isValidConnection={handleIsValidConnection}
       >
+        <Panel position="top-right">
+          <NodeCreationMenu onCreateNode={onCreateNode} />
+        </Panel>
         {modalIsOpen ? (
           <Modal
             modalIsOpen={modalIsOpen}
             handleOpen={() => setModalIsOpen(true)}
             handleClose={() => setModalIsOpen(false)}
             onSaveExecute={onSaveExecute}
+            onDeleteNode={onDeleteNode}
             runExecution={runExecution}
             nodeObj={modalData}
             active={active}

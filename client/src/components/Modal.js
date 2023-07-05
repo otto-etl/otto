@@ -30,6 +30,7 @@ function BasicModal({
   handleClose,
   nodeObj,
   onSaveExecute,
+  onDeleteNode,
   runExecution,
   active,
 }) {
@@ -46,6 +47,12 @@ function BasicModal({
   };
 
   console.log("nodeObj.data insde basicModal", nodeObj.data);
+
+  const handleDelete = (event) => {  
+    event.preventDefault();
+	onDeleteNode(nodeObj.id);
+	handleClose();
+  }
 
   return (
     <div>
@@ -70,6 +77,7 @@ function BasicModal({
                 <ScheduleModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
+                  handleDelete={handleDelete}
                   active={active}
                 />
               ) : null}
@@ -77,6 +85,7 @@ function BasicModal({
                 <ExtractModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
+                  handleDelete={handleDelete}
                   active={active}
                 />
               ) : null}
@@ -84,6 +93,7 @@ function BasicModal({
                 <TransformModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
+				          handleDelete={handleDelete}
                   active={active}
                 />
               ) : null}
@@ -91,6 +101,7 @@ function BasicModal({
                 <LoadModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
+        				  handleDelete={handleDelete}
                   active={active}
                 />
               ) : null}
