@@ -73,3 +73,15 @@ export const setStartTime = async (workflowID, startTime) => {
     }
   );
 };
+
+export const insertNewWF = async (name, nodes, edges) => {
+  return await db.one(
+    "INSERT INTO workflow (name, nodes, edges, created_at, updated_at, active) VALUES " +
+      "(${name}, ${nodes}, ${edges}, NOW(), NOW(), false) RETURNING *",
+    {
+      name: name,
+      nodes: nodes,
+      edges: edges,
+    }
+  );
+};

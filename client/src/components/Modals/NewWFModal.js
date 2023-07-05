@@ -4,6 +4,8 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
+import { createNewWF } from "../../services/api";
+import { useNavigate } from "react-router-dom";
 
 const boxStyle = {
   position: "absolute",
@@ -18,12 +20,17 @@ const boxStyle = {
   p: 4,
 };
 
-const NewWFModal = ({
-  newWFVisible,
-  handleCloseNewWFModal,
-  handleSaveNewWF,
-}) => {
+const NewWFModal = ({ newWFVisible, handleCloseNewWFModal }) => {
   const [newWfName, setNewWfName] = useState("New Workflow");
+  const navigate = useNavigate();
+
+  const handleSaveNewWF = async (e) => {
+    e.preventDefault();
+    const data = await createNewWF({ name: newWfName });
+    navigate(`/workflow/${data.id}`);
+    // handleCloseNewWFModal();
+  };
+
   return (
     <Modal
       open={newWFVisible}

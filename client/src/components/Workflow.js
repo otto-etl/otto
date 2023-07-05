@@ -37,6 +37,7 @@ import Switch from "@mui/material/Switch";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
+import { useNavigate } from "react-router-dom";
 
 const connectionLineStyle = { stroke: "#fff" };
 const snapGrid = [20, 20];
@@ -58,22 +59,25 @@ const Workflow = () => {
   const [active, setActive] = useState(false);
   const [wfName, setWfName] = useState("");
   const [message, setMessage] = useState("");
+  const [currentDB, setCurrentDB] = useState("");
   const wfID = useParams().id;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getWorkflow = async () => {
       const response = await getWorkflowAPI(wfID);
       console.log("active:", response.active);
-      
+
       if (response) {
         updateInputs(response.nodes);
       }
-      
+
       // console.log(Array.isArray(response.nodes));
       setNodes(response.nodes);
       setEdges(response.edges);
       setActive(response.active);
       setWfName(response.name);
+      getCurrentDB(response.nodes, response.active);
     };
     getWorkflow();
   }, [setNodes, setEdges]);
@@ -83,35 +87,43 @@ const Workflow = () => {
     setModalData(nodeData);
   };
 
-  const onEdgeUpdate = useCallback((oldEdge, newConnection) => {  
-	  setEdges((els) => updateEdge(oldEdge, newConnection, els));
-	}, [setEdges]
+  const onEdgeUpdate = useCallback(
+    (oldEdge, newConnection) => {
+      setEdges((els) => updateEdge(oldEdge, newConnection, els));
+    },
+    [setEdges]
   );
 
-  const onConnect = useCallback((params) => {
-	const targetNode = nodes.find(node => {
-	  return (node.id === params.target);
-	});
-	let newTargetNode = copyAndUpdateTargetNode(targetNode, params.source);
-	let newNodes = nodes.map(node => {
-	  if (node.id !== params.target) {
-	    return node;
-	  }
-	  return newTargetNode;
-	});
-	setNodes(newNodes);
-	let newEdge = { ...params, animated: true, style: { stroke: "#000033" } };
-    return setEdges((eds) =>
-      addEdge({ ...params, animated: true, style: { stroke: "#000033" } }, eds)
-    );
-  }, [nodes, edges]);
-  
+  const onConnect = useCallback(
+    (params) => {
+      const targetNode = nodes.find((node) => {
+        return node.id === params.target;
+      });
+      let newTargetNode = copyAndUpdateTargetNode(targetNode, params.source);
+      let newNodes = nodes.map((node) => {
+        if (node.id !== params.target) {
+          return node;
+        }
+        return newTargetNode;
+      });
+      setNodes(newNodes);
+      let newEdge = { ...params, animated: true, style: { stroke: "#000033" } };
+      return setEdges((eds) =>
+        addEdge(
+          { ...params, animated: true, style: { stroke: "#000033" } },
+          eds
+        )
+      );
+    },
+    [nodes, edges]
+  );
+
   const copyAndUpdateTargetNode = (targetNode, sourceId) => {
-	let newTargetNode = {...targetNode};
-	newTargetNode.data = {...targetNode.data};
-	newTargetNode.data.prev = sourceId; 
-    return newTargetNode;	
-  }
+    let newTargetNode = { ...targetNode };
+    newTargetNode.data = { ...targetNode.data };
+    newTargetNode.data.prev = sourceId;
+    return newTargetNode;
+  };
 
   const handleIsValidConnection = (edge) => {
     return (
@@ -179,29 +191,30 @@ const Workflow = () => {
         output: "",
       },
     };
-	addExtraNodeProperties(newNode);
-	console.log(newNode);
+    addExtraNodeProperties(newNode);
+    console.log(newNode);
     let newNodes = [...nodes, newNode];
     await saveWorkflow(1, { nodes: newNodes, edges });
     setNodes(newNodes);
   };
-  
+
   const addExtraNodeProperties = (newNode) => {
     // All of these values are hardcoded defaults, TODO: extract them to constants/decide what they are
     switch (newNode.type) {
-	  case "trigger": {
+      case "trigger": {
         newNode.data.startTime = "26 Jun 2023 5:16:00 EST";
         newNode.data.intervalInMinutes = "1";
-		break;
-	  }
-	  case "extract": {
+        break;
+      }
+      case "extract": {
         newNode.data.url = "https://dog.ceo/api/breeds/list/all";
-		newNode.data.json = {};
-		newNode.data.httpVerb = "GET";
-		break;
-	  }
-	  case "transform": {
-	    newNode.data.jscode = "for(const prop in data.message) { \
+        newNode.data.json = {};
+        newNode.data.httpVerb = "GET";
+        break;
+      }
+      case "transform": {
+        newNode.data.jscode =
+          "for(const prop in data.message) { \
 		  if (!data.message.breed) { \
 			  data.message.breed=[{breed:prop, num:data.message[prop].length}] \
  			  } else { \
@@ -209,23 +222,24 @@ const Workflow = () => {
 				  }\
 				  }\
 			data = data.message.breed;";
-	    break;
-	  }
-	  case "load": {
+        break;
+      }
+      case "load": {
         newNode.data.userName = "INSERT YOUR USERNAME HERE";
-	    newNode.data.password = "INSERT YOUR PASSWORD HERE";
-	    newNode.data.tableName = "dog"; 
-	    newNode.data.host = "localhost";
-	    newNode.data.port = "5432";
-	    newNode.data.dbName = "dog";
-	    newNode.data.sqlCode = "INSERT INTO dog(breed, count) VALUES(${breed}, ${num})";
-	    break;
-	  }
-	  default: {
-	    break;
-	  }
-	}
-  }
+        newNode.data.password = "INSERT YOUR PASSWORD HERE";
+        newNode.data.tableName = "dog";
+        newNode.data.host = "localhost";
+        newNode.data.port = "5432";
+        newNode.data.dbName = "dog";
+        newNode.data.sqlCode =
+          "INSERT INTO dog(breed, count) VALUES(${breed}, ${num})";
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  };
 
   const onDeleteNode = async (nodeId) => {
     let newNodes = nodes.filter((node) => node.id !== nodeId);
@@ -284,6 +298,7 @@ const Workflow = () => {
     } else {
       handleMessage(`Workflow ${wfName} is now deactivated!`, 2000);
     }
+    getCurrentDB(nodes, e.target.checked);
   };
 
   const handleSaveWorkflow = async (e) => {
@@ -300,6 +315,20 @@ const Workflow = () => {
     }, laps);
   };
 
+  const getCurrentDB = (nodes, active) => {
+    console.log(nodes, active);
+    const loadNode = nodes.find((node) => node.type === "load");
+    console.log(loadNode);
+    if (loadNode && !active) {
+      setCurrentDB(
+        `host:${loadNode.data.host} db:${loadNode.data.dbName} user:${loadNode.data.userName}`
+      );
+    } else if (loadNode && active) {
+      setCurrentDB("production db fields to be created");
+    } else {
+      setCurrentDB("No load node yet");
+    }
+  };
   /* ReactFlow throws a console warning here:
   
   It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them.
@@ -310,6 +339,16 @@ const Workflow = () => {
     <div className="grid">
       <p>{wfName}</p>
       <p>{message}</p>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={(e) => {
+          e.preventDefault();
+          navigate("/");
+        }}
+      >
+        All Workflows
+      </Button>
       <FormGroup>
         <FormControlLabel
           control={
@@ -368,6 +407,7 @@ const Workflow = () => {
           />
         ) : null}
       </ReactFlow>
+      <p>{currentDB}</p>
     </div>
   );
 };

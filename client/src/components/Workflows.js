@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getAllWorkflows } from "../services/api";
+import { getAllWorkflows, createNewWF } from "../services/api";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import NewWFModal from "./Modals/NewWFModal.js";
@@ -19,6 +19,7 @@ const Workflows = () => {
   const navigate = useNavigate();
   const [workflows, setWorkflows] = useState([]);
   const [newWFVisible, setNewWFVisible] = useState(false);
+
   useEffect(() => {
     const getInitialData = async () => {
       const res = await getAllWorkflows();

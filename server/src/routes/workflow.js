@@ -4,6 +4,7 @@ import {
   getAllWorkflows,
   getWorkflow,
   updateNodesEdges,
+  insertNewWF,
 } from "../models/pgService.js";
 
 //get one workflow data
@@ -37,6 +38,18 @@ router.put("/:id", async (req, res) => {
       edges: JSON.stringify(edges),
     });
     res.sendStatus(200);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+router.post("/", async (req, res) => {
+  try {
+    const { name } = req.body;
+    const edges = JSON.stringify([]);
+    const nodes = JSON.stringify([]);
+    const dbData = await insertNewWF(name, nodes, edges);
+    res.status(200).json(dbData);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
