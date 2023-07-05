@@ -7,14 +7,12 @@ export const getWorkflowAPI = async (id) => {
   return res.data;
 };
 
-export const postNodeChanges = async (payload) => {
+export const saveAndExecuteNode = async (payload) => {
   const res = await axios.post(`${host}/execute/node`, payload);
   return res.data;
 };
 
 export const saveWorkflow = async (id, payload) => {
-  // console.log("id", id);
-  // console.log("payload", payload);
   await axios.put(`${host}/workflows/${id}`, payload);
 };
 
