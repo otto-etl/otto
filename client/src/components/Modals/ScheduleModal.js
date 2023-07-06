@@ -8,9 +8,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 
-
-
-
 const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
   const [name, setName] = useState(nodeObj.data.label);
   const [dateAndTime, setDateAndTime] = useState(dayjs(nodeObj.data.startTime));
@@ -18,10 +15,11 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
     nodeObj.data.intervalInMinutes / 24 / 60
   );
 
-  console.log("Schedule modal");
+  console.log(name);
 
   return (
     <Box>
+      <p>Schedule Details</p>
       <form
         action=""
         onSubmit={(e) => {
@@ -31,7 +29,6 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             startTime: dateAndTime.$d,
             intervalInMinutes: Number(interval) * 24 * 60,
           };
-          console.log(newData);
           handleSubmit(e, newData);
         }}
       >
@@ -44,11 +41,12 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
         />
         <br></br>
         <br></br>
+        <p>Provide Cron job details below:</p>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DemoContainer components={["DateTimePicker", "DateTimePicker"]}>
             <DateTimePicker
               disabled={active ? true : false}
-              label="Controlled picker"
+              label="Date and Time"
               value={dateAndTime}
               onChange={(dateAndTime) => setDateAndTime(dateAndTime)}
             />
@@ -57,23 +55,28 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
         <br></br>
         <br></br>
         <TextField
+          sx={{ width: "50%" }}
           disabled={active ? true : false}
           id="outlined-basic"
-          label="Interval in Days"
+          label="Frequency of Executions (days)"
           type={"number"}
           value={interval}
           onChange={(e) => setInterval(e.target.value)} // variant="outlined"
         />
-		<Button onClick={handleDelete} disabled={active ? true : false}>Delete</Button>
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          disabled={active ? true : false}
-        >
-          Save
-        </Button>
+        <Box>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            disabled={active ? true : false}
+          >
+            Save
+          </Button>
+        </Box>
       </form>
+      <Button onClick={handleDelete} disabled={active ? true : false}>
+        Delete
+      </Button>
     </Box>
   );
 };

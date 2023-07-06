@@ -48,11 +48,11 @@ function BasicModal({
 
   console.log("nodeObj.data insde basicModal", nodeObj.data);
 
-  const handleDelete = (event) => {  
+  const handleDelete = (event) => {
     event.preventDefault();
-	onDeleteNode(nodeObj.id);
-	handleClose();
-  }
+    onDeleteNode(nodeObj.id);
+    handleClose();
+  };
 
   return (
     <div>
@@ -72,7 +72,6 @@ function BasicModal({
               </Box>
             </Container>
             <Container maxWidth="sm">
-              <p>Details</p>
               {nodeObj.type === "trigger" ? (
                 <ScheduleModal
                   nodeObj={nodeObj}
@@ -93,7 +92,7 @@ function BasicModal({
                 <TransformModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
-				          handleDelete={handleDelete}
+                  handleDelete={handleDelete}
                   active={active}
                 />
               ) : null}
@@ -101,7 +100,7 @@ function BasicModal({
                 <LoadModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
-        				  handleDelete={handleDelete}
+                  handleDelete={handleDelete}
                   active={active}
                 />
               ) : null}
