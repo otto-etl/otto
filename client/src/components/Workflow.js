@@ -187,7 +187,7 @@ const Workflow = () => {
       type: nodeType,
       position: { x: 650, y: -125 }, // Arbitrary hardcoded location, below menu
       data: {
-        label: nodeType.toUpperCase(),
+        label: `${nodeType[0].toUpperCase() + nodeType.slice(1)} node`,
         output: "",
       },
     };
@@ -200,10 +200,14 @@ const Workflow = () => {
 
   const addExtraNodeProperties = (newNode) => {
     // All of these values are hardcoded defaults, TODO: extract them to constants/decide what they are
+    const TOTAL_MINUTES_IN_A_DAY = 1440;
+
     switch (newNode.type) {
       case "trigger": {
-        newNode.data.startTime = "26 Jun 2023 5:16:00 EST";
-        newNode.data.intervalInMinutes = "1";
+        var currentDate = new Date();
+        newNode.data.startTime = currentDate.setDate(currentDate.getDate() + 1);
+        newNode.data.startTime = currentDate.setHours(0, 0, 0, 0);
+        newNode.data.intervalInMinutes = TOTAL_MINUTES_IN_A_DAY;
         break;
       }
       case "extract": {
