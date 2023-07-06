@@ -33,10 +33,17 @@ import {
   toggleWorkflowStatus,
 } from "../services/api";
 import "../index.css";
-import Switch from "@mui/material/Switch";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Button from "@mui/material/Button";
+import {
+  AppBar,
+  Box,
+  Button,
+  Typography,
+  FormControlLabel,
+  FormGroup,
+  Switch,
+  Toolbar,
+} from "@mui/material";
+import ottoLogo from "../assets/otto.png";
 import { useNavigate } from "react-router-dom";
 
 const connectionLineStyle = { stroke: "#fff" };
@@ -340,79 +347,132 @@ const Workflow = () => {
   */
 
   return (
-    <div className="grid">
-      <p>{wfName}</p>
-      <p>{message}</p>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={(e) => {
-          e.preventDefault();
-          navigate("/");
-        }}
-      >
-        All Workflows
-      </Button>
-      <FormGroup>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={active}
-              onChange={handleToggleActive}
-              inputProps={{ "aria-label": "controlled" }}
-            />
-          }
-          label="Active"
-          defaultChecked
-          labelPlacement="start"
-        />
-      </FormGroup>
-      <Button
-        variant="contained"
-        color="primary"
-        disabled={active ? true : false}
-        onClick={handleSaveWorkflow}
-      >
-        Save
-      </Button>
-      <Button variant="contained" color="primary" onClick={handleExecuteAll}>
-        Execute Workflow
-      </Button>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onNodeClick={onNodeClick}
-        onEdgeUpdate={onEdgeUpdate}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        connectionLineStyle={connectionLineStyle}
-        snapToGrid={true}
-        snapGrid={snapGrid}
-        defaultViewport={defaultViewport}
-        fitView
-        attributionPosition="bottom-left"
-        isValidConnection={handleIsValidConnection}
-      >
-        <Panel position="top-right">
-          <NodeCreationMenu onCreateNode={onCreateNode} />
-        </Panel>
-        {modalIsOpen ? (
-          <Modal
-            modalIsOpen={modalIsOpen}
-            handleOpen={() => setModalIsOpen(true)}
-            handleClose={() => setModalIsOpen(false)}
-            onSaveExecute={onSaveExecute}
-            onDeleteNode={onDeleteNode}
-            runExecution={runExecution}
-            nodeObj={modalData}
-            active={active}
+    <>
+      <AppBar position={"static"}>
+        <Toolbar
+          variant="dense"
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <img
+            src={ottoLogo}
+            className="otto logo"
+            alt="otto logo"
+            style={{ height: 25 }}
           />
-        ) : null}
-      </ReactFlow>
-      <p>{currentDB}</p>
-    </div>
+          <Button
+            variant="text"
+            color="secondary"
+            size="medium"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/");
+            }}
+          >
+            All Workflows
+          </Button>
+        </Toolbar>
+      </AppBar>
+      <AppBar position={"static"}>
+        <Toolbar
+          variant="dense"
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography sx={{ m: 0 }}>{wfName}</Typography>
+          <Box
+            sx={{
+              display: "flex",
+              gap: "20px",
+            }}
+          >
+            <p>{message}</p>
+            <Button
+              variant="contained"
+              color="secondary"
+              disabled={active ? true : false}
+              onClick={handleSaveWorkflow}
+            >
+              Save
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleExecuteAll}
+            >
+              Execute Workflow
+            </Button>
+            <FormGroup sx={{ marginRight: "-10px" }}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={active}
+                    onChange={handleToggleActive}
+                    inputProps={{ "aria-label": "controlled" }}
+                  />
+                }
+                sx={{ m: 0 }}
+                label="Active"
+                defaultChecked
+                labelPlacement="start"
+              />
+            </FormGroup>
+          </Box>
+        </Toolbar>
+      </AppBar>
+      <div className="grid">
+        <Box
+          data-name="sidebar"
+          sx={{
+            width: 250,
+            height: "calc(100vh - 151px)",
+            backgroundColor: "primary.dark",
+          }}
+        >
+          sidebar content
+        </Box>
+        <ReactFlow
+          style={{ flex: 1 }}
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onNodeClick={onNodeClick}
+          onEdgeUpdate={onEdgeUpdate}
+          onConnect={onConnect}
+          nodeTypes={nodeTypes}
+          connectionLineStyle={connectionLineStyle}
+          snapToGrid={true}
+          snapGrid={snapGrid}
+          defaultViewport={defaultViewport}
+          fitView
+          attributionPosition="bottom-left"
+          isValidConnection={handleIsValidConnection}
+        >
+          <Panel position="top-right">
+            <NodeCreationMenu onCreateNode={onCreateNode} />
+          </Panel>
+          {modalIsOpen ? (
+            <Modal
+              modalIsOpen={modalIsOpen}
+              handleOpen={() => setModalIsOpen(true)}
+              handleClose={() => setModalIsOpen(false)}
+              onSaveExecute={onSaveExecute}
+              onDeleteNode={onDeleteNode}
+              runExecution={runExecution}
+              nodeObj={modalData}
+              active={active}
+            />
+          ) : null}
+        </ReactFlow>
+      </div>
+      {/* <p>{currentDB}</p> */}
+    </>
   );
 };
 
