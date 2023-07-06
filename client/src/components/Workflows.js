@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { getAllWorkflows } from "../services/api";
+import { getAllWorkflows, createNewWF } from "../services/api";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
+import NewWFModal from "./Modals/NewWFModal.js";
+import Button from "@mui/material/Button";
 
 const columns = [
   {
@@ -17,6 +18,8 @@ const columns = [
 const Workflows = () => {
   const navigate = useNavigate();
   const [workflows, setWorkflows] = useState([]);
+  const [newWFVisible, setNewWFVisible] = useState(false);
+
   useEffect(() => {
     const getInitialData = async () => {
       const res = await getAllWorkflows();
@@ -28,9 +31,28 @@ const Workflows = () => {
     navigate(`/workflow/${params.row.id}`);
   };
 
+  const handleCloseNewWFModal = (e) => {
+    e.preventDefault();
+    setNewWFVisible(false);
+  };
+
+  const handleSaveNewWF = (e) => {
+    e.preventDefault();
+    setNewWFVisible(false);
+  };
   return (
     <>
       <div style={{ height: 400, width: "100%" }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={(e) => {
+            e.preventDefault();
+            setNewWFVisible(true);
+          }}
+        >
+          Create New Workflow
+        </Button>
         <DataGrid
           rows={workflows}
           columns={columns}
@@ -43,6 +65,13 @@ const Workflows = () => {
           pageSizeOptions={[5, 10]}
         />
       </div>
+      {newWFVisible ? (
+        <NewWFModal
+          newWFVisible={newWFVisible}
+          handleCloseNewWFModal={handleCloseNewWFModal}
+          handleSaveNewWF={handleSaveNewWF}
+        />
+      ) : null}
     </>
   );
 };

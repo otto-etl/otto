@@ -35,3 +35,8 @@ export const toggleWorkflowStatus = async (id, active) => {
   }
   return res.status;
 };
+
+export const createNewWF = async (payload) => {
+  const res = await axios.post(`${host}/workflows`, payload);
+  return res.data;
+};

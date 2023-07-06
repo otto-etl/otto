@@ -37,6 +37,7 @@ import Switch from "@mui/material/Switch";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
+import { useNavigate } from "react-router-dom";
 
 const connectionLineStyle = { stroke: "#fff" };
 const snapGrid = [20, 20];
@@ -58,7 +59,9 @@ const Workflow = () => {
   const [active, setActive] = useState(false);
   const [wfName, setWfName] = useState("");
   const [message, setMessage] = useState("");
+  const [currentDB, setCurrentDB] = useState("");
   const wfID = useParams().id;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getWorkflow = async () => {
@@ -74,6 +77,7 @@ const Workflow = () => {
       setEdges(response.edges);
       setActive(response.active);
       setWfName(response.name);
+      getCurrentDB(response.nodes, response.active);
     };
     getWorkflow();
   }, [setNodes, setEdges]);
@@ -298,6 +302,7 @@ const Workflow = () => {
     } else {
       handleMessage(`Workflow ${wfName} is now deactivated!`, 2000);
     }
+    getCurrentDB(nodes, e.target.checked);
   };
 
   const handleSaveWorkflow = async (e) => {
@@ -314,6 +319,20 @@ const Workflow = () => {
     }, laps);
   };
 
+  const getCurrentDB = (nodes, active) => {
+    console.log(nodes, active);
+    const loadNode = nodes.find((node) => node.type === "load");
+    console.log(loadNode);
+    if (loadNode && !active) {
+      setCurrentDB(
+        `host:${loadNode.data.host} db:${loadNode.data.dbName} user:${loadNode.data.userName}`
+      );
+    } else if (loadNode && active) {
+      setCurrentDB("production db fields to be created");
+    } else {
+      setCurrentDB("No load node yet");
+    }
+  };
   /* ReactFlow throws a console warning here:
   
   It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them.
@@ -324,6 +343,16 @@ const Workflow = () => {
     <div className="grid">
       <p>{wfName}</p>
       <p>{message}</p>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={(e) => {
+          e.preventDefault();
+          navigate("/");
+        }}
+      >
+        All Workflows
+      </Button>
       <FormGroup>
         <FormControlLabel
           control={
@@ -382,6 +411,7 @@ const Workflow = () => {
           />
         ) : null}
       </ReactFlow>
+      <p>{currentDB}</p>
     </div>
   );
 };
