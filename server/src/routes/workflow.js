@@ -8,27 +8,27 @@ import {
 } from "../models/pgService.js";
 
 //get one workflow data
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res, next) => {
+  const workflowID = req.params.id;
   try {
-    const id = req.params.id;
-    const { nodes, edges, active, name } = await getWorkflow(id);
-    res.status(200).send({ id, nodes, edges, active, name });
+    const workflowObj = await getWorkflow(workflowID);
+    res.status(200).send(workflowObj);
   } catch (e) {
-    res.status(500).send({ error: e.message });
+    next(e);
   }
 });
 
 //get all workflow data
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
   try {
     const data = await getAllWorkflows();
     res.status(200).json(data);
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    next(e);
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
     const { nodes, edges } = req.body;
@@ -39,11 +39,11 @@ router.put("/:id", async (req, res) => {
     });
     res.sendStatus(200);
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    next(e);
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", async (req, res, next) => {
   try {
     const { name } = req.body;
     const edges = JSON.stringify([]);
@@ -51,7 +51,7 @@ router.post("/", async (req, res) => {
     const dbData = await insertNewWF(name, nodes, edges);
     res.status(200).json(dbData);
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    next(e);
   }
 });
 

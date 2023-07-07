@@ -85,3 +85,13 @@ export const insertNewWF = async (name, nodes, edges) => {
     }
   );
 };
+
+export const updateWorkflowError = async (workflowID, error) => {
+  return await db.any(
+    "UPDATE workflow SET error = ${error} WHERE id = ${workflowID}",
+    {
+      error: error,
+      workflowID: workflowID,
+    }
+  );
+};

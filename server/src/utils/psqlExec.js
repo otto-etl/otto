@@ -1,6 +1,8 @@
 import pgPromise from "pg-promise";
-import { getNode } from "./node.js";
 import { updateNodes } from "../models/pgService.js";
+import { throwNDErrorAndUpdateDB } from "./errors.js";
+import { getInputData } from "./node.js";
+
 const pgp = pgPromise();
 
 let dbs = {};
@@ -21,32 +23,18 @@ const connectPSQL = ({ userName, host, port, password, dbName }) => {
 };
 
 export const runPSQLCode = async (workflowObj, nodeObj) => {
-  const prevNodeID = nodeObj.data.prev;
-  const previousNode = getNode(workflowObj, prevNodeID);
   let { userName, password, dbName, sqlCode, host, port } = nodeObj.data;
   const db = connectPSQL({ userName, password, dbName, host, port });
 
-  try {
-    const connection = await db.connect();
-    console.log("load db connection success");
-    connection.done();
-  } catch (e) {
-    throw new Error(
-      `Unable to connect to load database with error ${e.message}`
-    );
-  }
+  //test if connection to db can be made with provided credentials
+  await testConnection(db, workflowObj, nodeObj);
 
-  //if no input data throw an error
-  const inputData = previousNode.data.output.data;
-  if (inputData.length === 0) {
-    throw new Error(`No data from previous node: ${previousNode.type}`);
-  }
+  //get input data from previous nodes, currently assuming one input
+  let inputData = await getInputData(workflowObj, nodeObj);
+  //assuming only 1 input right now
+  inputData = inputData[0].data;
 
-  const regex = /\$\{([^}]+)\}/g;
-  const insertFields = [...sqlCode.matchAll(regex)].map((returnedData) => {
-    return returnedData[1];
-  });
-
+  const insertFields = getInputFields(sqlCode);
   //add returning statement if the code doesn't have one
   sqlCode = addReturnStr(sqlCode);
   let returnValues = [];
@@ -61,10 +49,12 @@ export const runPSQLCode = async (workflowObj, nodeObj) => {
       returnValues = returnValues.concat(returnValue);
     }
   } catch (e) {
-    throw new Error(`Error running psql code ${error.message}`);
+    const message = `Error running psql code: ${e.message}`;
+    await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
   }
 
   nodeObj.data.output = returnValues;
+  nodeObj.data.error = null;
   await updateNodes(workflowObj);
   return returnValues;
 };
@@ -83,4 +73,23 @@ const addReturnStr = (sqlCode) => {
   } else {
     return sqlCode.replace(";", " RETURNING * ;");
   }
+};
+
+const testConnection = async (db, workflowObj, nodeObj) => {
+  try {
+    const connection = await db.connect();
+    console.log("load db connection success");
+    connection.done();
+  } catch (e) {
+    const message = `Unable to connect to load database: ${e.message}`;
+    await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
+  }
+};
+
+const getInputFields = (sqlCode) => {
+  const regex = /\$\{([^}]+)\}/g;
+  const insertFields = [...sqlCode.matchAll(regex)].map((returnedData) => {
+    return returnedData[1];
+  });
+  return insertFields;
 };

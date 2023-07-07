@@ -1,3 +1,5 @@
+import { dataIsEmpty } from "./helper.js";
+import { throwNDErrorAndUpdateDB } from "./errors.js";
 //takes a workflow object and return the trigger node
 export const getTriggerNode = (workflowObj) => {
   return workflowObj.nodes.find((node) => node.type === "trigger");
@@ -41,4 +43,21 @@ const getTargetNodeObj = (workflowObj, sourceNodeObj) => {
   });
   const targetID = edgeObj.target;
   return workflowObj.nodes.find((node) => node.id === targetID);
+};
+
+export const getInputData = async (workflowObj, nodeObj) => {
+  const edges = workflowObj.edges;
+  const currentNodeId = nodeObj.id;
+  const sourceEdges = edges.filter((edge) => edge.target === currentNodeId);
+  const data = [];
+  for (const edge of sourceEdges) {
+    const sourceNode = getNode(workflowObj, edge.source);
+    if (dataIsEmpty(sourceNode.data.output)) {
+      const message = `No input data from previous node: ${sourceNode.data.label} `;
+      await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
+    } else {
+      data.push(JSON.parse(JSON.stringify(sourceNode.data.output)));
+    }
+  }
+  return data;
 };
