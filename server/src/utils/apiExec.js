@@ -22,7 +22,7 @@ export const runAPI = async (workflowObj, nodeObj) => {
     const status = e.toJSON().status;
     const code = e.toJSON().code;
     if ((!status && code !== "ENOTFOUND") || status >= 500) {
-      const message = `API call failed with error: ${e.message}`;
+      const message = `API call failed: No connection could be made because the target machine actively refused it.\n\n(Error code: ${e.message})`;
       await throwEXErrorAndUpdateDB(workflowObj, nodeObj, message);
     } else {
       const message = `API call failed with error: ${e.message}`;

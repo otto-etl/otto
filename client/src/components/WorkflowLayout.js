@@ -59,13 +59,14 @@ const nodeTypes = {
 
 const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 
-const Workflow = () => {
+const WorkflowLayout = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]); // useNodesState, useEdgesState are React Flow-specific
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalData, setModalData] = useState("");
   const [active, setActive] = useState(false);
   const [wfName, setWfName] = useState("");
+  const [wfError, setWfError] = useState();
   const [message, setMessage] = useState("");
   const [currentDB, setCurrentDB] = useState("");
   const wfID = useParams().id;
@@ -181,10 +182,18 @@ const Workflow = () => {
     let executionResult = await saveAndExecuteNode(payload);
     let currentNode = newNodesArray.find((node) => node.id === currentId);
     let nextNode = newNodesArray.find((node) => node.data.prev === currentId);
-    currentNode.data.output = executionResult;
-    if (nextNode) {
-      nextNode.data.input = executionResult;
-    }
+	if (executionResult.data && executionResult.data.error) {
+	  currentNode.data = executionResult.data;
+	  if (nextNode) {
+	    nextNode.data.input = null;
+	  }
+	}
+	else {
+      currentNode.data.output = executionResult;
+      if (nextNode) {
+        nextNode.data.input = executionResult;
+      }
+	}
   };
 
   const onCreateNode = async (nodeType) => {
@@ -199,7 +208,6 @@ const Workflow = () => {
       },
     };
     addExtraNodeProperties(newNode);
-    console.log(newNode);
     let newNodes = [...nodes, newNode];
     await saveWorkflow(1, { nodes: newNodes, edges });
     setNodes(newNodes);
@@ -327,9 +335,7 @@ const Workflow = () => {
   };
 
   const getCurrentDB = (nodes, active) => {
-    console.log(nodes, active);
     const loadNode = nodes.find((node) => node.type === "load");
-    console.log(loadNode);
     if (loadNode && !active) {
       setCurrentDB(
         `host:${loadNode.data.host} db:${loadNode.data.dbName} user:${loadNode.data.userName}`
@@ -399,4 +405,4 @@ const Workflow = () => {
   );
 };
 
-export default Workflow;
+export default WorkflowLayout;

@@ -19,7 +19,7 @@ export class WorkflowError extends Error {
 export class InternalError extends NodeError {
   constructor(message, data) {
     super(message, data);
-    this.name = "InteranlError";
+    this.name = "InternalError";
   }
 }
 
