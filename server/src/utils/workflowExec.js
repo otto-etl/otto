@@ -5,6 +5,7 @@ import { runPSQLCode } from "./psqlExec.js";
 import { InternalError } from "./errors.js";
 import { updateWorkflowError, updateNodes } from "../models/pgService.js";
 import { workflowInputvalidation } from "./workflowInput.js";
+import { throwNDErrorAndUpdateDB } from "./errors.js";
 
 export const runWorkflow = async (workflowObj) => {
   console.log("running workflow", workflowObj.id);
@@ -21,9 +22,7 @@ export const runWorkflow = async (workflowObj) => {
       await runPSQLCode(workflowObj, nodeObj);
     } else if (nodeObj.type !== "trigger") {
       const message = `Invalid Node Type: ${nodeObj.type}`;
-      nodeObj.data.error = { name: "InternalError", message: message };
-      await updateNodes(workflowObj);
-      throw new InternalError(message, workflowObj);
+      await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
     }
   }
   console.log("workflow completed", workflowObj.id);

@@ -66,7 +66,7 @@ router.post("/node", async (req, res, next) => {
       resData = await runPSQLCode(workflowObj, nodeObj);
     } else if (nodeObj.type !== "trigger") {
       const message = `Invalid Node Type: ${nodeObj.type}`;
-      throwNDErrorAndUpdateDB(workflowID, nodeObj, message);
+      await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
     }
     res.status(200).json(resData);
   } catch (e) {
