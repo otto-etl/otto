@@ -18,6 +18,9 @@ import TransformNode from "./TransformNode";
 import LoadNode from "./LoadNode";
 import NodeModal from "./NodeModal";
 import NodeCreationMenu from "./NodeCreationMenu";
+import WorkflowNavbar from "./WorkflowNavbar";
+import GlobalNavbar from "./GlobalNavbar";
+import WorkflowSidebar from "./WorkflowSidebar";
 import {
   updateInputs,
   isExtractNode,
@@ -33,11 +36,16 @@ import {
   toggleWorkflowStatus,
 } from "../services/api";
 import "../index.css";
-import Switch from "@mui/material/Switch";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Button from "@mui/material/Button";
-import { useNavigate } from "react-router-dom";
+import {
+  AppBar,
+  Box,
+  Button,
+  Typography,
+  FormControlLabel,
+  FormGroup,
+  Switch,
+  Toolbar,
+} from "@mui/material";
 
 const connectionLineStyle = { stroke: "#fff" };
 const snapGrid = [20, 20];
@@ -61,7 +69,6 @@ const Workflow = () => {
   const [message, setMessage] = useState("");
   const [currentDB, setCurrentDB] = useState("");
   const wfID = useParams().id;
-  const navigate = useNavigate();
 
   useEffect(() => {
     const getWorkflow = async () => {
@@ -340,79 +347,55 @@ const Workflow = () => {
   */
 
   return (
-    <div className="grid">
-      <p>{wfName}</p>
-      <p>{message}</p>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={(e) => {
-          e.preventDefault();
-          navigate("/");
-        }}
-      >
-        All Workflows
-      </Button>
-      <FormGroup>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={active}
-              onChange={handleToggleActive}
-              inputProps={{ "aria-label": "controlled" }}
+    <>
+      <GlobalNavbar />
+      <WorkflowNavbar
+        wfName={wfName}
+        message={message}
+        active={active}
+        handleSaveWorkflow={handleSaveWorkflow}
+        handleExecuteAll={handleExecuteAll}
+        handleToggleActive={handleToggleActive}
+      />
+      <div className="grid">
+        <WorkflowSidebar />
+        <ReactFlow
+          style={{ flex: 1 }}
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onNodeClick={onNodeClick}
+          onEdgeUpdate={onEdgeUpdate}
+          onConnect={onConnect}
+          nodeTypes={nodeTypes}
+          connectionLineStyle={connectionLineStyle}
+          snapToGrid={true}
+          snapGrid={snapGrid}
+          defaultViewport={defaultViewport}
+          fitView
+          attributionPosition="bottom-left"
+          isValidConnection={handleIsValidConnection}
+        >
+          <Panel position="top-right">
+            <NodeCreationMenu onCreateNode={onCreateNode} />
+          </Panel>
+          {modalIsOpen ? (
+            <Modal
+              modalIsOpen={modalIsOpen}
+              handleOpen={() => setModalIsOpen(true)}
+              handleClose={() => setModalIsOpen(false)}
+              onSaveExecute={onSaveExecute}
+              onDeleteNode={onDeleteNode}
+              runExecution={runExecution}
+              nodeObj={modalData}
+              active={active}
             />
-          }
-          label="Active"
-          defaultChecked
-          labelPlacement="start"
-        />
-      </FormGroup>
-      <Button
-        variant="contained"
-        color="primary"
-        disabled={active ? true : false}
-        onClick={handleSaveWorkflow}
-      >
-        Save
-      </Button>
-      <Button variant="contained" color="primary" onClick={handleExecuteAll}>
-        Execute Workflow
-      </Button>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onNodeClick={onNodeClick}
-        onEdgeUpdate={onEdgeUpdate}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        connectionLineStyle={connectionLineStyle}
-        snapToGrid={true}
-        snapGrid={snapGrid}
-        defaultViewport={defaultViewport}
-        fitView
-        attributionPosition="bottom-left"
-        isValidConnection={handleIsValidConnection}
-      >
-        <Panel position="top-right">
-          <NodeCreationMenu onCreateNode={onCreateNode} />
-        </Panel>
-        {modalIsOpen ? (
-          <Modal
-            modalIsOpen={modalIsOpen}
-            handleOpen={() => setModalIsOpen(true)}
-            handleClose={() => setModalIsOpen(false)}
-            onSaveExecute={onSaveExecute}
-            onDeleteNode={onDeleteNode}
-            runExecution={runExecution}
-            nodeObj={modalData}
-            active={active}
-          />
-        ) : null}
-      </ReactFlow>
-      <p>{currentDB}</p>
-    </div>
+          ) : null}
+        </ReactFlow>
+      </div>
+      {/* <p>{currentDB}</p> */}
+    </>
   );
 };
 
