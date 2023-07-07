@@ -1,14 +1,14 @@
 import cron from "node-cron";
 import { getTriggerNode } from "./node.js";
 import {
-  getWorkflow,
   activateWorkflow,
   deactivateWorkflow,
   getActiveWorkflows,
   setStartTime,
 } from "../models/pgService.js";
 import { runWorkflow } from "./workflowExec.js";
-
+import { throwWFErrorAndUpdateDB } from "./errors.js";
+import { updateWorkflowError } from "../models/pgService.js";
 // workflows that have cron job started
 const startedWorkflows = {};
 // workflows that have timeout triggered but cron job hasn't started
@@ -30,7 +30,13 @@ const pendingWorkflows = {};
 export const startCron = async (workflowObj) => {
   const workflowID = workflowObj.id;
   const currentTimeInMilsec = Date.now();
-  const triggerNodeObj = await getTriggerNode(workflowObj);
+  const triggerNodeObj = getTriggerNode(workflowObj);
+
+  if (!triggerNodeObj) {
+    const message = "No trigger node in the workflow, unable to start cron";
+    await throwWFErrorAndUpdateDB(workflowObj, message);
+  }
+
   const intervalInMinutes = triggerNodeObj.data.intervalInMinutes;
   let startTime;
 

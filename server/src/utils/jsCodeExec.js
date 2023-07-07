@@ -1,24 +1,24 @@
 import vm from "vm";
-import { getNode } from "./node.js";
 import { updateNodes } from "../models/pgService.js";
+import { throwNDErrorAndUpdateDB } from "./errors.js";
+import { getInputData } from "./node.js";
 
 export const runJSCode = async (workflowObj, nodeObj) => {
-  const prevNodeID = nodeObj.data.prev;
-  const previousNode = getNode(workflowObj, prevNodeID);
   const customCode = nodeObj.data.jsCode;
-  const inputData = JSON.parse(JSON.stringify(previousNode.data.output));
-  if (!inputData) {
-    throw new Error(`No data from previous node: ${previousNode.type}`);
-  }
+  let inputData = await getInputData(workflowObj, nodeObj);
+  //need to be modified when handling multiple inputs
+  inputData = inputData[0];
 
   try {
     vm.createContext(inputData);
     vm.runInContext(customCode, inputData);
   } catch (e) {
-    throw new Error(`JS code execution failed with error ${e.message}`);
+    const message = `JS code execution failed with error ${e.message}`;
+    await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
   }
 
   nodeObj.data.output = inputData;
+  nodeObj.data.error = null;
   await updateNodes(workflowObj);
   return inputData;
 };

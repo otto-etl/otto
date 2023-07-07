@@ -6,44 +6,45 @@ import { runPSQLCode } from "../utils/psqlExec.js";
 import { getNode } from "../utils/node.js";
 import { getWorkflow, updateNodesEdges } from "../models/pgService.js";
 import { runWorkflow } from "../utils/workflowExec.js";
+import { throwNDErrorAndUpdateDB } from "../utils/errors.js";
 const router = express.Router();
 
 //start cron job
-router.put("/workflow/:id", async (req, res) => {
+router.put("/workflow/:id", async (req, res, next) => {
+  const workflowID = req.params.id;
   try {
-    const id = req.params.id;
-    const workflowObj = await getWorkflow(id);
+    const workflowObj = await getWorkflow(workflowID);
     if (workflowObj.active === true) {
-      throw new Error("work flow already active");
+      throw new Error("workflow already active");
     }
-    startCron(workflowObj);
-    res.status(200).send(`workflow${id} schedule triggered`);
+    await startCron(workflowObj);
+    res.status(200).send(`workflow${workflowID} schedule triggered`);
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    next(e);
   }
 });
 
 //stop cron job
-router.put("/stopworkflow/:id", async (req, res) => {
+router.put("/stopworkflow/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
     const workflowObj = await getWorkflow(id);
     if (workflowObj.active === false) {
-      throw new Error("work flow already deactivated");
+      throw new Error("workflow already deactivated");
     }
     stopCron(id);
     res.status(200).send(`workflow${id} schedule stopped`);
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    next(e);
   }
 });
 
 //execute node
-router.post("/node", async (req, res) => {
+router.post("/node", async (req, res, next) => {
+  let { workflowID, nodeID, nodes, edges } = req.body;
+  nodes = JSON.stringify(nodes);
+  edges = JSON.stringify(edges);
   try {
-    let { workflowID, nodeID, nodes, edges } = req.body;
-    nodes = JSON.stringify(nodes);
-    edges = JSON.stringify(edges);
     //update nodes and edges in DB by workflowID
     await updateNodesEdges({
       workflowID,
@@ -64,26 +65,26 @@ router.post("/node", async (req, res) => {
     } else if (nodeObj.type === "load") {
       resData = await runPSQLCode(workflowObj, nodeObj);
     } else if (nodeObj.type !== "trigger") {
-      res.status(403).json({ error: `Invalid node type: ${nodeObj.type}` });
+      const message = `Invalid Node Type: ${nodeObj.type}`;
+      throwNDErrorAndUpdateDB(workflowID, nodeObj, message);
     }
     res.status(200).json(resData);
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    next(e);
   }
 });
 
 //execute workflow
-router.post("/workflow/:id", async (req, res) => {
+router.post("/workflow/:id", async (req, res, next) => {
+  const workflowID = req.params.id;
+  const { nodes, edges } = req.body;
   try {
-    const workflowID = req.params.id;
-    const { nodes, edges } = req.body;
     //update nodes and edges in DB by workflowID
     await updateNodesEdges({
       workflowID,
       nodes: JSON.stringify(nodes),
       edges: JSON.stringify(edges),
     });
-
     const workflowObj = await getWorkflow(workflowID);
     await runWorkflow(workflowObj);
     const workflowObjNew = await getWorkflow(String(workflowID));
@@ -91,7 +92,7 @@ router.post("/workflow/:id", async (req, res) => {
       .status(200)
       .json({ nodes: workflowObjNew.nodes, edges: workflowObjNew.edges });
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    next(e);
   }
 });
 
