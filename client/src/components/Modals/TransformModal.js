@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import CustomTabPanel from "../CustomTabPanel";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -7,30 +8,6 @@ import Tab from "@mui/material/Tab";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
-
-const CustomTabPanel = (props) => {
-  const { children, value, index, ...other } = props;
-  console.log(children);
-  console.log(value);
-  console.log(index);
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {children}
-          {/* <Typography>{children}</Typography> */}
-        </Box>
-      )}
-    </div>
-  );
-};
 
 const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
   console.log(nodeObj.data);
