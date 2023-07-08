@@ -7,7 +7,7 @@ const Sidebar = ({
   handleExecutionListItemClick,
   handleEditWorkflowListItemClick,
 }) => {
-  const [selectedCurrentIndex, setSelectedCurrentIndex] = React.useState(0);
+  const [selectedEditIndex, setSelectedEditIndex] = React.useState(0);
   const [selectedTestIndex, setSelectedTestIndex] = React.useState(null);
   const [selectedActiveIndex, setSelectedActiveIndex] = React.useState(null);
 
@@ -22,8 +22,11 @@ const Sidebar = ({
     { id: 5, primary: "24 Jun at 00:00:00", success: false },
   ];
 
-  const handleCurrentListItemClick = (event, index) => {
-    setSelectedCurrentIndex(index);
+  const handleEditListItemClick = (event, index) => {
+    // Prevents function from executing when "Edit Test Workflow" is already selected.
+    if (event.target.closest(".Mui-selected")) return;
+
+    setSelectedEditIndex(index);
     setSelectedTestIndex(null);
     setSelectedActiveIndex(null);
     handleEditWorkflowListItemClick();
@@ -31,7 +34,7 @@ const Sidebar = ({
   };
 
   const handleTestListItemClick = (event, index) => {
-    setSelectedCurrentIndex(null);
+    setSelectedEditIndex(null);
     setSelectedTestIndex(index);
     setSelectedActiveIndex(null);
     handleExecutionListItemClick(
@@ -249,7 +252,7 @@ const Sidebar = ({
   };
 
   const handleActiveListItemClick = (event, index) => {
-    setSelectedCurrentIndex(null);
+    setSelectedEditIndex(null);
     setSelectedActiveIndex(index);
     setSelectedTestIndex(null);
     handleExecutionListItemClick([], []);
@@ -266,8 +269,8 @@ const Sidebar = ({
       }}
     >
       <EditWorkflow
-        selectedCurrentIndex={selectedCurrentIndex}
-        handleCurrentListItemClick={handleCurrentListItemClick}
+        selectedEditIndex={selectedEditIndex}
+        handleEditListItemClick={handleEditListItemClick}
       />
       <Divider sx={{ mb: "20px" }} />
       <ExecutionLogs
