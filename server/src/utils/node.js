@@ -49,15 +49,18 @@ export const getInputData = async (workflowObj, nodeObj) => {
   const edges = workflowObj.edges;
   const currentNodeId = nodeObj.id;
   const sourceEdges = edges.filter((edge) => edge.target === currentNodeId);
-  const data = [];
+  const data = {};
+  let inputNum = 1;
   for (const edge of sourceEdges) {
     const sourceNode = getNode(workflowObj, edge.source);
-    if (dataIsEmpty(sourceNode.data.output)) {
+    if (dataIsEmpty(sourceNode.data.output.data)) {
       const message = `No input data from previous node: ${sourceNode.data.label} `;
       await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
     } else {
-      data.push(JSON.parse(JSON.stringify(sourceNode.data.output)));
+      const output = JSON.parse(JSON.stringify(sourceNode.data.output.data));
+      data[`input${inputNum}`] = output;
+      inputNum++;
     }
   }
-  return data;
+  return { data: data };
 };

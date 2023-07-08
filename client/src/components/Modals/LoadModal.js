@@ -62,6 +62,11 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             host: host,
             port: port,
             dbName: dbName,
+            userNamePD: userNamePD,
+            passwordPD: passwordPD,
+            hostPD: hostPD,
+            portPD: portPD,
+            dbNamePD: dbNamePD,
             sqlCode: code,
           };
           handleSubmit(e, newData);
@@ -221,7 +226,7 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             type="submit"
             disabled={active ? true : false}
           >
-            Save
+            Save and Execute
           </Button>
         </Stack>
       </form>

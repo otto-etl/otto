@@ -223,14 +223,12 @@ const WorkflowLayout = () => {
       }
       case "transform": {
         newNode.data.jscode =
-          "for(const prop in data.message) { \
-		  if (!data.message.breed) { \
-			  data.message.breed=[{breed:prop, num:data.message[prop].length}] \
- 			  } else { \
-				  data.message.breed.push({breed:prop, num:data.message[prop].length}) \
-				  }\
-				  }\
-			data = data.message.breed;";
+          "let array1 = []; \
+          let data1 = data.input1.message \
+          for(const prop in data1) { \
+              array1.push({breed:prop, num:data1[prop].length}) \
+          } \
+          data = array1";
         break;
       }
       case "load": {
