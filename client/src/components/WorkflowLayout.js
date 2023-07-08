@@ -189,18 +189,17 @@ const WorkflowLayout = () => {
     let executionResult = await saveAndExecuteNode(payload);
     let currentNode = newNodesArray.find((node) => node.id === currentId);
     let nextNode = newNodesArray.find((node) => node.data.prev === currentId);
-	if (executionResult.data && executionResult.data.error) {
-	  currentNode.data = executionResult.data;
-	  if (nextNode) {
-	    nextNode.data.input = null;
-	  }
-	}
-	else {
+    if (executionResult.data && executionResult.data.error) {
+      currentNode.data = executionResult.data;
+      if (nextNode) {
+        nextNode.data.input = null;
+      }
+    } else {
       currentNode.data.output = executionResult;
       if (nextNode) {
         nextNode.data.input = executionResult;
       }
-	}
+    }
   };
 
   const onCreateNode = async (nodeType) => {
@@ -241,15 +240,13 @@ const WorkflowLayout = () => {
         break;
       }
       case "transform": {
-        newNode.data.jscode =
-          "for(const prop in data.message) { \
-		  if (!data.message.breed) { \
-			  data.message.breed=[{breed:prop, num:data.message[prop].length}] \
- 			  } else { \
-				  data.message.breed.push({breed:prop, num:data.message[prop].length}) \
-				  }\
-				  }\
-			data = data.message.breed;";
+        newNode.data.jsCode =
+          "let array1 = []; \
+          let data1 = data.input1.message \
+          for(const prop in data1) { \
+              array1.push({breed:prop, num:data1[prop].length}) \
+          } \
+          data = array1";
         break;
       }
       case "load": {
@@ -282,7 +279,7 @@ const WorkflowLayout = () => {
 
   const onNodeClick = useCallback((event, object) => {
     saveWorkflow(wfID, { nodes, edges });
-    openModal({ ...object});
+    openModal({ ...object });
   });
 
   const handleExecuteAll = async (e) => {
@@ -333,7 +330,9 @@ const WorkflowLayout = () => {
         `host:${loadNode.data.host} db:${loadNode.data.dbName} user:${loadNode.data.userName}`
       );
     } else if (loadNode && active) {
-      setCurrentDB("production db fields to be created");
+      setCurrentDB(
+        `host:${loadNode.data.hostPD} db:${loadNode.data.dbNamePD} user:${loadNode.data.userNamePD}`
+      );
     } else {
       setCurrentDB("No load node yet");
     }
@@ -394,8 +393,8 @@ const WorkflowLayout = () => {
             />
           ) : null}
         </ReactFlow>
+        {/* <p>{currentDB}</p> */}
       </div>
-      {/* <p>{currentDB}</p> */}
     </>
   );
 };

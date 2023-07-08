@@ -22,18 +22,21 @@ export const runAPI = async (workflowObj, nodeObj) => {
     const status = e.toJSON().status;
     const code = e.toJSON().code;
     if ((!status && code !== "ENOTFOUND") || status >= 500) {
-	  let errorDesc;
-	  switch(code) { // TODO: Determine errno codes that users are most likely to receive
-	    case "ENOTFOUND":
-	      errorDesc = "DNS lookup failed."
-		  break;
-		case "ECONNREFUSED":
-	   	  errorDesc = "No connection could be made because the target machine actively refused it."
-		  break;
-		default:
-		  errorDesc = "See error code details."
-		  break;
-	  }
+      let errorDesc;
+      switch (
+        code // TODO: Determine errno codes that users are most likely to receive
+      ) {
+        case "ENOTFOUND":
+          errorDesc = "DNS lookup failed.";
+          break;
+        case "ECONNREFUSED":
+          errorDesc =
+            "No connection could be made because the target machine actively refused it.";
+          break;
+        default:
+          errorDesc = "See error code details.";
+          break;
+      }
       const message = `API call failed: ${errorDesc}\n\n(Error code: ${e.message})`;
       await throwEXErrorAndUpdateDB(workflowObj, nodeObj, message);
     } else {
