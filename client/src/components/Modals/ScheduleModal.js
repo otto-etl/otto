@@ -16,7 +16,9 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
     nodeObj.data.intervalInMinutes / 24 / 60
   );
 
-  console.log(name);
+  const formsPopulated = () => {
+    return name && dateAndTime && interval;
+  }
 
   return (
     <Box>
@@ -72,7 +74,7 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             variant="contained"
             color="primary"
             type="submit"
-            disabled={active ? true : false}
+            disabled={active || !formsPopulated() ? true : false}
           >
             Save
           </Button>
