@@ -89,8 +89,10 @@ const Workflow = () => {
   }, [setNodes, setEdges]);
 
   const handleExecutionListItemClick = (executionNodes, executionEdges) => {
-    setEditEdges(edges);
-    setEditNodes(nodes);
+    if (editNodes.length === 0 && editEdges.length === 0) {
+      setEditNodes(nodes);
+      setEditEdges(edges);
+    }
     setNodes(executionNodes);
     setEdges(executionEdges);
   };
@@ -98,6 +100,8 @@ const Workflow = () => {
   const handleEditWorkflowListItemClick = () => {
     setNodes(editNodes);
     setEdges(editEdges);
+    setEditNodes([]);
+    setEditEdges([]);
   };
 
   const openModal = (nodeData) => {
