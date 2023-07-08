@@ -23,8 +23,32 @@ const connectPSQL = ({ userName, host, port, password, dbName }) => {
 };
 
 export const runPSQLCode = async (workflowObj, nodeObj) => {
-  let { userName, password, dbName, sqlCode, host, port } = nodeObj.data;
-  const db = connectPSQL({ userName, password, dbName, host, port });
+  let {
+    userName,
+    password,
+    dbName,
+    host,
+    port,
+    userNamePD,
+    passwordPD,
+    dbNamePD,
+    hostPD,
+    portPD,
+    sqlCode,
+  } = nodeObj.data;
+
+  const cnCredentials = workflowObj.active
+    ? {
+        userName: userNamePD,
+        password: passwordPD,
+        dbName: dbNamePD,
+        host: hostPD,
+        port: portPD,
+      }
+    : { userName, password, dbName, host, port };
+
+  console.log(cnCredentials);
+  const db = connectPSQL(cnCredentials);
 
   //test if connection to db can be made with provided credentials
   await testConnection(db, workflowObj, nodeObj);
