@@ -23,16 +23,41 @@ const connectPSQL = ({ userName, host, port, password, dbName }) => {
 };
 
 export const runPSQLCode = async (workflowObj, nodeObj) => {
-  let { userName, password, dbName, sqlCode, host, port } = nodeObj.data;
-  const db = connectPSQL({ userName, password, dbName, host, port });
+  let {
+    userName,
+    password,
+    dbName,
+    host,
+    port,
+    userNamePD,
+    passwordPD,
+    dbNamePD,
+    hostPD,
+    portPD,
+    sqlCode,
+  } = nodeObj.data;
+
+  const cnCredentials = workflowObj.active
+    ? {
+        userName: userNamePD,
+        password: passwordPD,
+        dbName: dbNamePD,
+        host: hostPD,
+        port: portPD,
+      }
+    : { userName, password, dbName, host, port };
+
+  console.log(cnCredentials);
+  const db = connectPSQL(cnCredentials);
 
   //test if connection to db can be made with provided credentials
   await testConnection(db, workflowObj, nodeObj);
 
   //get input data from previous nodes, currently assuming one input
   let inputData = await getInputData(workflowObj, nodeObj);
-  //assuming only 1 input right now
-  inputData = inputData[0].data;
+
+  //assuming load node only have 1 source of input
+  inputData = inputData.data.input1;
 
   const insertFields = getInputFields(sqlCode);
   //add returning statement if the code doesn't have one

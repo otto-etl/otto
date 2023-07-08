@@ -7,7 +7,7 @@ export const runJSCode = async (workflowObj, nodeObj) => {
   const customCode = nodeObj.data.jsCode;
   let inputData = await getInputData(workflowObj, nodeObj);
   //need to be modified when handling multiple inputs
-  inputData = inputData[0];
+  inputData;
 
   try {
     vm.createContext(inputData);
@@ -17,8 +17,8 @@ export const runJSCode = async (workflowObj, nodeObj) => {
     await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
   }
 
-  nodeObj.data.output = inputData;
+  nodeObj.data.output = { data: inputData.data };
   nodeObj.data.error = null;
   await updateNodes(workflowObj);
-  return inputData;
+  return { data: inputData.data };
 };
