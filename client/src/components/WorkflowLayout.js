@@ -17,9 +17,9 @@ import ExtractNode from "./ExtractNode";
 import TransformNode from "./TransformNode";
 import LoadNode from "./LoadNode";
 import NodeCreationMenu from "./NodeCreationMenu";
-import WorkflowNavbar from "./WorkflowNavbar";
-import GlobalNavbar from "./GlobalNavbar";
-import WorkflowSidebar from "./WorkflowSidebar";
+import WorkflowNavbar from "./Navigation/WorkflowNavbar";
+import GlobalNavbar from "./Navigation/GlobalNavbar";
+import Sidebar from "./Sidebar/Sidebar";
 import {
   isExtractNode,
   isScheduleNode,
@@ -34,16 +34,6 @@ import {
   toggleWorkflowStatus,
 } from "../services/api";
 import "../index.css";
-import {
-  AppBar,
-  Box,
-  Button,
-  Typography,
-  FormControlLabel,
-  FormGroup,
-  Switch,
-  Toolbar,
-} from "@mui/material";
 
 const connectionLineStyle = { stroke: "#fff" };
 const snapGrid = [20, 20];
@@ -60,6 +50,15 @@ const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 const WorkflowLayout = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]); // useNodesState, useEdgesState are React Flow-specific
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [editNodes, setEditNodes] = useNodesState([]); // useNodesState, useEdgesState are React Flow-specific
+  const [editEdges, setEditEdges] = useEdgesState([]);
+
+  // Create editNodes and editEdges
+  // When a execution list item is clicked
+  // Save the currentState of the edges and nodes to editsNodes and editEdges
+  // When "edit test workflow" is clicked
+  // Set nodes and edges state back to editNodes and editEdges
+  // Reset editNodes and editEdges
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalData, setModalData] = useState("");
   const [active, setActive] = useState(false);
@@ -72,6 +71,7 @@ const WorkflowLayout = () => {
   useEffect(() => {
     const getWorkflow = async () => {
       const response = await getWorkflowAPI(wfID);
+      // console.log("active:", response.active);
 
       setNodes(response.nodes);
       setEdges(response.edges);
@@ -81,6 +81,22 @@ const WorkflowLayout = () => {
     };
     getWorkflow();
   }, [setNodes, setEdges, wfID]);
+
+  const handleExecutionListItemClick = (executionNodes, executionEdges) => {
+    if (editNodes.length === 0 && editEdges.length === 0) {
+      setEditNodes(nodes);
+      setEditEdges(edges);
+    }
+    setNodes(executionNodes);
+    setEdges(executionEdges);
+  };
+
+  const handleEditWorkflowListItemClick = () => {
+    setNodes(editNodes);
+    setEdges(editEdges);
+    setEditNodes([]);
+    setEditEdges([]);
+  };
 
   const openModal = (nodeData) => {
     setModalIsOpen(true);
@@ -199,6 +215,8 @@ const WorkflowLayout = () => {
       },
     };
     addExtraNodeProperties(newNode);
+    // console.log(newNode);
+
     let newNodes = [...nodes, newNode];
     await saveWorkflow(1, { nodes: newNodes, edges });
     setNodes(newNodes);
@@ -306,7 +324,10 @@ const WorkflowLayout = () => {
   };
 
   const getCurrentDB = (nodes, active) => {
+    // console.log(nodes, active);
     const loadNode = nodes.find((node) => node.type === "load");
+    // console.log(loadNode);
+
     if (loadNode && !active) {
       setCurrentDB(
         `host:${loadNode.data.host} db:${loadNode.data.dbName} user:${loadNode.data.userName}`
@@ -335,7 +356,10 @@ const WorkflowLayout = () => {
         handleToggleActive={handleToggleActive}
       />
       <div className="grid">
-        <WorkflowSidebar />
+        <Sidebar
+          handleExecutionListItemClick={handleExecutionListItemClick}
+          handleEditWorkflowListItemClick={handleEditWorkflowListItemClick}
+        />
         <ReactFlow
           style={{ flex: 1 }}
           nodes={nodes}
