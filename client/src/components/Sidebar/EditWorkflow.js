@@ -1,6 +1,6 @@
 import React from "react";
 import { List, ListItemButton, ListItemText } from "@mui/material";
-import { Network, Workflow } from "lucide-react";
+import { Workflow } from "lucide-react";
 
 const EditWorkflow = ({ selectedCurrentIndex, handleCurrentListItemClick }) => {
   return (

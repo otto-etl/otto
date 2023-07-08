@@ -10,7 +10,7 @@ import {
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { CheckCircle2, AlertTriangle } from "lucide-react";
 
-const SidebarExecutionLogs = ({
+const ExecutionLogs = ({
   testExecutions,
   activeExecutions,
   selectedTestIndex,
@@ -28,6 +28,7 @@ const SidebarExecutionLogs = ({
     return testExecutions.map((execution, index) => {
       return (
         <ListItemButton
+          key={execution.id}
           selected={selectedTestIndex === index}
           onClick={(event) => handleTestListItemClick(event, index)}
           sx={{ gap: "12px" }}
@@ -47,6 +48,7 @@ const SidebarExecutionLogs = ({
     return activeExecutions.map((execution, index) => {
       return (
         <ListItemButton
+          key={execution.id}
           selected={selectedActiveIndex === index}
           onClick={(event) => handleActiveListItemClick(event, index)}
           sx={{ gap: "12px" }}
@@ -124,4 +126,4 @@ const SidebarExecutionLogs = ({
   );
 };
 
-export default SidebarExecutionLogs;
+export default ExecutionLogs;
