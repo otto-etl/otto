@@ -1,15 +1,7 @@
-export const updateInputs = (nodes) => {
-  nodes.forEach((node) => {
-    if (node.data.prev) {
-      const prev = nodes.find((othNode) => othNode.id === node.data.prev);
-      node.data.input = prev.data.output;
-    }
-  });
-};
 
-export const isTriggerNode = (nodeId, nodes) => {
+export const isScheduleNode = (nodeId, nodes) => {
   const nodeToCheck = nodes.find((node) => node.id === nodeId);
-  return nodeToCheck && nodeToCheck.type === "trigger";
+  return nodeToCheck && nodeToCheck.type === "schedule";
 };
 
 export const isExtractNode = (nodeId, nodes) => {

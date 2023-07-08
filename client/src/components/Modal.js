@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
+
 import JsonView from "react18-json-view";
 import "react18-json-view/src/style.css";
 import ScheduleModal from "./Modals/ScheduleModal";
@@ -17,11 +18,12 @@ const boxStyle = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 1400,
-  height: 800,
+  height: "80%",
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
   p: 4,
+  overflowY: "scroll"
 };
 
 function BasicModal({
@@ -37,7 +39,6 @@ function BasicModal({
   const handleSaveExecuteNode = (event, formValues) => {
     event.preventDefault();
     handleSaveNode(formValues);
-    //handleExecuteNode();
     handleClose();
   };
 
@@ -45,8 +46,6 @@ function BasicModal({
     console.log(formValues);
     onSaveExecute(nodeObj.id, formValues);
   };
-
-  console.log("nodeObj.data insde basicModal", nodeObj.data);
 
   const handleDelete = (event) => {
     event.preventDefault();
@@ -62,17 +61,18 @@ function BasicModal({
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
+		sx={{overflow: "scroll"}}
       >
         <Box sx={boxStyle}>
           <Stack direction="row">
             <Container maxWidth="sm">
               <p>Input</p>
-              <Box sx={{ bgcolor: "#cfe8fc" }}>
+              <Box sx={{ bgcolor: "#cfe8fc"}}>
                 {nodeObj.data ? <JsonView src={nodeObj.data.input} /> : null}
               </Box>
             </Container>
             <Container maxWidth="sm">
-              {nodeObj.type === "trigger" ? (
+              {nodeObj.type === "schedule" ? (
                 <ScheduleModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
@@ -108,7 +108,6 @@ function BasicModal({
             <Container maxWidth="sm">
               <p>Output</p>
               <Box sx={{ bgcolor: "#cfe8fc" }}>
-                {console.log(nodeObj.data)}
                 {nodeObj.data ? <JsonView src={nodeObj.data.output} /> : null}
               </Box>
             </Container>

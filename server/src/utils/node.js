@@ -1,8 +1,8 @@
 import { dataIsEmpty } from "./helper.js";
 import { throwNDErrorAndUpdateDB } from "./errors.js";
-//takes a workflow object and return the trigger node
-export const getTriggerNode = (workflowObj) => {
-  return workflowObj.nodes.find((node) => node.type === "trigger");
+//takes a workflow object and return the schedule node
+export const getScheduleNode = (workflowObj) => {
+  return workflowObj.nodes.find((node) => node.type === "schedule");
 };
 
 //takes a workflow object and node id and return the node
@@ -20,7 +20,7 @@ export const getAllNodesInOrder = (workflowObj) => {
   //set extractNode to be the sourceNode
   let sourceNodeObj = extractNode;
   while (true) {
-    // break out when we have 1 node less than the total nodes because we are manually starting so trigger node is excluded
+    // break out when we have 1 node less than the total nodes because we are manually starting so schedule node is excluded
     if (executionOrder.length === workflowObj.nodes.length - 1) {
       break;
     }

@@ -1,5 +1,5 @@
 import cron from "node-cron";
-import { getTriggerNode } from "./node.js";
+import { getScheduleNode } from "./node.js";
 import {
   activateWorkflow,
   deactivateWorkflow,
@@ -30,22 +30,22 @@ const pendingWorkflows = {};
 export const startCron = async (workflowObj) => {
   const workflowID = workflowObj.id;
   const currentTimeInMilsec = Date.now();
-  const triggerNodeObj = getTriggerNode(workflowObj);
+  const scheduleNodeObj = getScheduleNode(workflowObj);
 
-  if (!triggerNodeObj) {
-    const message = "No trigger node in the workflow, unable to start cron";
+  if (!scheduleNodeObj) {
+    const message = "No schedule node in the workflow, unable to start cron";
     await throwWFErrorAndUpdateDB(workflowObj, message);
   }
 
-  const intervalInMinutes = triggerNodeObj.data.intervalInMinutes;
+  const intervalInMinutes = scheduleNodeObj.data.intervalInMinutes;
   let startTime;
 
   //if workflow is already active, use start time in workflow start_time field ind the db
   if (workflowObj.active) {
     startTime = workflowObj.start_time;
   } else {
-    //if workflow is not active, use start time from the trigger node
-    startTime = triggerNodeObj.data.startTime;
+    //if workflow is not active, use start time from the schedule node
+    startTime = scheduleNodeObj.data.startTime;
     await activateWorkflow(workflowID);
   }
 

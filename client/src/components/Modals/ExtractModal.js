@@ -1,5 +1,8 @@
 import React, { useState } from "react";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
@@ -70,6 +73,7 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
   const [url, setURL] = useState(nodeObj.data.url);
   const [actionType, setActionType] = useState(nodeObj.data.httpVerb);
   const [json, setJSON] = useState(nodeObj.data.json);
+  const [error, setError] = useState(nodeObj.data.error);
 
   return (
     <Box>
@@ -85,10 +89,10 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             httpVerb: actionType,
             output: "",
           };
-          console.log(newData);
           handleSubmit(e, newData);
         }}
       >
+		<p>Extract Details</p>
         <TextField
           disabled={active ? true : false}
           id="outlined-basic"
@@ -96,8 +100,12 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <br></br>
-        <br></br>
+		{error ? 
+	  	  <Alert sx={{margin:"10px 0 10px 0",border:"2px solid #B99",whiteSpace: 'pre-line'}}severity="error">
+		    <AlertTitle sx={{fontWeight:"700", color:"#200"}}>{error.errName === "ExternalError" ? "External Error:" : "Internal Error:"}</AlertTitle>
+		    <p>{error.message}</p>
+		  </Alert>
+		: null}
         <FormControl>
           <InputLabel id="action-type">Action Type</InputLabel>
           <Select
@@ -121,9 +129,6 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           value={url}
           onChange={(e) => setURL(e.target.value)}
         />
-        <Button onClick={handleDelete} disabled={active ? true : false}>
-          Delete
-        </Button>
         <br></br>
         <br></br>
         <FormControl>
@@ -140,14 +145,19 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
         </FormControl>
         <br></br>
         <br></br>
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          disabled={active ? true : false}
-        >
-          Save and Execute
-        </Button>
+		<Stack direction="row">
+          <Button variant="contained" color="primary" onClick={handleDelete} disabled={active ? true : false}>
+            Delete
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            disabled={active ? true : false}
+          >
+            Save and Execute
+          </Button>
+		</Stack>
       </form>
     </Box>
   );

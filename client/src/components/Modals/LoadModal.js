@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import CodeMirror from "@uiw/react-codemirror";
 import { sql, SQLConfig, StandardSQL } from "@codemirror/lang-sql";
@@ -13,6 +16,7 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
   const [host, setHost] = useState(nodeObj.data.host);
   const [port, setPort] = useState(nodeObj.data.port);
   const [dbName, setDBName] = useState(nodeObj.data.dbName);
+  const [error, setError] = useState(nodeObj.data.error);
 
   const handleChange = React.useCallback((value, viewupdate) => {
     setCode(value);
@@ -40,10 +44,10 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             dbName: dbName,
             sqlCode: code,
           };
-          console.log(newData);
           handleSubmit(e, newData);
         }}
       >
+		<p>Load Details</p>
         <TextField
           disabled={active ? true : false}
           id="outlined-basic"
@@ -51,8 +55,12 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           value={name}
           onChange={(e) => setName(e.target.value)} // variant="outlined"
         />
-        <br></br>
-        <br></br>
+		{error ? 
+	  	  <Alert sx={{margin:"10px 0 10px 0",border:"2px solid #B99",whiteSpace: 'pre-line'}}severity="error">
+		    <AlertTitle sx={{fontWeight:"700", color:"#200"}}>{error.errName === "ExternalError" ? "External Error:" : "Internal Error:"}</AlertTitle>
+		    <p>{error.message}</p>
+		  </Alert>
+		: null}
         <TextField
           disabled={active ? true : false}
           id="outlined-basic"
@@ -105,18 +113,21 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           extensions={[sql(config)]}
           onChange={handleChange}
         />
-            
-		<Button onClick={handleDelete} disabled={active ? true : false}>Delete</Button>
         <br></br>
         <br></br>
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          disabled={active ? true : false}
-        >
-          Save and Execute
-        </Button>
+		<Stack direction="row">
+          <Button variant="contained" color="primary" onClick={handleDelete} disabled={active ? true : false}>
+            Delete
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            disabled={active ? true : false}
+          >
+            Save
+          </Button>
+		</Stack>
       </form>
     </Box>
   );
