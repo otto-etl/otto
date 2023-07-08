@@ -222,7 +222,7 @@ const WorkflowLayout = () => {
         break;
       }
       case "transform": {
-        newNode.data.jscode =
+        newNode.data.jsCode =
           "let array1 = []; \
           let data1 = data.input1.message \
           for(const prop in data1) { \
