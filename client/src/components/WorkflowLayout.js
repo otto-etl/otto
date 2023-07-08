@@ -36,16 +36,6 @@ import {
   toggleWorkflowStatus,
 } from "../services/api";
 import "../index.css";
-import {
-  AppBar,
-  Box,
-  Button,
-  Typography,
-  FormControlLabel,
-  FormGroup,
-  Switch,
-  Toolbar,
-} from "@mui/material";
 
 const connectionLineStyle = { stroke: "#fff" };
 const snapGrid = [20, 20];
