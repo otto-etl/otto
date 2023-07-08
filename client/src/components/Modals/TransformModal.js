@@ -19,6 +19,10 @@ const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
   const [error, setError] = useState(nodeObj.data.error);
   const [tab, setTab] = useState(0);
   
+  const formsPopulated = () => {
+    return name && code;
+  }  
+  
   const handleChange = React.useCallback((value, viewupdate) => {
     setCode(value);
   }, []);
@@ -105,7 +109,7 @@ const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             variant="contained"
             color="primary"
             type="submit"
-            disabled={active ? true : false}
+            disabled={active || !formsPopulated() ? true : false}
           >
             Save and Execute
           </Button>

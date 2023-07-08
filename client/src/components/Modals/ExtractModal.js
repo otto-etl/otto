@@ -75,6 +75,10 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
   const [json, setJSON] = useState(nodeObj.data.json);
   const [error, setError] = useState(nodeObj.data.error);
 
+  const formsPopulated = () => {
+    return name && url && actionType; // do we need json populated too?
+  }  
+
   return (
     <Box>
       <form
@@ -153,7 +157,7 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             variant="contained"
             color="primary"
             type="submit"
-            disabled={active ? true : false}
+            disabled={active || !formsPopulated() ? true : false}
           >
             Save and Execute
           </Button>

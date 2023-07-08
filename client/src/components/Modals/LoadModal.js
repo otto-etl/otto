@@ -27,6 +27,10 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
     upperCaseKeywords: true,
   };
 
+  const formsPopulated = () => {
+    return name && code && userName && password && host && port && dbName; 
+  }  
+
   return (
     <Box>
       <form
@@ -123,7 +127,7 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             variant="contained"
             color="primary"
             type="submit"
-            disabled={active ? true : false}
+            disabled={active || !formsPopulated() ? true : false}
           >
             Save
           </Button>
