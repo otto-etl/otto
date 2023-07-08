@@ -23,7 +23,7 @@ export const runAPI = async (workflowObj, nodeObj) => {
     const code = e.toJSON().code;
     if ((!status && code !== "ENOTFOUND") || status >= 500) {
 	  let errorDesc;
-	  switch(code) {
+	  switch(code) { // TODO: Determine errno codes that users are most likely to receive
 	    case "ENOTFOUND":
 	      errorDesc = "DNS lookup failed."
 		  break;

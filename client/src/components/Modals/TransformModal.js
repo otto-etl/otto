@@ -4,6 +4,7 @@ import AlertTitle from "@mui/material/AlertTitle";
 import CustomTabPanel from "../CustomTabPanel";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -96,19 +97,19 @@ const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             onChange={handleChange}
           />
         </CustomTabPanel>
-        <br></br>
-        <br></br>
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          disabled={active ? true : false}
-        >
-          Save and Execute
-        </Button>
-        <Button onClick={handleDelete} disabled={active ? true : false}>
-          Delete Node
-        </Button>
+		<Stack direction="row">
+          <Button variant="contained" color="primary" onClick={handleDelete} disabled={active ? true : false}>
+            Delete
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            disabled={active ? true : false}
+          >
+            Save and Execute
+          </Button>
+		</Stack>
       </form>
     </Box>
   );

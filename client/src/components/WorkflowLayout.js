@@ -12,19 +12,17 @@ import { useParams } from "react-router-dom";
 import "reactflow/dist/style.css";
 
 import Modal from "./Modal";
-import TriggerNode from "./TriggerNode";
+import ScheduleNode from "./ScheduleNode";
 import ExtractNode from "./ExtractNode";
 import TransformNode from "./TransformNode";
 import LoadNode from "./LoadNode";
-import NodeModal from "./NodeModal";
 import NodeCreationMenu from "./NodeCreationMenu";
 import WorkflowNavbar from "./WorkflowNavbar";
 import GlobalNavbar from "./GlobalNavbar";
 import WorkflowSidebar from "./WorkflowSidebar";
 import {
-  updateInputs,
   isExtractNode,
-  isTriggerNode,
+  isScheduleNode,
   isTransformNode,
   isLoadNode,
 } from "../utils/utils";
@@ -51,7 +49,7 @@ const connectionLineStyle = { stroke: "#fff" };
 const snapGrid = [20, 20];
 // See comment below about React Flow nodeTypes warning
 const nodeTypes = {
-  trigger: TriggerNode,
+  schedule: ScheduleNode,
   extract: ExtractNode,
   transform: TransformNode,
   load: LoadNode,
@@ -74,13 +72,7 @@ const WorkflowLayout = () => {
   useEffect(() => {
     const getWorkflow = async () => {
       const response = await getWorkflowAPI(wfID);
-      console.log("active:", response.active);
 
-      if (response) {
-        updateInputs(response.nodes);
-      }
-
-      // console.log(Array.isArray(response.nodes));
       setNodes(response.nodes);
       setEdges(response.edges);
       setActive(response.active);
@@ -88,7 +80,7 @@ const WorkflowLayout = () => {
       getCurrentDB(response.nodes, response.active);
     };
     getWorkflow();
-  }, [setNodes, setEdges]);
+  }, [setNodes, setEdges, wfID]);
 
   const openModal = (nodeData) => {
     setModalIsOpen(true);
@@ -115,15 +107,14 @@ const WorkflowLayout = () => {
         return newTargetNode;
       });
       setNodes(newNodes);
-      let newEdge = { ...params, animated: true, style: { stroke: "#000033" } };
       return setEdges((eds) =>
         addEdge(
-          { ...params, animated: true, style: { stroke: "#000033" } },
+          { ...params, animated: false, style: { stroke: "#000033" } },
           eds
         )
       );
     },
-    [nodes, edges]
+    [nodes, setNodes, edges, setEdges]
   );
 
   const copyAndUpdateTargetNode = (targetNode, sourceId) => {
@@ -135,7 +126,7 @@ const WorkflowLayout = () => {
 
   const handleIsValidConnection = (edge) => {
     return (
-      (isTriggerNode(edge.source, nodes) &&
+      (isScheduleNode(edge.source, nodes) &&
         isExtractNode(edge.target, nodes)) ||
       (isExtractNode(edge.source, nodes) &&
         isTransformNode(edge.target, nodes)) ||
@@ -218,7 +209,7 @@ const WorkflowLayout = () => {
     const TOTAL_MINUTES_IN_A_DAY = 1440;
 
     switch (newNode.type) {
-      case "trigger": {
+      case "schedule": {
         var currentDate = new Date();
         newNode.data.startTime = currentDate.setDate(currentDate.getDate() + 1);
         newNode.data.startTime = currentDate.setHours(0, 0, 0, 0);
@@ -272,27 +263,8 @@ const WorkflowLayout = () => {
   };
 
   const onNodeClick = useCallback((event, object) => {
-    let contents;
-    // switch (object.type) {
-    //   case "trigger":
-    //     contents = "Trigger modal goes here";
-    //     break;
-    //   case "extract":
-    //     contents = "Extract modal goes here";
-    //     break;
-    //   case "transform":
-    //     contents = "Transform IDE goes here";
-    //     break;
-    //   case "load":
-    //     contents = "Load modal goes here";
-    //     break;
-    //   default:
-    //     break;
-    // }
-
     saveWorkflow(wfID, { nodes, edges });
-
-    openModal({ ...object, contents: contents });
+    openModal({ ...object});
   });
 
   const handleExecuteAll = async (e) => {
@@ -303,7 +275,6 @@ const WorkflowLayout = () => {
       nodes,
       edges,
     });
-    updateInputs(res.nodes);
     setNodes(res.nodes);
     setEdges(res.edges);
     handleMessage(`Execution finished`, 2000);
@@ -313,18 +284,18 @@ const WorkflowLayout = () => {
     setActive(e.target.checked);
     await toggleWorkflowStatus(wfID, e.target.checked);
     if (e.target.checked) {
-      handleMessage(`Workflow ${wfName} is now activated!`, 2000);
+      handleMessage(`Workflow ${wfName} is now active!`, 2000);
     } else {
-      handleMessage(`Workflow ${wfName} is now deactivated!`, 2000);
+      handleMessage(`Workflow ${wfName} is now inactive!`, 2000);
     }
     getCurrentDB(nodes, e.target.checked);
   };
 
   const handleSaveWorkflow = async (e) => {
     e.preventDefault();
-    handleMessage("Saving", 1000);
+    handleMessage("Saving...", 1000);
     await saveWorkflow(wfID, { nodes, edges });
-    handleMessage("Saved", 2000);
+    handleMessage("Saved!", 2000);
   };
 
   const handleMessage = (message, laps) => {

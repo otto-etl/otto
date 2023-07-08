@@ -5,7 +5,7 @@ const workflowObject = {
   nodes: [
     {
       id: "1",
-      type: "trigger",
+      type: "schedule",
       data: {
         label: "Schedule",
         startTime: "26 Jun 2023 7:16:00 CST",
@@ -120,7 +120,7 @@ router.post("/execute/workflow/:id", (req, res) => {
     nodes: [
       {
         id: "1",
-        type: "trigger",
+        type: "schedule",
         data: {
           label: "Schedule",
           startTime: "26 Jun 2023 7:16:00 CST",

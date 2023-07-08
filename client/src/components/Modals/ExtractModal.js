@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
@@ -128,9 +129,6 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           value={url}
           onChange={(e) => setURL(e.target.value)}
         />
-        <Button onClick={handleDelete} disabled={active ? true : false}>
-          Delete
-        </Button>
         <br></br>
         <br></br>
         <FormControl>
@@ -147,14 +145,19 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
         </FormControl>
         <br></br>
         <br></br>
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          disabled={active ? true : false}
-        >
-          Save and Execute
-        </Button>
+		<Stack direction="row">
+          <Button variant="contained" color="primary" onClick={handleDelete} disabled={active ? true : false}>
+            Delete
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            disabled={active ? true : false}
+          >
+            Save and Execute
+          </Button>
+		</Stack>
       </form>
     </Box>
   );

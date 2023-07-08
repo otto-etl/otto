@@ -3,6 +3,7 @@ import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import CodeMirror from "@uiw/react-codemirror";
 import { sql, SQLConfig, StandardSQL } from "@codemirror/lang-sql";
@@ -112,18 +113,21 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           extensions={[sql(config)]}
           onChange={handleChange}
         />
-            
-		<Button onClick={handleDelete} disabled={active ? true : false}>Delete</Button>
         <br></br>
         <br></br>
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          disabled={active ? true : false}
-        >
-          Save and Execute
-        </Button>
+		<Stack direction="row">
+          <Button variant="contained" color="primary" onClick={handleDelete} disabled={active ? true : false}>
+            Delete
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            disabled={active ? true : false}
+          >
+            Save
+          </Button>
+		</Stack>
       </form>
     </Box>
   );

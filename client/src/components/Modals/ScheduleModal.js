@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import dayjs from "dayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
@@ -63,7 +64,10 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           value={interval}
           onChange={(e) => setInterval(e.target.value)} // variant="outlined"
         />
-        <Box>
+		<Stack direction="row">
+          <Button variant="contained" color="primary" onClick={handleDelete} disabled={active ? true : false}>
+            Delete
+          </Button>
           <Button
             variant="contained"
             color="primary"
@@ -72,11 +76,8 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           >
             Save
           </Button>
-        </Box>
+		</Stack>
       </form>
-      <Button onClick={handleDelete} disabled={active ? true : false}>
-        Delete
-      </Button>
     </Box>
   );
 };

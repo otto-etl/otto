@@ -72,7 +72,7 @@ function BasicModal({
               </Box>
             </Container>
             <Container maxWidth="sm">
-              {nodeObj.type === "trigger" ? (
+              {nodeObj.type === "schedule" ? (
                 <ScheduleModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}

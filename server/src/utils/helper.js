@@ -11,7 +11,7 @@ export const dataIsEmpty = (data) => {
 };
 
 export const validNodeTypes = (nodes) => {
-  const validNodeTypes = ["trigger", "transform", "extract", "load"];
+  const validNodeTypes = ["schedule", "transform", "extract", "load"];
   for (const node of nodes) {
     if (!validNodeTypes.includes(node.type)) {
       return false;

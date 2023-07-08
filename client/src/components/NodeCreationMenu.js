@@ -54,7 +54,7 @@ const NodeCreationMenu = (props) => {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem data-value="trigger" onClick={handleCreateNode}>Schedule</MenuItem>
+        <MenuItem data-value="schedule" onClick={handleCreateNode}>Schedule</MenuItem>
         <MenuItem data-value="extract" onClick={handleCreateNode}>Extract</MenuItem>
         <MenuItem data-value="transform" onClick={handleCreateNode}>Transform</MenuItem>
         <MenuItem data-value="load" onClick={handleCreateNode}>Load</MenuItem>		

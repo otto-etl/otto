@@ -1,11 +1,11 @@
-import { getTriggerNode } from "./node.js";
+import { getScheduleNode } from "./node.js";
 import { isValidArray } from "./helper.js";
 import { throwWFErrorAndUpdateDB } from "./errors.js";
 
 export const workflowInputvalidation = async (workflowObj) => {
   await nodesNonEmptyCheck(workflowObj);
   await edgesNonEmptyCheck(workflowObj);
-  await triggerNodeCheck(workflowObj);
+  await scheduleNodeCheck(workflowObj);
   await workflowActiveCheck(workflowObj);
 };
 
@@ -24,10 +24,10 @@ const edgesNonEmptyCheck = async (workflowObj) => {
 };
 
 //this is not necessary once algo is changed
-const triggerNodeCheck = async (workflowObj) => {
-  const triggerNodeObj = getTriggerNode(workflowObj);
-  if (!triggerNodeObj) {
-    const message = "Workflow does not have a trigger node";
+const scheduleNodeCheck = async (workflowObj) => {
+  const scheduleNodeObj = getScheduleNode(workflowObj);
+  if (!scheduleNodeObj) {
+    const message = "Workflow does not have a schedule node";
     await throwWFErrorAndUpdateDB(workflowObj, message);
   }
 };
