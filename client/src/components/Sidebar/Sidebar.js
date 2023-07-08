@@ -2,8 +2,6 @@ import React from "react";
 import SidebarExecutionLogs from "./ExecutionLogs";
 import EditWorkflow from "./EditWorkflow";
 import { Box, Divider } from "@mui/material";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
-// import { CheckCircle2 } from "lucide-react";
 
 const WorkflowSidebar = () => {
   const [selectedCurrentIndex, setSelectedCurrentIndex] = React.useState(0);
@@ -11,13 +9,13 @@ const WorkflowSidebar = () => {
   const [selectedActiveIndex, setSelectedActiveIndex] = React.useState(null);
 
   const testExecutions = [
-    { primary: "23 Jun at 12:19:14" },
-    { primary: "23 Jun at 12:19:01" },
-    { primary: "22 Jun at 2:39:12" },
-    { primary: "15 Jun at 09:11:48" },
+    { primary: "23 Jun at 12:19:14", success: true },
+    { primary: "23 Jun at 12:19:01", success: true },
+    { primary: "22 Jun at 2:39:12", success: false },
+    { primary: "15 Jun at 09:11:48", success: true },
   ];
 
-  const activeExecutions = [{ primary: "24 Jun at 00:00:00" }];
+  const activeExecutions = [{ primary: "24 Jun at 00:00:00", success: false }];
 
   const handleCurrentListItemClick = (event, index) => {
     setSelectedCurrentIndex(index);
@@ -49,12 +47,6 @@ const WorkflowSidebar = () => {
         padding: "24px",
       }}
     >
-      {/* <CheckCircle2
-        size={32}
-        color="#cf1717"
-        strokeWidth={2.25}
-        absoluteStrokeWidth
-      /> */}
       <EditWorkflow
         selectedCurrentIndex={selectedCurrentIndex}
         handleCurrentListItemClick={handleCurrentListItemClick}

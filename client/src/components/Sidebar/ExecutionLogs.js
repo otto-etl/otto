@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { CheckCircle2, AlertTriangle } from "lucide-react";
 
 const SidebarExecutionLogs = ({
   testExecutions,
@@ -29,7 +30,13 @@ const SidebarExecutionLogs = ({
         <ListItemButton
           selected={selectedTestIndex === index}
           onClick={(event) => handleTestListItemClick(event, index)}
+          sx={{ gap: "12px" }}
         >
+          {execution.success ? (
+            <CheckCircle2 size={20} strokeWidth={2} />
+          ) : (
+            <AlertTriangle size={20} strokeWidth={2} />
+          )}
           <ListItemText primary={execution.primary} />
         </ListItemButton>
       );
@@ -42,7 +49,13 @@ const SidebarExecutionLogs = ({
         <ListItemButton
           selected={selectedActiveIndex === index}
           onClick={(event) => handleActiveListItemClick(event, index)}
+          sx={{ gap: "12px" }}
         >
+          {execution.success ? (
+            <CheckCircle2 size={20} strokeWidth={2} />
+          ) : (
+            <AlertTriangle size={20} strokeWidth={2} />
+          )}
           <ListItemText primary={execution.primary} />
         </ListItemButton>
       );
