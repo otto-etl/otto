@@ -1,16 +1,7 @@
 import React from "react";
-import {
-  AppBar,
-  Box,
-  Button,
-  Typography,
-  FormControlLabel,
-  FormGroup,
-  Switch,
-  Toolbar,
-} from "@mui/material";
+import { AppBar, Button, Toolbar } from "@mui/material";
 
-import ottoLogo from "../assets/otto.png";
+import ottoLogo from "../../assets/otto.png";
 import { useNavigate } from "react-router-dom";
 
 const GlobalNavbar = () => {

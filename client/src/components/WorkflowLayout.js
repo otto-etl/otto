@@ -18,9 +18,9 @@ import TransformNode from "./TransformNode";
 import LoadNode from "./LoadNode";
 import NodeModal from "./NodeModal";
 import NodeCreationMenu from "./NodeCreationMenu";
-import WorkflowNavbar from "./WorkflowNavbar";
-import GlobalNavbar from "./GlobalNavbar";
-import WorkflowSidebar from "./WorkflowSidebar";
+import WorkflowNavbar from "./Navigation/WorkflowNavbar";
+import GlobalNavbar from "./Navigation/GlobalNavbar";
+import Sidebar from "./Sidebar/Sidebar";
 import {
   updateInputs,
   isExtractNode,
@@ -348,7 +348,7 @@ const Workflow = () => {
         handleToggleActive={handleToggleActive}
       />
       <div className="grid">
-        <WorkflowSidebar />
+        <Sidebar />
         <ReactFlow
           style={{ flex: 1 }}
           nodes={nodes}
