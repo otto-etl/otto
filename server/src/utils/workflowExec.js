@@ -19,7 +19,7 @@ const executeNode = async (workflowObj, nodeObj) => {
       await runJSCode(workflowObj, nodeObj);
     } else if (nodeObj.type === "load") {
       await runPSQLCode(workflowObj, nodeObj);
-    } else if (nodeObj.type !== "trigger") {
+    } else if (nodeObj.type !== "schedule") {
       const message = `Invalid Node Type: ${nodeObj.type}`;
       await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
     }
