@@ -5,6 +5,9 @@ import "./index.css";
 import App from "./App";
 
 const theme = createTheme({
+  typography: {
+    fontFamily: ["Inter", "sans-serif"].join(","),
+  },
   components: {
     MuiButton: {
       variants: [

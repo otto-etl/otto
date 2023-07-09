@@ -21,16 +21,16 @@ const boxStyle = {
 const NodeCreationMenu = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
-  
+
   const handleCreateNode = (event) => {
     const nodeType = event.target.dataset.value;
-    props.onCreateNode(nodeType);	
+    props.onCreateNode(nodeType);
     handleClose();
   };
 
@@ -38,9 +38,9 @@ const NodeCreationMenu = (props) => {
     <div>
       <Button
         id="basic-button"
-        aria-controls={open ? 'basic-menu' : undefined}
+        aria-controls={open ? "basic-menu" : undefined}
         aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
+        aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
       >
         CREATE NODE
@@ -51,16 +51,24 @@ const NodeCreationMenu = (props) => {
         open={open}
         onClose={handleClose}
         MenuListProps={{
-          'aria-labelledby': 'basic-button',
+          "aria-labelledby": "basic-button",
         }}
       >
-        <MenuItem data-value="schedule" onClick={handleCreateNode}>Schedule</MenuItem>
-        <MenuItem data-value="extract" onClick={handleCreateNode}>Extract</MenuItem>
-        <MenuItem data-value="transform" onClick={handleCreateNode}>Transform</MenuItem>
-        <MenuItem data-value="load" onClick={handleCreateNode}>Load</MenuItem>		
+        <MenuItem data-value="schedule" onClick={handleCreateNode}>
+          Schedule
+        </MenuItem>
+        <MenuItem data-value="extract" onClick={handleCreateNode}>
+          Extract
+        </MenuItem>
+        <MenuItem data-value="transform" onClick={handleCreateNode}>
+          Transform
+        </MenuItem>
+        <MenuItem data-value="load" onClick={handleCreateNode}>
+          Load
+        </MenuItem>
       </Menu>
     </div>
   );
-}
+};
 
 export default NodeCreationMenu;

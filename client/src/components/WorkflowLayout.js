@@ -13,10 +13,10 @@ import { useParams } from "react-router-dom";
 import "reactflow/dist/style.css";
 
 import Modal from "./Modal";
-import ScheduleNode from "./ScheduleNode";
-import ExtractNode from "./ExtractNode";
-import TransformNode from "./TransformNode";
-import LoadNode from "./LoadNode";
+import ScheduleNode from "./Nodes/ScheduleNode";
+import ExtractNode from "./Nodes/ExtractNode";
+import TransformNode from "./Nodes/TransformNode";
+import LoadNode from "./Nodes/LoadNode";
 import NodeCreationMenu from "./NodeCreationMenu";
 import WorkflowNavbar from "./Navigation/WorkflowNavbar";
 import GlobalNavbar from "./Navigation/GlobalNavbar";
