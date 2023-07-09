@@ -42,9 +42,10 @@ const WorkflowNavbar = ({
           sx={{
             display: "flex",
             gap: "20px",
+            alignItems: "center",
           }}
         >
-          <p>{message}</p>
+          <Typography>{message}</Typography>
           <Button
             variant="outlined"
             disabled={active ? true : false}
