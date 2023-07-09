@@ -85,33 +85,36 @@
   margin: 0 2px 0 2px;
   align-items: center;
   color: #ffffff;
-  height: 150px;
-  width: 150px;
+  /* height: 150px; */
+  width: 200px;
   font-size: 14px;
   font-weight: 400;
   padding: 0px 10px 0px 10px;
   border-radius: 6px;
   text-align: center;
   cursor: move;
-  overflow: auto;
 }
 
 .react-flow__node-schedule {
   background-color: #660000;
-  border: 2px solid #553333;
+  /* border: 2px solid #553333; */
 }
 
 .react-flow__node-extract {
   background-color: #660066;
-  border: 2px solid #553355;
+  /* border: 2px solid #553355; */
 }
 
 .react-flow__node-transform {
   background-color: #006666;
-  border: 2px solid #335555;
+  /* border: 2px solid #335555; */
 }
 
 .react-flow__node-load {
   background-color: #000066;
-  border: 2px solid #333355;
+  /* border: 2px solid #333355; */
+}
+
+.react-flow__attribution {
+  display: none;
 }

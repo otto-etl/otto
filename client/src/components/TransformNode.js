@@ -13,15 +13,15 @@ export default memo(({ data, isConnectable }) => {
       />
       <div>
         <strong>{data.label}</strong>
-        <p>Input: {(data.input) ? "Has input" : "No input"}</p>
-        <p>Output: {(data.output) ? "Has output" : "No output"}</p>
-        {(data.error) ? <p>ERROR</p> : null}
+        <p>Input: {data.input ? "Has input" : "No input"}</p>
+        <p>Output: {data.output ? "Has output" : "No output"}</p>
+        {data.error ? <p>ERROR</p> : null}
       </div>
       <Handle
         type="source"
         position={Position.Right}
         id="a"
-        style={{ top: 50, background: "#555" }}
+        // style={{ top: 50, background: "#555" }}
         isConnectable={isConnectable}
       />
     </>

@@ -8,6 +8,7 @@ import ReactFlow, {
   updateEdge,
   Panel,
 } from "reactflow";
+import { Controls, ControlButton } from "@reactflow/controls";
 import { useParams } from "react-router-dom";
 import "reactflow/dist/style.css";
 
@@ -377,6 +378,7 @@ const WorkflowLayout = () => {
           attributionPosition="bottom-left"
           isValidConnection={handleIsValidConnection}
         >
+          <Controls />
           <Panel position="top-right">
             <NodeCreationMenu onCreateNode={onCreateNode} />
           </Panel>
