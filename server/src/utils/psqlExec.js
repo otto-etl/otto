@@ -57,8 +57,7 @@ export const runPSQLCode = async (workflowObj, nodeObj) => {
   let inputData = await getInputData(workflowObj, nodeObj);
 
   //assuming load node only have 1 source of input
-  inputData = inputData.data.input1;
-
+  inputData = inputData.data;
   const insertFields = getInputFields(sqlCode);
   //add returning statement if the code doesn't have one
   sqlCode = addReturnStr(sqlCode);

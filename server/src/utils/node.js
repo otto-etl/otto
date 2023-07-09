@@ -1,5 +1,6 @@
 import { dataIsEmpty } from "./helper.js";
 import { throwNDErrorAndUpdateDB } from "./errors.js";
+import { convertLabel } from "./helper.js";
 //takes a workflow object and return the schedule node
 export const getScheduleNode = (workflowObj) => {
   return workflowObj.nodes.find((node) => node.type === "schedule");
@@ -45,12 +46,12 @@ const getTargetNodeObj = (workflowObj, sourceNodeObj) => {
   return workflowObj.nodes.find((node) => node.id === targetID);
 };
 
-export const getInputData = async (workflowObj, nodeObj) => {
+export const getMultipleInputData = async (workflowObj, nodeObj) => {
   const edges = workflowObj.edges;
   const currentNodeId = nodeObj.id;
   const sourceEdges = edges.filter((edge) => edge.target === currentNodeId);
   const data = {};
-  let inputNum = 1;
+
   for (const edge of sourceEdges) {
     const sourceNode = getNode(workflowObj, edge.source);
     if (dataIsEmpty(sourceNode.data.output.data)) {
@@ -58,9 +59,22 @@ export const getInputData = async (workflowObj, nodeObj) => {
       await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
     } else {
       const output = JSON.parse(JSON.stringify(sourceNode.data.output.data));
-      data[`input${inputNum}`] = output;
-      inputNum++;
+      data[convertLabel(sourceNode.data.label)] = output;
     }
   }
-  return { data: data };
+  return { data };
+};
+
+export const getInputData = async (workflowObj, nodeObj) => {
+  const edges = workflowObj.edges;
+  const currentNodeId = nodeObj.id;
+  const sourceEdge = edges.find((edge) => edge.target === currentNodeId);
+  const sourceNode = getNode(workflowObj, sourceEdge.source);
+  console.log(sourceNode);
+  if (dataIsEmpty(sourceNode.data.output.data)) {
+    const message = `No input data from previous node: ${sourceNode.data.label} `;
+    await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
+  } else {
+    return sourceNode.data.output;
+  }
 };

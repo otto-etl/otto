@@ -33,7 +33,7 @@ const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
       "aria-controls": `simple-tabpanel-${index}`,
     };
   };
-  console.log(code);
+
   return (
     <Box>
       <form
@@ -50,15 +50,6 @@ const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
         }}
       >
         <p>Transform Details</p>
-        <TextField
-          disabled={active ? true : false}
-          id="outlined-basic"
-          label="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)} // variant="outlined"
-        />
-        <br></br>
-        <br></br>
         {error ? (
           <Alert
             sx={{ margin: "10px 0 0 0", border: "2px solid #B99" }}
@@ -78,6 +69,16 @@ const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
         ) : null}
         <br></br>
         <br></br>
+        <TextField
+          disabled={active ? true : false}
+          id="outlined-basic"
+          label="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)} // variant="outlined"
+        />
+        <br></br>
+        <br></br>
+
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs
             value={tab}
