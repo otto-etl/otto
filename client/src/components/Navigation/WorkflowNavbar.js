@@ -10,6 +10,8 @@ import {
   Toolbar,
 } from "@mui/material";
 
+import { Play, Save } from "lucide-react";
+
 const WorkflowNavbar = ({
   wfName,
   message,
@@ -50,10 +52,17 @@ const WorkflowNavbar = ({
             variant="outlined"
             disabled={active ? true : false}
             onClick={handleSaveWorkflow}
+            sx={{ gap: "10px" }}
           >
+            <Save size={16} />
             Save
           </Button>
-          <Button variant="contained" onClick={handleExecuteAll}>
+          <Button
+            variant="contained"
+            onClick={handleExecuteAll}
+            sx={{ gap: "10px" }}
+          >
+            <Play size={16} fill={"#FFF"} />
             Execute Workflow
           </Button>
           <FormGroup sx={{ marginRight: "-10px" }}>

@@ -396,7 +396,9 @@ const WorkflowLayout = () => {
             <NodeCreationMenu onCreateNode={onCreateNode} />
           </Panel>
           <Panel position="bottom-center">
-            <Typography sx={{ color: "#555" }}>{currentDB}</Typography>
+            <Typography sx={{ color: "#555" }}>
+              Current load database: {currentDB}
+            </Typography>
           </Panel>
           {modalIsOpen ? (
             <Modal
