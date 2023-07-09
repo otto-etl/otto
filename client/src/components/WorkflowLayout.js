@@ -7,8 +7,9 @@ import ReactFlow, {
   addEdge,
   updateEdge,
   Panel,
+  Controls,
 } from "reactflow";
-import { Controls, ControlButton } from "@reactflow/controls";
+import { Background } from "@reactflow/background";
 import { useParams } from "react-router-dom";
 import "reactflow/dist/style.css";
 
@@ -35,6 +36,7 @@ import {
   toggleWorkflowStatus,
 } from "../services/api";
 import "../index.css";
+import { Typography } from "@mui/material";
 
 const connectionLineStyle = { stroke: "#fff" };
 const snapGrid = [20, 20];
@@ -389,8 +391,12 @@ const WorkflowLayout = () => {
           isValidConnection={handleIsValidConnection}
         >
           <Controls />
+          <Background color={"#a7a7ae"} style={{ background: "#f3f4f6" }} />
           <Panel position="top-right">
             <NodeCreationMenu onCreateNode={onCreateNode} />
+          </Panel>
+          <Panel position="bottom-center">
+            <Typography sx={{ color: "#555" }}>{currentDB}</Typography>
           </Panel>
           {modalIsOpen ? (
             <Modal
@@ -405,7 +411,6 @@ const WorkflowLayout = () => {
             />
           ) : null}
         </ReactFlow>
-        {/* <p>{currentDB}</p> */}
       </div>
     </>
   );
