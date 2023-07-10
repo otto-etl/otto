@@ -7,15 +7,17 @@ import ReactFlow, {
   addEdge,
   updateEdge,
   Panel,
+  Controls,
 } from "reactflow";
+import { Background } from "@reactflow/background";
 import { useParams } from "react-router-dom";
 import "reactflow/dist/style.css";
 
 import Modal from "./Modal";
-import ScheduleNode from "./ScheduleNode";
-import ExtractNode from "./ExtractNode";
-import TransformNode from "./TransformNode";
-import LoadNode from "./LoadNode";
+import ScheduleNode from "./Nodes/ScheduleNode";
+import ExtractNode from "./Nodes/ExtractNode";
+import TransformNode from "./Nodes/TransformNode";
+import LoadNode from "./Nodes/LoadNode";
 import NodeCreationMenu from "./NodeCreationMenu";
 import WorkflowNavbar from "./Navigation/WorkflowNavbar";
 import GlobalNavbar from "./Navigation/GlobalNavbar";
@@ -207,10 +209,8 @@ const WorkflowLayout = () => {
 
     if (executionResult.data && executionResult.data.error) {
       currentNode.data = executionResult.data;
-
     } else {
       currentNode.data.output = executionResult;
-
     }
   };
 
@@ -296,7 +296,7 @@ const WorkflowLayout = () => {
 
   const handleExecuteAll = async (e) => {
     e.preventDefault();
-    handleMessage(`Executing ${wfName}`, 2000);
+    handleMessage(`Executing ${wfName}`, `Execution finished`, 2000, 2000);
     const res = await saveAndExecuteWorkflow(wfID, {
       workflowID: wfID,
       nodes,
@@ -315,32 +315,42 @@ const WorkflowLayout = () => {
     }
     setNodes(res.nodes);
     setEdges(res.edges);
-    handleMessage(`Execution finished`, 2000);
   };
 
   const handleToggleActive = async (e) => {
     setActive(e.target.checked);
     await toggleWorkflowStatus(wfID, e.target.checked);
     if (e.target.checked) {
-      handleMessage(`Workflow ${wfName} is now active!`, 2000);
+      handleMessage(`Workflow ${wfName} is now active!`, null, 2000, null);
     } else {
-      handleMessage(`Workflow ${wfName} is now inactive!`, 2000);
+      handleMessage(`Workflow ${wfName} is now inactive!`, null, 2000, null);
     }
     getCurrentDB(nodes, e.target.checked);
   };
 
   const handleSaveWorkflow = async (e) => {
     e.preventDefault();
-    handleMessage("Saving...", 1000);
+    handleMessage("Saving...", "Saved!", 500, 1000);
     await saveWorkflow(wfID, { nodes, edges });
-    handleMessage("Saved!", 2000);
   };
 
-  const handleMessage = (message, laps) => {
-    setMessage(message);
-    setTimeout(() => {
-      setMessage("");
-    }, laps);
+  const handleMessage = (message1, message2, laps1, laps2) => {
+    setMessage(message1);
+
+    const handleMessage2 = () => {
+      setMessage(message2);
+      setTimeout(() => setMessage(""), laps2);
+    };
+
+    const handleMessage1 = () => {
+      if (message2) {
+        handleMessage2();
+      } else {
+        setMessage("");
+      }
+    };
+
+    setTimeout(handleMessage1, laps1);
   };
 
   const getCurrentDB = (nodes, active) => {
@@ -425,9 +435,12 @@ const WorkflowLayout = () => {
           snapGrid={snapGrid}
           defaultViewport={defaultViewport}
           fitView
+          fitViewOptions={{ maxZoom: 1 }}
           attributionPosition="bottom-left"
           isValidConnection={handleIsValidConnection}
         >
+          <Controls />
+          <Background color={"#a7a7ae"} style={{ background: "#f3f4f6" }} />
           <Panel position="top-right">
             <NodeCreationMenu onCreateNode={onCreateNode} />
           </Panel>
@@ -445,7 +458,6 @@ const WorkflowLayout = () => {
             />
           ) : null}
         </ReactFlow>
-        {/* <p>{currentDB}</p> */}
       </div>
     </>
   );
