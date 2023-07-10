@@ -70,7 +70,6 @@ export const getInputData = async (workflowObj, nodeObj) => {
   const currentNodeId = nodeObj.id;
   const sourceEdge = edges.find((edge) => edge.target === currentNodeId);
   const sourceNode = getNode(workflowObj, sourceEdge.source);
-  console.log(sourceNode);
   if (dataIsEmpty(sourceNode.data.output.data)) {
     const message = `No input data from previous node: ${sourceNode.data.label} `;
     await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);

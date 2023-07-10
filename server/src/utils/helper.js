@@ -21,7 +21,7 @@ export const validNodeTypes = (nodes) => {
 };
 
 export const convertLabel = (label) => {
-  const words = label.toLowerCase().split(" ");
+  const words = label.trim().toLowerCase().split(" ");
   return words
     .map((word, idx) => {
       if (idx !== 0) {

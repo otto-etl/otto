@@ -101,6 +101,9 @@ function BasicModal({
                     {Object.keys(input).map((key) => {
                       return (
                         <Tab
+                          sx={{
+                            textTransform: "none",
+                          }}
                           label={input[key].label}
                           {...a11yProps(Number(key))}
                         />
