@@ -7,7 +7,6 @@ import {
   updateNodes,
 } from "../models/workflowsService.js";
 import { InternalError, throwWFErrorAndUpdateDB } from "./errors.js";
-import { updateWorkflowError, updateNodes } from "../models/pgService.js";
 import { workflowInputvalidation } from "./workflowInput.js";
 import { throwNDErrorAndUpdateDB } from "./errors.js";
 import { insertNewExecution } from "../models/executionsService.js";
