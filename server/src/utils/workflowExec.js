@@ -2,7 +2,6 @@ import { getNode } from "./node.js";
 import { runAPI } from "./apiExec.js";
 import { runJSCode } from "./jsCodeExec.js";
 import { runPSQLCode } from "./psqlExec.js";
-import { InternalError } from "./errors.js";
 import {
   updateWorkflowError,
   updateNodes,
