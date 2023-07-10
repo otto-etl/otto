@@ -3,9 +3,13 @@ import { runAPI } from "./apiExec.js";
 import { runJSCode } from "./jsCodeExec.js";
 import { runPSQLCode } from "./psqlExec.js";
 import { InternalError } from "./errors.js";
-import { updateWorkflowError, updateNodes } from "../models/pgService.js";
+import {
+  updateWorkflowError,
+  updateNodes,
+} from "../models/workflowsService.js";
 import { workflowInputvalidation } from "./workflowInput.js";
 import { throwNDErrorAndUpdateDB } from "./errors.js";
+import { insertNewExecution } from "../models/executionsService.js";
 
 let completedNodes = {};
 
@@ -45,12 +49,13 @@ const activateNode = async (workflowObj, nodeObj) => {
 };
 
 export const runWorkflow = async (workflowObj) => {
-  console.log("running workflow", workflowObj.id);
   await workflowInputvalidation(workflowObj);
   const finalLoadNodes = workflowObj.nodes.filter(
     (node) => node.type === "load"
   );
 
+  workflowObj.startTime = Date.now();
+  console.log("Workflow start time:", workflowObj.startTime);
   const promises = finalLoadNodes.map((node) => {
     return new Promise((res, rej) => {
       res(activateNode(workflowObj, node));
@@ -58,11 +63,9 @@ export const runWorkflow = async (workflowObj) => {
   });
   await Promise.all(promises);
 
-  // for (const node of finalLoadNodes) {
-  //   await activateNode(workflowObj, node);
-  // }
-
   completedNodes = {};
   console.log("workflow completed", workflowObj.id);
   await updateWorkflowError(workflowObj.id, null);
+  workflowObj.error = null;
+  await insertNewExecution("TRUE", workflowObj);
 };

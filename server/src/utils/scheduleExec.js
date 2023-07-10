@@ -5,10 +5,10 @@ import {
   deactivateWorkflow,
   getActiveWorkflows,
   setStartTime,
-} from "../models/pgService.js";
+} from "../models/workflowsService.js";
 import { runWorkflow } from "./workflowExec.js";
 import { throwWFErrorAndUpdateDB } from "./errors.js";
-import { updateWorkflowError } from "../models/pgService.js";
+import { updateWorkflowError } from "../models/workflowsService.js";
 // workflows that have cron job started
 const startedWorkflows = {};
 // workflows that have timeout triggered but cron job hasn't started
