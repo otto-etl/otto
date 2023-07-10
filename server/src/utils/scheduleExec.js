@@ -5,9 +5,10 @@ import {
   deactivateWorkflow,
   getActiveWorkflows,
   setStartTime,
-} from "../models/pgService.js";
+} from "../models/workflowsService.js";
 import { runWorkflow } from "./workflowExec.js";
 import { throwWFErrorAndUpdateDB } from "./errors.js";
+import { updateWorkflowError } from "../models/workflowsService.js";
 import { nodeInputvalidation } from "./nodeInput.js";
 import { workflowInputvalidation } from "./workflowInput.js";
 import { updateWorkflowError } from "../models/pgService.js";

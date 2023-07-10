@@ -1,5 +1,5 @@
 import pgPromise from "pg-promise";
-import { updateNodes } from "../models/pgService.js";
+import { updateNodes } from "../models/workflowsService.js";
 import { throwNDErrorAndUpdateDB } from "./errors.js";
 import { getInputData } from "./node.js";
 import { nodeInputvalidation } from "./nodeInput.js";

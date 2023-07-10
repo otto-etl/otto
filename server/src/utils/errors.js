@@ -1,4 +1,7 @@
-import { updateWorkflowError, updateNodes } from "../models/pgService.js";
+import {
+  updateWorkflowError,
+  updateNodes,
+} from "../models/workflowsService.js";
 
 export class NodeError extends Error {
   constructor(message, data) {

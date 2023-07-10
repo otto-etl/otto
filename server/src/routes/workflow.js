@@ -5,7 +5,7 @@ import {
   getWorkflow,
   updateNodesEdges,
   insertNewWF,
-} from "../models/pgService.js";
+} from "../models/workflowsService.js";
 
 //get one workflow data
 router.get("/:id", async (req, res, next) => {

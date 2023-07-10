@@ -4,7 +4,7 @@ import { runJSCode } from "../utils/jsCodeExec.js";
 import { runAPI } from "../utils/apiExec.js";
 import { runPSQLCode } from "../utils/psqlExec.js";
 import { getNode } from "../utils/node.js";
-import { getWorkflow, updateNodesEdges } from "../models/pgService.js";
+import { getWorkflow, updateNodesEdges } from "../models/workflowsService.js";
 import { runWorkflow } from "../utils/workflowExec.js";
 import { throwNDErrorAndUpdateDB } from "../utils/errors.js";
 const router = express.Router();

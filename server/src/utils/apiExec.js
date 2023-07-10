@@ -1,4 +1,4 @@
-import { updateNodes } from "../models/pgService.js";
+import { updateNodes } from "../models/workflowsService.js";
 import { throwNDErrorAndUpdateDB, throwEXErrorAndUpdateDB } from "./errors.js";
 import { nodeInputvalidation } from "./nodeInput.js";
 import axios from "axios";
