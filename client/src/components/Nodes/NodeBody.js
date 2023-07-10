@@ -5,7 +5,7 @@ import { CheckCircle2, AlertTriangle } from "lucide-react";
 const NodeBody = ({ data, nodeAbbreviation, nodeName, bgColor }) => {
   return (
     <>
-      {Object.keys(data.output).length > 0 && !data.error ? (
+      {data.output && Object.keys(data.output).length > 0 && !data.error ? (
         <Box
           sx={{
             position: "absolute",

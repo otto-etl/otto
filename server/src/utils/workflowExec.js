@@ -9,7 +9,7 @@ import {
 import { InternalError, throwWFErrorAndUpdateDB } from "./errors.js";
 import { workflowInputvalidation } from "./workflowInput.js";
 import { throwNDErrorAndUpdateDB } from "./errors.js";
-import { insertNewExecution } from "../models/executionsService.js";
+import { insertNewExecution } from "../models/workflowsService.js";
 
 let completedNodes = {};
 

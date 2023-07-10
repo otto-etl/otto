@@ -169,7 +169,7 @@ const WorkflowLayout = () => {
   const onSaveExecute = async (currentId, updatedNodeData) => {
     let newNodesArray = updateNodeObject(currentId, updatedNodeData);
     await runExecution(currentId, newNodesArray); // mutates newNodesArray
-    setNodes(newNodesArray);
+    // setNodes(newNodesArray);
   };
 
   const updateNodeObject = (currentId, updatedData) => {
@@ -204,14 +204,18 @@ const WorkflowLayout = () => {
     };
     //on successfull execution returns output data
     //on execution failure returns error node object
-    let executionResult = await saveAndExecuteNode(payload);
-    let currentNode = newNodesArray.find((node) => node.id === currentId);
+    // let executionResult = await saveAndExecuteNode(payload);
+    // let currentNode = newNodesArray.find((node) => node.id === currentId);
 
-    if (executionResult.data && executionResult.data.error) {
-      currentNode.data = executionResult.data;
-    } else {
-      currentNode.data.output = executionResult;
-    }
+    // if (executionResult.data && executionResult.data.error) {
+    //   currentNode.data = executionResult.data;
+    // } else {
+    //   currentNode.data.output = executionResult;
+    // }
+    let executionResult = await saveAndExecuteNode(payload);
+    console.log("execution result", executionResult.nodes);
+    setNodes(executionResult.nodes);
+    setEdges(executionResult.edges);
   };
 
   const onCreateNode = async (nodeType) => {

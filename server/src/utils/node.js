@@ -79,20 +79,14 @@ export const getInputData = async (workflowObj, nodeObj) => {
 };
 
 export const resetSubsequentOutputs = (nodes, edges, nodeID) => {
-  console.log("Inside resetSubsequentOUtputs");
-  // console.log(nodes);
-  // console.log(edges);
-  console.log(nodeID);
   const sourceEdges = edges.filter((edge) => {
-    console.log(edge);
     return edge.source === nodeID;
   });
-  console.log("Got past step 1", sourceEdges.length);
   if (sourceEdges.length > 0) {
     sourceEdges.forEach((edge) => {
       resetSubsequentOutputs(nodes, edges, edge.target);
     });
   }
-  console.log("Got past step 2");
-  getNode({ nodes }, nodeID).output = {};
+  const node = getNode({ nodes }, nodeID);
+  node.data.output = {};
 };
