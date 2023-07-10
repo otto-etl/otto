@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import { getAllWorkflows, createNewWF } from "../services/api";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
@@ -12,13 +13,13 @@ const columns = [
     width: 70,
   },
   { field: "name", headerName: "Workflow Name", width: 130 },
-  { 
-    field: "active", 
-	valueGetter: (params) => {
-	  return params.value ? "Active" : "Inactive";
-	},
-	headerName: "Status", 
-	width: 90 
+  {
+    field: "active",
+    valueGetter: (params) => {
+      return params.value ? "Active" : "Inactive";
+    },
+    headerName: "Status",
+    width: 90,
   },
 ];
 

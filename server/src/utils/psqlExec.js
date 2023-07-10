@@ -2,44 +2,57 @@ import pgPromise from "pg-promise";
 import { updateNodes } from "../models/workflowsService.js";
 import { throwNDErrorAndUpdateDB } from "./errors.js";
 import { getInputData } from "./node.js";
-
+import { nodeInputvalidation } from "./nodeInput.js";
 const pgp = pgPromise();
 
 let dbs = {};
 
-// connect to PSQL with user credentials
-const connectPSQL = ({ userName, host, port, password, dbName }) => {
-  const cnStr = `postgres://${userName}:${password}@${host}:${port}/${dbName}`;
-  let db;
-  if (dbs[cnStr]) {
-    console.log("use existing load DB connection: ", cnStr);
-    return dbs[cnStr];
-  } else {
-    console.log("create new load DB connection: ", cnStr);
-    db = pgp(cnStr);
-    dbs[cnStr] = db;
-    return db;
-  }
-};
-
 export const runPSQLCode = async (workflowObj, nodeObj) => {
-  let { userName, password, dbName, sqlCode, host, port } = nodeObj.data;
-  const db = connectPSQL({ userName, password, dbName, host, port });
+  await nodeInputvalidation(workflowObj, nodeObj);
+
+  let {
+    userName,
+    password,
+    dbName,
+    host,
+    port,
+    userNamePD,
+    passwordPD,
+    dbNamePD,
+    hostPD,
+    portPD,
+    sqlCode,
+  } = nodeObj.data;
+
+  const cnCredentials = workflowObj.active
+    ? {
+        userName: userNamePD,
+        password: passwordPD,
+        dbName: dbNamePD,
+        host: hostPD,
+        port: portPD,
+      }
+    : { userName, password, dbName, host, port };
+
+
+  const db = connectPSQL(cnCredentials);
 
   //test if connection to db can be made with provided credentials
   await testConnection(db, workflowObj, nodeObj);
 
   //get input data from previous nodes, currently assuming one input
+  //also throws NodeError if previous node is missing input data
   let inputData = await getInputData(workflowObj, nodeObj);
-  //assuming only 1 input right now
-  inputData = inputData[0].data;
 
+  //assuming load node only have 1 source of input
+  inputData = inputData.data;
   const insertFields = getInputFields(sqlCode);
   //add returning statement if the code doesn't have one
   sqlCode = addReturnStr(sqlCode);
+
   let returnValues = [];
 
-  //for each role in the input dataset insert into db
+  //for each row in the input dataset, insert into db
   try {
     for (const obj of inputData) {
       const returnValue = await db.any(
@@ -57,6 +70,21 @@ export const runPSQLCode = async (workflowObj, nodeObj) => {
   nodeObj.data.error = null;
   await updateNodes(workflowObj);
   return returnValues;
+};
+
+// connect to PSQL with user credentials
+const connectPSQL = ({ userName, host, port, password, dbName }) => {
+  const cnStr = `postgres://${userName}:${password}@${host}:${port}/${dbName}`;
+  let db;
+  if (dbs[cnStr]) {
+    console.log("use existing load DB connection: ", cnStr);
+    return dbs[cnStr];
+  } else {
+    console.log("create new load DB connection: ", cnStr);
+    db = pgp(cnStr);
+    dbs[cnStr] = db;
+    return db;
+  }
 };
 
 const matchDataPropsWithVarNames = (insertFields, obj) => {

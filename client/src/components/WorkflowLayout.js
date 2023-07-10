@@ -7,24 +7,27 @@ import ReactFlow, {
   addEdge,
   updateEdge,
   Panel,
+  Controls,
 } from "reactflow";
+import { Background } from "@reactflow/background";
 import { useParams } from "react-router-dom";
 import "reactflow/dist/style.css";
 
 import Modal from "./Modal";
-import ScheduleNode from "./ScheduleNode";
-import ExtractNode from "./ExtractNode";
-import TransformNode from "./TransformNode";
-import LoadNode from "./LoadNode";
+import ScheduleNode from "./Nodes/ScheduleNode";
+import ExtractNode from "./Nodes/ExtractNode";
+import TransformNode from "./Nodes/TransformNode";
+import LoadNode from "./Nodes/LoadNode";
 import NodeCreationMenu from "./NodeCreationMenu";
-import WorkflowNavbar from "./WorkflowNavbar";
-import GlobalNavbar from "./GlobalNavbar";
-import WorkflowSidebar from "./WorkflowSidebar";
+import WorkflowNavbar from "./Navigation/WorkflowNavbar";
+import GlobalNavbar from "./Navigation/GlobalNavbar";
+import Sidebar from "./Sidebar/Sidebar";
 import {
   isExtractNode,
   isScheduleNode,
   isTransformNode,
   isLoadNode,
+  convertLabel,
 } from "../utils/utils";
 import {
   getWorkflowAPI,
@@ -34,6 +37,7 @@ import {
   toggleWorkflowStatus,
 } from "../services/api";
 import "../index.css";
+
 import {
   AppBar,
   Box,
@@ -44,6 +48,8 @@ import {
   Switch,
   Toolbar,
 } from "@mui/material";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 
 const connectionLineStyle = { stroke: "#fff" };
 const snapGrid = [20, 20];
@@ -60,6 +66,15 @@ const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 const WorkflowLayout = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]); // useNodesState, useEdgesState are React Flow-specific
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [editNodes, setEditNodes] = useNodesState([]); // useNodesState, useEdgesState are React Flow-specific
+  const [editEdges, setEditEdges] = useEdgesState([]);
+
+  // Create editNodes and editEdges
+  // When a execution list item is clicked
+  // Save the currentState of the edges and nodes to editsNodes and editEdges
+  // When "edit test workflow" is clicked
+  // Set nodes and edges state back to editNodes and editEdges
+  // Reset editNodes and editEdges
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalData, setModalData] = useState("");
   const [active, setActive] = useState(false);
@@ -72,6 +87,7 @@ const WorkflowLayout = () => {
   useEffect(() => {
     const getWorkflow = async () => {
       const response = await getWorkflowAPI(wfID);
+      // console.log("active:", response.active);
 
       setNodes(response.nodes);
       setEdges(response.edges);
@@ -81,6 +97,22 @@ const WorkflowLayout = () => {
     };
     getWorkflow();
   }, [setNodes, setEdges, wfID]);
+
+  const handleExecutionListItemClick = (executionNodes, executionEdges) => {
+    if (editNodes.length === 0 && editEdges.length === 0) {
+      setEditNodes(nodes);
+      setEditEdges(edges);
+    }
+    setNodes(executionNodes);
+    setEdges(executionEdges);
+  };
+
+  const handleEditWorkflowListItemClick = () => {
+    setNodes(editNodes);
+    setEdges(editEdges);
+    setEditNodes([]);
+    setEditEdges([]);
+  };
 
   const openModal = (nodeData) => {
     setModalIsOpen(true);
@@ -170,21 +202,16 @@ const WorkflowLayout = () => {
       nodes: newNodesArray,
       edges: edges,
     };
+    //on successfull execution returns output data
+    //on execution failure returns error node object
     let executionResult = await saveAndExecuteNode(payload);
     let currentNode = newNodesArray.find((node) => node.id === currentId);
-    let nextNode = newNodesArray.find((node) => node.data.prev === currentId);
-	if (executionResult.data && executionResult.data.error) {
-	  currentNode.data = executionResult.data;
-	  if (nextNode) {
-	    nextNode.data.input = null;
-	  }
-	}
-	else {
+
+    if (executionResult.data && executionResult.data.error) {
+      currentNode.data = executionResult.data;
+    } else {
       currentNode.data.output = executionResult;
-      if (nextNode) {
-        nextNode.data.input = executionResult;
-      }
-	}
+    }
   };
 
   const onCreateNode = async (nodeType) => {
@@ -199,6 +226,8 @@ const WorkflowLayout = () => {
       },
     };
     addExtraNodeProperties(newNode);
+    // console.log(newNode);
+
     let newNodes = [...nodes, newNode];
     await saveWorkflow(1, { nodes: newNodes, edges });
     setNodes(newNodes);
@@ -223,15 +252,13 @@ const WorkflowLayout = () => {
         break;
       }
       case "transform": {
-        newNode.data.jscode =
-          "for(const prop in data.message) { \
-		  if (!data.message.breed) { \
-			  data.message.breed=[{breed:prop, num:data.message[prop].length}] \
- 			  } else { \
-				  data.message.breed.push({breed:prop, num:data.message[prop].length}) \
-				  }\
-				  }\
-			data = data.message.breed;";
+        newNode.data.jsCode =
+          "let array1 = []; \
+          let data1 = data.input1.message \
+          for(const prop in data1) { \
+              array1.push({breed:prop, num:data1[prop].length}) \
+          } \
+          data = array1";
         break;
       }
       case "load": {
@@ -264,59 +291,102 @@ const WorkflowLayout = () => {
 
   const onNodeClick = useCallback((event, object) => {
     saveWorkflow(wfID, { nodes, edges });
-    openModal({ ...object});
+    openModal({ ...object });
   });
 
   const handleExecuteAll = async (e) => {
     e.preventDefault();
-    handleMessage(`Executing ${wfName}`, 2000);
+    handleMessage(`Executing ${wfName}`, `Execution finished`, 2000, 2000);
     const res = await saveAndExecuteWorkflow(wfID, {
       workflowID: wfID,
       nodes,
       edges,
     });
+    if (res.errMessage) {
+      if (res.errName === "NodeError" || res.errName === "ExternalError")
+        res.errMessage =
+          "Node execution failure, please checked the failed node";
+      setWfError(res.errMessage);
+      setTimeout(() => {
+        setWfError(null);
+      }, 3000);
+    } else {
+      setWfError(null);
+    }
     setNodes(res.nodes);
     setEdges(res.edges);
-    handleMessage(`Execution finished`, 2000);
   };
 
   const handleToggleActive = async (e) => {
     setActive(e.target.checked);
     await toggleWorkflowStatus(wfID, e.target.checked);
     if (e.target.checked) {
-      handleMessage(`Workflow ${wfName} is now active!`, 2000);
+      handleMessage(`Workflow ${wfName} is now active!`, null, 2000, null);
     } else {
-      handleMessage(`Workflow ${wfName} is now inactive!`, 2000);
+      handleMessage(`Workflow ${wfName} is now inactive!`, null, 2000, null);
     }
     getCurrentDB(nodes, e.target.checked);
   };
 
   const handleSaveWorkflow = async (e) => {
     e.preventDefault();
-    handleMessage("Saving...", 1000);
+    handleMessage("Saving...", "Saved!", 500, 1000);
     await saveWorkflow(wfID, { nodes, edges });
-    handleMessage("Saved!", 2000);
   };
 
-  const handleMessage = (message, laps) => {
-    setMessage(message);
-    setTimeout(() => {
-      setMessage("");
-    }, laps);
+  const handleMessage = (message1, message2, laps1, laps2) => {
+    setMessage(message1);
+
+    const handleMessage2 = () => {
+      setMessage(message2);
+      setTimeout(() => setMessage(""), laps2);
+    };
+
+    const handleMessage1 = () => {
+      if (message2) {
+        handleMessage2();
+      } else {
+        setMessage("");
+      }
+    };
+
+    setTimeout(handleMessage1, laps1);
   };
 
   const getCurrentDB = (nodes, active) => {
+    // console.log(nodes, active);
     const loadNode = nodes.find((node) => node.type === "load");
+    // console.log(loadNode);
+
     if (loadNode && !active) {
       setCurrentDB(
         `host:${loadNode.data.host} db:${loadNode.data.dbName} user:${loadNode.data.userName}`
       );
     } else if (loadNode && active) {
-      setCurrentDB("production db fields to be created");
+      setCurrentDB(
+        `host:${loadNode.data.hostPD} db:${loadNode.data.dbNamePD} user:${loadNode.data.userNamePD}`
+      );
     } else {
       setCurrentDB("No load node yet");
     }
   };
+
+  const getPrevNodesOutput = (currentNodeID) => {
+    const sourceEdges = edges.filter((edge) => edge.target === currentNodeID);
+    const input = {};
+    let idx = 0;
+    //adding an index to each output is just for material UI tabs to work
+    sourceEdges.forEach((edge) => {
+      const sourceNode = nodes.find((node) => node.id === edge.source);
+      input[idx] = {
+        label: convertLabel(sourceNode.data.label),
+        data: sourceNode.data.output.data,
+      };
+      idx++;
+    });
+    return input;
+  };
+
   /* ReactFlow throws a console warning here:
   
   It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them.
@@ -334,8 +404,22 @@ const WorkflowLayout = () => {
         handleExecuteAll={handleExecuteAll}
         handleToggleActive={handleToggleActive}
       />
+      {wfError ? (
+        <Alert
+          sx={{ margin: "10px 0 0 0", border: "2px solid #B99" }}
+          severity="error"
+        >
+          <AlertTitle sx={{ fontWeight: "700", color: "#200" }}>
+            Error:
+          </AlertTitle>
+          <p style={{ fontWeight: "600", textIndent: "10px" }}>{wfError}</p>
+        </Alert>
+      ) : null}
       <div className="grid">
-        <WorkflowSidebar />
+        <Sidebar
+          handleExecutionListItemClick={handleExecutionListItemClick}
+          handleEditWorkflowListItemClick={handleEditWorkflowListItemClick}
+        />
         <ReactFlow
           style={{ flex: 1 }}
           nodes={nodes}
@@ -351,9 +435,12 @@ const WorkflowLayout = () => {
           snapGrid={snapGrid}
           defaultViewport={defaultViewport}
           fitView
+          fitViewOptions={{ maxZoom: 1 }}
           attributionPosition="bottom-left"
           isValidConnection={handleIsValidConnection}
         >
+          <Controls />
+          <Background color={"#a7a7ae"} style={{ background: "#f3f4f6" }} />
           <Panel position="top-right">
             <NodeCreationMenu onCreateNode={onCreateNode} />
           </Panel>
@@ -367,11 +454,11 @@ const WorkflowLayout = () => {
               runExecution={runExecution}
               nodeObj={modalData}
               active={active}
+              getPrevNodesOutput={getPrevNodesOutput}
             />
           ) : null}
         </ReactFlow>
       </div>
-      {/* <p>{currentDB}</p> */}
     </>
   );
 };

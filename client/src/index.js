@@ -3,8 +3,12 @@ import ReactDOM from "react-dom/client";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "./index.css";
 import App from "./App";
+import { capitalize } from "@mui/material";
 
 const theme = createTheme({
+  typography: {
+    fontFamily: ["Inter", "sans-serif"].join(","),
+  },
   components: {
     MuiButton: {
       variants: [
@@ -12,6 +16,8 @@ const theme = createTheme({
           props: { variant: "contained" },
           style: {
             backgroundColor: "#3c4bcb",
+            textTransform: "capitalize",
+            fontSize: "16px",
           },
         },
         {
@@ -19,6 +25,8 @@ const theme = createTheme({
           style: {
             color: "#3c4bcb",
             border: "1px solid #3c4bcb",
+            textTransform: "capitalize",
+            fontSize: "16px",
           },
         },
       ],

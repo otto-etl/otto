@@ -7,6 +7,8 @@ import {
   updateWorkflowError,
   updateNodes,
 } from "../models/workflowsService.js";
+import { InternalError, throwWFErrorAndUpdateDB } from "./errors.js";
+import { updateWorkflowError, updateNodes } from "../models/pgService.js";
 import { workflowInputvalidation } from "./workflowInput.js";
 import { throwNDErrorAndUpdateDB } from "./errors.js";
 import { insertNewExecution } from "../models/executionsService.js";
@@ -34,6 +36,10 @@ const executeNode = async (workflowObj, nodeObj) => {
 const activateNode = async (workflowObj, nodeObj) => {
   const edges = workflowObj.edges.filter((edge) => edge.target === nodeObj.id);
 
+  if (edges.length === 0 && nodeObj.type !== "schedule") {
+    const message = `Unconnected nodes detected`;
+    await throwWFErrorAndUpdateDB(workflowObj, message);
+  }
   if (edges.length === 0) {
     return;
   } else {

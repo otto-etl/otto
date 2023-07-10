@@ -1,13 +1,17 @@
 import vm from "vm";
 import { updateNodes } from "../models/workflowsService.js";
 import { throwNDErrorAndUpdateDB } from "./errors.js";
-import { getInputData } from "./node.js";
+import { getMultipleInputData } from "./node.js";
+import { nodeInputvalidation } from "./nodeInput.js";
 
 export const runJSCode = async (workflowObj, nodeObj) => {
+  await nodeInputvalidation(workflowObj, nodeObj);
+
   const customCode = nodeObj.data.jsCode;
-  let inputData = await getInputData(workflowObj, nodeObj);
-  //need to be modified when handling multiple inputs
-  inputData = inputData[0];
+  //this function also throws NodeError if any previous node is missing input data
+  let inputData = await getMultipleInputData(workflowObj, nodeObj);
+
+  inputData;
 
   try {
     vm.createContext(inputData);
@@ -17,8 +21,8 @@ export const runJSCode = async (workflowObj, nodeObj) => {
     await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
   }
 
-  nodeObj.data.output = inputData;
+  nodeObj.data.output = { data: inputData.data };
   nodeObj.data.error = null;
   await updateNodes(workflowObj);
-  return inputData;
+  return { data: inputData.data };
 };
