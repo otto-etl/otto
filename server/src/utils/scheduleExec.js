@@ -11,7 +11,6 @@ import { throwWFErrorAndUpdateDB } from "./errors.js";
 import { updateWorkflowError } from "../models/workflowsService.js";
 import { nodeInputvalidation } from "./nodeInput.js";
 import { workflowInputvalidation } from "./workflowInput.js";
-import { updateWorkflowError } from "../models/pgService.js";
 // workflows that have cron job started
 const startedWorkflows = {};
 // workflows that have timeout triggered but cron job hasn't started

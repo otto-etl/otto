@@ -2,13 +2,11 @@ import { getNode } from "./node.js";
 import { runAPI } from "./apiExec.js";
 import { runJSCode } from "./jsCodeExec.js";
 import { runPSQLCode } from "./psqlExec.js";
-import { InternalError } from "./errors.js";
 import {
   updateWorkflowError,
   updateNodes,
 } from "../models/workflowsService.js";
 import { InternalError, throwWFErrorAndUpdateDB } from "./errors.js";
-import { updateWorkflowError, updateNodes } from "../models/pgService.js";
 import { workflowInputvalidation } from "./workflowInput.js";
 import { throwNDErrorAndUpdateDB } from "./errors.js";
 import { insertNewExecution } from "../models/executionsService.js";
