@@ -396,11 +396,6 @@ const WorkflowLayout = () => {
           <Panel position="top-right">
             <NodeCreationMenu onCreateNode={onCreateNode} />
           </Panel>
-          <Panel position="bottom-center">
-            <Typography sx={{ color: "#555" }}>
-              Current load database: {currentDB}
-            </Typography>
-          </Panel>
           {modalIsOpen ? (
             <Modal
               modalIsOpen={modalIsOpen}
