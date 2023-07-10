@@ -47,7 +47,7 @@ const Sidebar = ({
             startTime: "2023-07-07T04:00:00.000Z",
             intervalInMinutes: 1440,
           },
-          type: "trigger",
+          type: "schedule",
           width: 150,
           height: 150,
           dragging: false,

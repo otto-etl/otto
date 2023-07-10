@@ -30,3 +30,34 @@ export const convertLabel = (label) => {
     })
     .join("");
 };
+
+/* Runs upon initial load of page if the workflow property "orphans" is false.
+   In practice, this means it runs once, at workflow creation.
+*/
+export const workflowHasOrphanNodes = (nodes, edges) => {
+  let nodeEdgeTracker = {};
+  let hasOrphans = false;
+  nodes.forEach(node => {
+    nodeEdgeTracker[node.id] = {type: node.type, hasSource: false, hasTarget: false};
+  });
+  edges.forEach(edge => {
+    if (edge.source) {
+	  nodeEdgeTracker[edge.source].hasTarget = true;
+	}
+    if (edge.target) {
+      nodeEdgeTracker[edge.target].hasSource = true;
+    }
+  });
+  Object.keys(nodeEdgeTracker).forEach(node => {
+    if (nodeEdgeTracker[node].type === "schedule" && !nodeEdgeTracker[node].hasTarget) {
+	  hasOrphans = true;
+	}
+    else if (nodeEdgeTracker[node].type === "load" && !nodeEdgeTracker[node].hasSource) {
+	  hasOrphans = true;
+	}
+	else if ((nodeEdgeTracker[node].type === "extract" || nodeEdgeTracker[node].type === "transform") && (!nodeEdgeTracker[node].hasSource || !nodeEdgeTracker[node].hasTarget)) {
+	  hasOrphans = true;	
+	}
+  });
+  return hasOrphans;
+}
