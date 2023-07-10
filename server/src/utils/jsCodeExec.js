@@ -1,12 +1,16 @@
 import vm from "vm";
 import { updateNodes } from "../models/pgService.js";
 import { throwNDErrorAndUpdateDB } from "./errors.js";
-import { getInputData } from "./node.js";
+import { getMultipleInputData } from "./node.js";
+import { nodeInputvalidation } from "./nodeInput.js";
 
 export const runJSCode = async (workflowObj, nodeObj) => {
+  await nodeInputvalidation(workflowObj, nodeObj);
+
   const customCode = nodeObj.data.jsCode;
-  let inputData = await getInputData(workflowObj, nodeObj);
-  //need to be modified when handling multiple inputs
+  //this function also throws NodeError if any previous node is missing input data
+  let inputData = await getMultipleInputData(workflowObj, nodeObj);
+
   inputData;
 
   try {

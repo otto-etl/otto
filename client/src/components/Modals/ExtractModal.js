@@ -96,7 +96,24 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           handleSubmit(e, newData);
         }}
       >
-		<p>Extract Details</p>
+        <p>Extract Details</p>
+        {error ? (
+          <Alert
+            sx={{
+              margin: "10px 0 10px 0",
+              border: "2px solid #B99",
+              whiteSpace: "pre-line",
+            }}
+            severity="error"
+          >
+            <AlertTitle sx={{ fontWeight: "700", color: "#200" }}>
+              {error.errName === "ExternalError"
+                ? "External Error:"
+                : "Internal Error:"}
+            </AlertTitle>
+            <p>{error.message}</p>
+          </Alert>
+        ) : null}
         <TextField
           disabled={active ? true : false}
           id="outlined-basic"
@@ -104,12 +121,7 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-		{error ? 
-	  	  <Alert sx={{margin:"10px 0 10px 0",border:"2px solid #B99",whiteSpace: 'pre-line'}}severity="error">
-		    <AlertTitle sx={{fontWeight:"700", color:"#200"}}>{error.errName === "ExternalError" ? "External Error:" : "Internal Error:"}</AlertTitle>
-		    <p>{error.message}</p>
-		  </Alert>
-		: null}
+
         <FormControl>
           <InputLabel id="action-type">Action Type</InputLabel>
           <Select
@@ -149,8 +161,13 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
         </FormControl>
         <br></br>
         <br></br>
-		<Stack direction="row">
-          <Button variant="contained" color="primary" onClick={handleDelete} disabled={active ? true : false}>
+        <Stack direction="row">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleDelete}
+            disabled={active ? true : false}
+          >
             Delete
           </Button>
           <Button
@@ -161,7 +178,7 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           >
             Save and Execute
           </Button>
-		</Stack>
+        </Stack>
       </form>
     </Box>
   );
