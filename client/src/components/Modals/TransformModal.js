@@ -19,11 +19,10 @@ const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
   const [error, setError] = useState(nodeObj.data.error);
   const [tab, setTab] = useState(0);
 
-
   const formsPopulated = () => {
     return name && code;
-  };  
-  
+  };
+
   const handleChange = React.useCallback((value, viewupdate) => {
     setCode(value);
   }, []);
@@ -83,26 +82,6 @@ const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           value={name}
           onChange={(e) => setName(e.target.value)} // variant="outlined"
         />
-
-        <br></br>
-        <br></br>
-        {error ? (
-          <Alert
-            sx={{ margin: "10px 0 0 0", border: "2px solid #B99" }}
-            severity="error"
-          >
-            <AlertTitle sx={{ fontWeight: "700", color: "#200" }}>
-              Error:
-            </AlertTitle>
-            <p>Your JavaScript code could not be executed:</p>
-            <p style={{ fontWeight: "600", textIndent: "10px" }}>
-              {error.message.includes("JS code")
-                ? error.message.split("with error")[1]
-                : error.message}
-            </p>
-            <p>Please modify the code and try again.</p>
-          </Alert>
-        ) : null}
 
         <br></br>
         <br></br>
