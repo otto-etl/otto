@@ -36,6 +36,10 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
     upperCaseKeywords: true,
   };
 
+  const formsPopulated = () => {
+    return name && code && userName && password && host && port && dbName; 
+  };
+  
   const a11yProps = (index) => {
     return {
       id: `simple-tab-${index}`,
@@ -224,7 +228,7 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             variant="contained"
             color="primary"
             type="submit"
-            disabled={active ? true : false}
+            disabled={active || !formsPopulated() ? true : false}
           >
             Save and Execute
           </Button>

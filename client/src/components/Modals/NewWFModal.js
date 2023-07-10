@@ -31,6 +31,10 @@ const NewWFModal = ({ newWFVisible, handleCloseNewWFModal }) => {
     // handleCloseNewWFModal();
   };
 
+  const formsPopulated = () => {
+    return newWfName;
+  }
+
   return (
     <Modal
       open={newWFVisible}
@@ -47,7 +51,7 @@ const NewWFModal = ({ newWFVisible, handleCloseNewWFModal }) => {
             onChange={(e) => setNewWfName(e.target.value)}
           />
           <br></br>
-          <Button variant="contained" onClick={handleSaveNewWF}>
+          <Button variant="contained" disabled={formsPopulated() ? false : true} onClick={handleSaveNewWF}>
             Create
           </Button>
           <Button variant="contained" onClick={handleCloseNewWFModal}>

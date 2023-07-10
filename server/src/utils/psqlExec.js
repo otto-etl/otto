@@ -9,6 +9,7 @@ let dbs = {};
 
 export const runPSQLCode = async (workflowObj, nodeObj) => {
   await nodeInputvalidation(workflowObj, nodeObj);
+
   let {
     userName,
     password,
@@ -32,6 +33,7 @@ export const runPSQLCode = async (workflowObj, nodeObj) => {
         port: portPD,
       }
     : { userName, password, dbName, host, port };
+
 
   const db = connectPSQL(cnCredentials);
 

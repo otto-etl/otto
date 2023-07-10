@@ -10,6 +10,7 @@ export const runJSCode = async (workflowObj, nodeObj) => {
   const customCode = nodeObj.data.jsCode;
   //this function also throws NodeError if any previous node is missing input data
   let inputData = await getMultipleInputData(workflowObj, nodeObj);
+
   inputData;
 
   try {
