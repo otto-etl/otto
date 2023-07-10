@@ -16,6 +16,7 @@ const WorkflowNavbar = ({
   wfName,
   message,
   active,
+  orphans,
   handleSaveWorkflow,
   handleExecuteAll,
   handleToggleActive,
@@ -58,6 +59,7 @@ const WorkflowNavbar = ({
             Save
           </Button>
           <Button
+		    disabled = {orphans ? true : false}
             variant="contained"
             onClick={handleExecuteAll}
             sx={{ gap: "10px" }}
