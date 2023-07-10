@@ -1,4 +1,4 @@
-import { insertNewExecution } from "../models/executionsService.js";
+import { insertNewExecution } from "../models/workflowsService.js";
 import { NodeError, WorkflowError } from "../utils/errors.js";
 
 export const errorHandler = async (err, req, res, next) => {

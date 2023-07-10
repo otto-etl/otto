@@ -77,3 +77,16 @@ export const getInputData = async (workflowObj, nodeObj) => {
     return sourceNode.data.output;
   }
 };
+
+export const resetSubsequentOutputs = (nodes, edges, nodeID) => {
+  const sourceEdges = edges.filter((edge) => {
+    return edge.source === nodeID;
+  });
+  if (sourceEdges.length > 0) {
+    sourceEdges.forEach((edge) => {
+      resetSubsequentOutputs(nodes, edges, edge.target);
+    });
+  }
+  const node = getNode({ nodes }, nodeID);
+  node.data.output = {};
+};

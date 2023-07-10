@@ -3,7 +3,7 @@ import { startCron, stopCron } from "../utils/scheduleExec.js";
 import { runJSCode } from "../utils/jsCodeExec.js";
 import { runAPI } from "../utils/apiExec.js";
 import { runPSQLCode } from "../utils/psqlExec.js";
-import { getNode } from "../utils/node.js";
+import { getNode, resetSubsequentOutputs } from "../utils/node.js";
 import { getWorkflow, updateNodesEdges } from "../models/workflowsService.js";
 import { runWorkflow } from "../utils/workflowExec.js";
 import { throwNDErrorAndUpdateDB } from "../utils/errors.js";
@@ -42,9 +42,10 @@ router.put("/stopworkflow/:id", async (req, res, next) => {
 //execute node
 router.post("/node", async (req, res, next) => {
   let { workflowID, nodeID, nodes, edges } = req.body;
-  nodes = JSON.stringify(nodes);
-  edges = JSON.stringify(edges);
   try {
+    resetSubsequentOutputs(nodes, edges, nodeID);
+    nodes = JSON.stringify(nodes);
+    edges = JSON.stringify(edges);
     //update nodes and edges in DB by workflowID
     await updateNodesEdges({
       workflowID,
@@ -68,7 +69,9 @@ router.post("/node", async (req, res, next) => {
       const message = `Invalid Node Type: ${nodeObj.type}`;
       await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
     }
-    res.status(200).json(resData);
+    res
+      .status(200)
+      .json({ nodes: workflowObj.nodes, edges: workflowObj.edges });
   } catch (e) {
     next(e);
   }
