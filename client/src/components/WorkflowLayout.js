@@ -387,6 +387,7 @@ const WorkflowLayout = () => {
           snapGrid={snapGrid}
           defaultViewport={defaultViewport}
           fitView
+          fitViewOptions={{ maxZoom: 1 }}
           attributionPosition="bottom-left"
           isValidConnection={handleIsValidConnection}
         >

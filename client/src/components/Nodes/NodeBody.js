@@ -13,7 +13,12 @@ const NodeBody = ({ data, nodeAbbreviation, nodeName, bgColor }) => {
             top: "-12px",
           }}
         >
-          <CheckCircle2 stroke={"#247c44"} fill={"#9ce2b7"} size={24} />
+          <CheckCircle2
+            strokeWidth={1.5}
+            stroke={"#247c44"}
+            fill={"#9ce2b7"}
+            size={24}
+          />
         </Box>
       ) : null}
       {data.error ? (
@@ -25,7 +30,12 @@ const NodeBody = ({ data, nodeAbbreviation, nodeName, bgColor }) => {
             top: "-12px",
           }}
         >
-          <AlertTriangle size={24} fill={"#fcbaba"} stroke={"#902b2b"} />
+          <AlertTriangle
+            size={24}
+            fill={"#fcbaba"}
+            stroke={"#902b2b"}
+            strokeWidth={1.5}
+          />
         </Box>
       ) : null}
       <Box
