@@ -1,14 +1,10 @@
 import { updateNodes } from "../models/pgService.js";
 import { throwNDErrorAndUpdateDB, throwEXErrorAndUpdateDB } from "./errors.js";
-
+import { nodeInputvalidation } from "./nodeInput.js";
 import axios from "axios";
 
-const sendAPI = async ({ method, url, data }) => {
-  const response = await axios({ method, url, data });
-  return response.data;
-};
-
 export const runAPI = async (workflowObj, nodeObj) => {
+  await nodeInputvalidation(workflowObj, nodeObj);
   const input = {
     url: nodeObj.data.url,
     method: nodeObj.data.httpVerb,
@@ -49,4 +45,9 @@ export const runAPI = async (workflowObj, nodeObj) => {
   nodeObj.data.error = null;
   await updateNodes(workflowObj);
   return { data };
+};
+
+const sendAPI = async ({ method, url, data }) => {
+  const response = await axios({ method, url, data });
+  return response.data;
 };

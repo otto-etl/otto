@@ -27,6 +27,7 @@ import {
   isScheduleNode,
   isTransformNode,
   isLoadNode,
+  convertLabel,
 } from "../utils/utils";
 import {
   getWorkflowAPI,
@@ -36,7 +37,19 @@ import {
   toggleWorkflowStatus,
 } from "../services/api";
 import "../index.css";
-import { Typography } from "@mui/material";
+
+import {
+  AppBar,
+  Box,
+  Button,
+  Typography,
+  FormControlLabel,
+  FormGroup,
+  Switch,
+  Toolbar,
+} from "@mui/material";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 
 const connectionLineStyle = { stroke: "#fff" };
 const snapGrid = [20, 20];
@@ -189,19 +202,15 @@ const WorkflowLayout = () => {
       nodes: newNodesArray,
       edges: edges,
     };
+    //on successfull execution returns output data
+    //on execution failure returns error node object
     let executionResult = await saveAndExecuteNode(payload);
     let currentNode = newNodesArray.find((node) => node.id === currentId);
-    let nextNode = newNodesArray.find((node) => node.data.prev === currentId);
+
     if (executionResult.data && executionResult.data.error) {
       currentNode.data = executionResult.data;
-      if (nextNode) {
-        nextNode.data.input = null;
-      }
     } else {
       currentNode.data.output = executionResult;
-      if (nextNode) {
-        nextNode.data.input = executionResult;
-      }
     }
   };
 
@@ -293,6 +302,17 @@ const WorkflowLayout = () => {
       nodes,
       edges,
     });
+    if (res.errMessage) {
+      if (res.errName === "NodeError" || res.errName === "ExternalError")
+        res.errMessage =
+          "Node execution failure, please checked the failed node";
+      setWfError(res.errMessage);
+      setTimeout(() => {
+        setWfError(null);
+      }, 3000);
+    } else {
+      setWfError(null);
+    }
     setNodes(res.nodes);
     setEdges(res.edges);
   };
@@ -350,6 +370,23 @@ const WorkflowLayout = () => {
       setCurrentDB("No load node yet");
     }
   };
+
+  const getPrevNodesOutput = (currentNodeID) => {
+    const sourceEdges = edges.filter((edge) => edge.target === currentNodeID);
+    const input = {};
+    let idx = 0;
+    //adding an index to each output is just for material UI tabs to work
+    sourceEdges.forEach((edge) => {
+      const sourceNode = nodes.find((node) => node.id === edge.source);
+      input[idx] = {
+        label: convertLabel(sourceNode.data.label),
+        data: sourceNode.data.output.data,
+      };
+      idx++;
+    });
+    return input;
+  };
+
   /* ReactFlow throws a console warning here:
   
   It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them.
@@ -367,6 +404,17 @@ const WorkflowLayout = () => {
         handleExecuteAll={handleExecuteAll}
         handleToggleActive={handleToggleActive}
       />
+      {wfError ? (
+        <Alert
+          sx={{ margin: "10px 0 0 0", border: "2px solid #B99" }}
+          severity="error"
+        >
+          <AlertTitle sx={{ fontWeight: "700", color: "#200" }}>
+            Error:
+          </AlertTitle>
+          <p style={{ fontWeight: "600", textIndent: "10px" }}>{wfError}</p>
+        </Alert>
+      ) : null}
       <div className="grid">
         <Sidebar
           handleExecutionListItemClick={handleExecutionListItemClick}
@@ -406,6 +454,7 @@ const WorkflowLayout = () => {
               runExecution={runExecution}
               nodeObj={modalData}
               active={active}
+              getPrevNodesOutput={getPrevNodesOutput}
             />
           ) : null}
         </ReactFlow>

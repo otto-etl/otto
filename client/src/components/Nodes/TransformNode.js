@@ -17,12 +17,6 @@ export default memo(({ data, isConnectable }) => {
         nodeName={"Transform"}
         bgColor={"#319A9C"}
       />
-      {/* <div>
-        <strong>{data.label}</strong>
-        <p>Input: {data.input ? "Has input" : "No input"}</p>
-        <p>Output: {data.output ? "Has output" : "No output"}</p>
-        {data.error ? <p>ERROR</p> : null}
-      </div> */}
       <Handle
         type="source"
         position={Position.Right}

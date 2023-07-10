@@ -19,3 +19,16 @@ export const validNodeTypes = (nodes) => {
   }
   return true;
 };
+
+export const convertLabel = (label) => {
+  const words = label.trim().toLowerCase().split(" ");
+  return words
+    .map((word, idx) => {
+      if (idx !== 0) {
+        return word[0].toUpperCase() + word.slice(1);
+      } else {
+        return word;
+      }
+    })
+    .join("");
+};

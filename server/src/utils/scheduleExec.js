@@ -8,6 +8,8 @@ import {
 } from "../models/pgService.js";
 import { runWorkflow } from "./workflowExec.js";
 import { throwWFErrorAndUpdateDB } from "./errors.js";
+import { nodeInputvalidation } from "./nodeInput.js";
+import { workflowInputvalidation } from "./workflowInput.js";
 import { updateWorkflowError } from "../models/pgService.js";
 // workflows that have cron job started
 const startedWorkflows = {};
@@ -31,6 +33,8 @@ export const startCron = async (workflowObj) => {
   const workflowID = workflowObj.id;
   const currentTimeInMilsec = Date.now();
   const scheduleNodeObj = getScheduleNode(workflowObj);
+  await workflowInputvalidation(workflowObj);
+  await nodeInputvalidation(workflowObj, scheduleNodeObj);
 
   if (!scheduleNodeObj) {
     const message = "No schedule node in the workflow, unable to start cron";
