@@ -35,6 +35,9 @@ export const convertLabel = (label) => {
    In practice, this means it runs once, at workflow creation.
 */
 export const workflowHasOrphanNodes = (nodes, edges) => {
+  if (nodes.length === 0) {
+    return false;
+  }
   let nodeEdgeTracker = {};
   let hasOrphans = false;
   nodes.forEach(node => {
