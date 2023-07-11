@@ -1,10 +1,10 @@
 import Box from "@mui/material/Box";
 
 const CustomTabPanel = (props) => {
-  const { children, value, index, ...other } = props;
+  const { children, value, index, scrollOffset, ...other } = props;
 
   return (
-    <div
+    <Box
       role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
@@ -12,12 +12,18 @@ const CustomTabPanel = (props) => {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3 }}>
+        <Box
+          sx={{
+            m: 3,
+            height: `calc(100vh - ${scrollOffset})`,
+            overflow: "scroll",
+          }}
+        >
           {children}
           {/* <Typography>{children}</Typography> */}
         </Box>
       )}
-    </div>
+    </Box>
   );
 };
 

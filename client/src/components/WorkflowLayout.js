@@ -28,7 +28,7 @@ import {
   isTransformNode,
   isLoadNode,
   convertLabel,
-  workflowHasOrphanNodes
+  workflowHasOrphanNodes,
 } from "../utils/utils";
 import {
   getWorkflowAPI,
@@ -101,11 +101,11 @@ const WorkflowLayout = () => {
   }, [setNodes, setEdges, setActive, setWfName, wfID]);
 
   useEffect(() => {
-	console.log("call to workflowHasOrphanNodes");
+    // console.log("call to workflowHasOrphanNodes");
     let orphans = workflowHasOrphanNodes(nodes, edges);
-	setHasOrphans(orphans);
-	if (orphans) {
-	}
+    setHasOrphans(orphans);
+    if (orphans) {
+    }
   }, [edges]);
 
   const handleExecutionListItemClick = (executionNodes, executionEdges) => {
@@ -223,7 +223,7 @@ const WorkflowLayout = () => {
     //   currentNode.data.output = executionResult;
     // }
     let executionResult = await saveAndExecuteNode(payload);
-    console.log("execution result", executionResult.nodes);
+    // console.log("execution result", executionResult.nodes);
     setNodes(executionResult.nodes);
     setEdges(executionResult.edges);
   };
@@ -245,7 +245,7 @@ const WorkflowLayout = () => {
     let newNodes = [...nodes, newNode];
     await saveWorkflow(1, { nodes: newNodes, edges });
     setNodes(newNodes);
-	setHasOrphans(true); // New nodes are always orphans
+    setHasOrphans(true); // New nodes are always orphans
   };
 
   const addExtraNodeProperties = (newNode) => {
@@ -385,7 +385,7 @@ const WorkflowLayout = () => {
       setCurrentDB("No load node yet");
     }
   };
-  
+
   const getPrevNodesOutput = (currentNodeID) => {
     const sourceEdges = edges.filter((edge) => edge.target === currentNodeID);
     const input = {};
@@ -415,7 +415,7 @@ const WorkflowLayout = () => {
         wfName={wfName}
         message={message}
         active={active}
-		orphans={hasOrphans}
+        orphans={hasOrphans}
         handleSaveWorkflow={handleSaveWorkflow}
         handleExecuteAll={handleExecuteAll}
         handleToggleActive={handleToggleActive}

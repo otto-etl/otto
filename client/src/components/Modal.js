@@ -13,18 +13,20 @@ import LoadModal from "./Modals/LoadModal";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import CustomTabPanel from "./CustomTabPanel";
+import { Typography } from "@mui/material";
 
 const boxStyle = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 1400,
-  height: "80%",
+  width: "97%",
+  height: "95%",
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
-  p: 4,
+  boxSizing: "border-box",
+  // p: 4,
   overflowY: "scroll",
 };
 
@@ -88,39 +90,69 @@ function BasicModal({
         sx={{ overflow: "scroll" }}
       >
         <Box sx={boxStyle}>
-          <Stack direction="row">
-            <Container maxWidth="sm">
-              <p>Input</p>
-              <Box sx={{ bgcolor: "#cfe8fc" }}>
-                <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                  <Tabs
-                    value={tab}
-                    onChange={handleTabChange}
-                    aria-label="basic tabs example"
+          <Stack direction="row" sx={{ height: "100%" }}>
+            {/* LEFT COLUMN */}
+
+            <Box sx={{ flex: 1, padding: 0, backgroundColor: "#f3f4f6" }}>
+              <Typography
+                sx={{ fontSize: "20px", fontWeight: "500", padding: "20px" }}
+              >
+                Input
+              </Typography>
+              {/* ADD CONDITIONAL */}
+              {nodeObj.type === "schedule" || nodeObj.type === "extract" ? (
+                <div>
+                  <Typography sx={{ marginLeft: "20px", color: "#555" }}>
+                    No input
+                  </Typography>
+                </div>
+              ) : null}
+              {nodeObj.type === "transform" || nodeObj.type === "load" ? (
+                <Box
+                  sx={{
+                    margin: "0 20px",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      borderBottom: 1,
+                      borderColor: "divider",
+                    }}
                   >
-                    {Object.keys(input).map((key) => {
-                      return (
-                        <Tab
-                          sx={{
-                            textTransform: "none",
-                          }}
-                          label={input[key].label}
-                          {...a11yProps(Number(key))}
-                        />
-                      );
-                    })}
-                  </Tabs>
+                    <Tabs
+                      value={tab}
+                      onChange={handleTabChange}
+                      aria-label="basic tabs example"
+                    >
+                      {Object.keys(input).map((key) => {
+                        return (
+                          <Tab
+                            sx={{
+                              textTransform: "none",
+                            }}
+                            label={input[key].label}
+                            {...a11yProps(Number(key))}
+                          />
+                        );
+                      })}
+                    </Tabs>
+                  </Box>
+                  {Object.keys(input).map((key) => {
+                    return (
+                      <CustomTabPanel
+                        value={tab}
+                        index={Number(key)}
+                        scrollOffset={"236px"}
+                      >
+                        <JsonView src={input[key].data} />
+                      </CustomTabPanel>
+                    );
+                  })}
                 </Box>
-                {Object.keys(input).map((key) => {
-                  return (
-                    <CustomTabPanel value={tab} index={Number(key)}>
-                      <JsonView src={input[key].data} />
-                    </CustomTabPanel>
-                  );
-                })}
-              </Box>
-            </Container>
-            <Container maxWidth="sm">
+              ) : null}
+            </Box>
+            {/* CENTER COLUMN */}
+            <Box sx={{ flex: 1 }}>
               {nodeObj.type === "schedule" ? (
                 <ScheduleModal
                   nodeObj={nodeObj}
@@ -153,13 +185,13 @@ function BasicModal({
                   active={active}
                 />
               ) : null}
-            </Container>
-            <Container maxWidth="sm">
+            </Box>
+            <Box sx={{ flex: 1 }}>
               <p>Output</p>
-              <Box sx={{ bgcolor: "#cfe8fc" }}>
+              <Box>
                 {nodeObj.data ? <JsonView src={nodeObj.data.output} /> : null}
               </Box>
-            </Container>
+            </Box>
           </Stack>
         </Box>
       </Modal>

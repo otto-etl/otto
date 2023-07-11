@@ -13,7 +13,7 @@ import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 
 const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
-  console.log("transform", nodeObj.data);
+  // console.log("transform", nodeObj.data);
   const [name, setName] = useState(nodeObj.data.label);
   const [code, setCode] = useState(nodeObj.data.jsCode);
   const [error, setError] = useState(nodeObj.data.error);
@@ -37,7 +37,7 @@ const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
       "aria-controls": `simple-tabpanel-${index}`,
     };
   };
-  console.log(code);
+  // console.log(code);
   return (
     <Box>
       <form

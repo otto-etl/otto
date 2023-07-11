@@ -10,6 +10,7 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
+import { Typography } from "@mui/material";
 import { styled } from "@mui/system";
 
 const blue = {
@@ -77,10 +78,30 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
 
   const formsPopulated = () => {
     return name && url && actionType; // do we need json populated too?
-  }  
+  };
 
   return (
-    <Box>
+    <Box sx={{ height: "100%", padding: "20px", boxSizing: "border-box" }}>
+      <Typography sx={{ fontSize: "20px", fontWeight: "500" }}>
+        Extract Details
+      </Typography>
+      {error ? (
+        <Alert
+          sx={{
+            margin: "10px 0 10px 0",
+            border: "2px solid #B99",
+            whiteSpace: "pre-line",
+          }}
+          severity="error"
+        >
+          <AlertTitle sx={{ fontWeight: "700", color: "#200" }}>
+            {error.errName === "ExternalError"
+              ? "External Error:"
+              : "Internal Error:"}
+          </AlertTitle>
+          <p>{error.message}</p>
+        </Alert>
+      ) : null}
       <form
         action=""
         onSubmit={(e) => {
@@ -95,72 +116,59 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           };
           handleSubmit(e, newData);
         }}
+        style={{ display: "flex", flexDirection: "column", gap: "25px" }}
       >
-        <p>Extract Details</p>
-        {error ? (
-          <Alert
-            sx={{
-              margin: "10px 0 10px 0",
-              border: "2px solid #B99",
-              whiteSpace: "pre-line",
-            }}
-            severity="error"
-          >
-            <AlertTitle sx={{ fontWeight: "700", color: "#200" }}>
-              {error.errName === "ExternalError"
-                ? "External Error:"
-                : "Internal Error:"}
-            </AlertTitle>
-            <p>{error.message}</p>
-          </Alert>
-        ) : null}
-        <TextField
-          disabled={active ? true : false}
-          id="outlined-basic"
-          label="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-
-        <FormControl>
-          <InputLabel id="action-type">Action Type</InputLabel>
-          <Select
+        <Box>
+          <TextField
             disabled={active ? true : false}
-            labelId="action-type"
-            id="action-type-select"
-            value={actionType}
-            label="Action Type"
-            onChange={(e) => setActionType(e.target.value)}
-          >
-            <MenuItem value={"GET"}>GET</MenuItem>
-            <MenuItem value={"POST"}>POST</MenuItem>
-          </Select>
-        </FormControl>
-        <br></br>
-        <br></br>
-        <TextField
-          disabled={active ? true : false}
-          id="outlined-basic"
-          label="URL"
-          value={url}
-          onChange={(e) => setURL(e.target.value)}
-        />
-        <br></br>
-        <br></br>
-        <FormControl>
-          <StyledTextarea
-            disabled={active ? true : false}
-            aria-label="json"
-            minRows={5}
-            placeholder="JSON"
-            value={json}
-            onChange={(e) => {
-              setJSON(e.target.value);
-            }}
+            id="outlined-basic"
+            label="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
-        </FormControl>
-        <br></br>
-        <br></br>
+        </Box>
+
+        <Box>
+          <FormControl>
+            <InputLabel id="action-type">Action Type</InputLabel>
+            <Select
+              disabled={active ? true : false}
+              labelId="action-type"
+              id="action-type-select"
+              value={actionType}
+              label="Action Type"
+              onChange={(e) => setActionType(e.target.value)}
+            >
+              <MenuItem value={"GET"}>GET</MenuItem>
+              <MenuItem value={"POST"}>POST</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+
+        <Box>
+          <TextField
+            disabled={active ? true : false}
+            id="outlined-basic"
+            label="URL"
+            value={url}
+            onChange={(e) => setURL(e.target.value)}
+          />
+        </Box>
+
+        <Box>
+          <FormControl>
+            <StyledTextarea
+              disabled={active ? true : false}
+              aria-label="json"
+              minRows={5}
+              placeholder="JSON"
+              value={json}
+              onChange={(e) => {
+                setJSON(e.target.value);
+              }}
+            />
+          </FormControl>
+        </Box>
         <Stack direction="row">
           <Button
             variant="contained"
