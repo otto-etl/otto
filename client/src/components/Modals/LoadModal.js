@@ -10,6 +10,7 @@ import { sql, SQLConfig, StandardSQL } from "@codemirror/lang-sql";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import CustomTabPanel from "../CustomTabPanel";
+import { EditorView } from "@codemirror/view";
 
 const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
   const [name, setName] = useState(nodeObj.data.label);
@@ -37,9 +38,9 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
   };
 
   const formsPopulated = () => {
-    return name && code && userName && password && host && port && dbName; 
+    return name && code && userName && password && host && port && dbName;
   };
-  
+
   const a11yProps = (index) => {
     return {
       id: `simple-tab-${index}`,
@@ -210,7 +211,7 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           readOnly={active ? true : false}
           value={code}
           height="200px"
-          extensions={[sql(config)]}
+          extensions={[sql(config), EditorView.lineWrapping]}
           onChange={handleChange}
         />
         <br></br>

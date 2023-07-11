@@ -11,6 +11,7 @@ import Tab from "@mui/material/Tab";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
+import { EditorView } from "@codemirror/view";
 
 const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
   console.log("transform", nodeObj.data);
@@ -101,7 +102,7 @@ const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             readOnly={active ? true : false}
             value={code}
             height="200px"
-            extensions={[javascript({ jsx: true })]}
+            extensions={[javascript({ jsx: true }), EditorView.lineWrapping]}
             onChange={handleChange}
           />
         </CustomTabPanel>
@@ -110,7 +111,7 @@ const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             readOnly={active ? true : false}
             value={code}
             height="200px"
-            extensions={[python()]}
+            extensions={[python(), EditorView.lineWrapping]}
             onChange={handleChange}
           />
         </CustomTabPanel>

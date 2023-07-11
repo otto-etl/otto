@@ -8,7 +8,8 @@ export const runAPI = async (workflowObj, nodeObj) => {
   const input = {
     url: nodeObj.data.url,
     method: nodeObj.data.httpVerb,
-    data: nodeObj.jsonBody,
+    data: nodeObj.data.jsonBody,
+    headers: nodeObj.data.header,
   };
   let data;
 
@@ -47,7 +48,8 @@ export const runAPI = async (workflowObj, nodeObj) => {
   return { data };
 };
 
-const sendAPI = async ({ method, url, data }) => {
-  const response = await axios({ method, url, data });
+const sendAPI = async ({ method, url, data, headers }) => {
+  console.log({ method, url, data, headers });
+  const response = await axios({ method, url, data, headers });
   return response.data;
 };
