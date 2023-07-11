@@ -3,11 +3,13 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
+import { Typography, IconButton } from "@mui/material";
 import dayjs from "dayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { Trash2 } from "lucide-react";
 
 const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
   const [name, setName] = useState(nodeObj.data.label);
@@ -18,12 +20,22 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
 
   const formsPopulated = () => {
     return name && dateAndTime && interval;
-  }
+  };
 
   return (
-    <Box>
-      <p>Schedule Details</p>
+    <Box sx={{ height: "100%" }}>
+      <Typography sx={{ fontSize: "20px", fontWeight: "500", padding: "20px" }}>
+        Schedule Details
+      </Typography>
       <form
+        style={{
+          padding: "10px 20px 20px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          // gap: "30px",
+          height: "calc(100% - 100px)",
+        }}
         action=""
         onSubmit={(e) => {
           e.preventDefault();
@@ -35,41 +47,71 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           handleSubmit(e, newData);
         }}
       >
-        <TextField
-          disabled={active ? true : false}
-          id="outlined-basic"
-          label="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)} // variant="outlined"
-        />
-        <br></br>
-        <br></br>
-        <p>Provide Cron job details below:</p>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DemoContainer components={["DateTimePicker", "DateTimePicker"]}>
-            <DateTimePicker
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "30px",
+          }}
+        >
+          <Box>
+            <TextField
               disabled={active ? true : false}
-              label="Date and Time"
-              value={dateAndTime}
-              onChange={(dateAndTime) => setDateAndTime(dateAndTime)}
+              id="outlined-basic"
+              label="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)} // variant="outlined"
+              sx={{ width: "100%" }}
             />
-          </DemoContainer>
-        </LocalizationProvider>
-        <br></br>
-        <br></br>
-        <TextField
-          sx={{ width: "50%" }}
-          disabled={active ? true : false}
-          id="outlined-basic"
-          label="Frequency of Executions (days)"
-          type={"number"}
-          value={interval}
-          onChange={(e) => setInterval(e.target.value)} // variant="outlined"
-        />
-		<Stack direction="row">
-          <Button variant="contained" color="primary" onClick={handleDelete} disabled={active ? true : false}>
+          </Box>
+          <Box>
+            <Typography sx={{ m: "0 0 10px" }}>
+              Provide Cron job details below:
+            </Typography>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={["DateTimePicker", "DateTimePicker"]}>
+                <DateTimePicker
+                  disabled={active ? true : false}
+                  label="Date and Time"
+                  value={dateAndTime}
+                  onChange={(dateAndTime) => setDateAndTime(dateAndTime)}
+                />
+              </DemoContainer>
+            </LocalizationProvider>
+          </Box>
+          <Box>
+            <TextField
+              sx={{ width: "50%", marginTop: "10px", minWidth: "260px" }}
+              disabled={active ? true : false}
+              id="outlined-basic"
+              label="Frequency of Execution (days)"
+              type={"number"}
+              value={interval}
+              onChange={(e) => setInterval(e.target.value)} // variant="outlined"
+            />
+          </Box>
+        </Box>
+        <Stack direction="row" sx={{ justifyContent: "space-between" }}>
+          <IconButton
+            aria-label="delete"
+            onClick={handleDelete}
+            disabled={active ? true : false}
+          >
+            <Trash2 color="#555" size={26} strokeWidth={1.5} />
+            {/* // #d32f2f */}
+          </IconButton>
+          {/* <Button
+            variant="outlined"
+            color="error"
+            onClick={handleDelete}
+            disabled={active ? true : false}
+            sx={{
+              color: "#d32f2f",
+              border: "1px solid #d32f2f",
+            }}
+          >
             Delete
-          </Button>
+          </Button> */}
           <Button
             variant="contained"
             color="primary"
@@ -78,7 +120,7 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           >
             Save
           </Button>
-		</Stack>
+        </Stack>
       </form>
     </Box>
   );

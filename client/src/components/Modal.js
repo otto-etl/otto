@@ -99,7 +99,6 @@ function BasicModal({
               >
                 Input
               </Typography>
-              {/* ADD CONDITIONAL */}
               {nodeObj.type === "schedule" || nodeObj.type === "extract" ? (
                 <div>
                   <Typography sx={{ marginLeft: "20px", color: "#555" }}>
@@ -186,9 +185,23 @@ function BasicModal({
                 />
               ) : null}
             </Box>
-            <Box sx={{ flex: 1 }}>
-              <p>Output</p>
+            {/* RIGHT COLUMN */}
+            <Box sx={{ flex: 1, padding: 0, backgroundColor: "#f3f4f6" }}>
+              <Typography
+                sx={{ fontSize: "20px", fontWeight: "500", padding: "20px" }}
+              >
+                Output
+              </Typography>
+              {nodeObj.type === "schedule" ? (
+                <div>
+                  <Typography sx={{ marginLeft: "20px", color: "#555" }}>
+                    No output
+                  </Typography>
+                </div>
+              ) : null}
               <Box>
+                {console.log(nodeObj.data.output)}
+                {console.log(Object.keys(nodeObj.data.output).length)}
                 {nodeObj.data ? <JsonView src={nodeObj.data.output} /> : null}
               </Box>
             </Box>
