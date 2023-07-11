@@ -9,7 +9,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 
-const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
+const ScheduleModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
   const [name, setName] = useState(nodeObj.data.label);
   const [dateAndTime, setDateAndTime] = useState(dayjs(nodeObj.data.startTime));
   const [interval, setInterval] = useState(
@@ -18,7 +18,7 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
 
   const formsPopulated = () => {
     return name && dateAndTime && interval;
-  }
+  };
 
   return (
     <Box>
@@ -36,7 +36,7 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
         }}
       >
         <TextField
-          disabled={active ? true : false}
+          disabled={disabled ? true : false}
           id="outlined-basic"
           label="Name"
           value={name}
@@ -48,7 +48,7 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DemoContainer components={["DateTimePicker", "DateTimePicker"]}>
             <DateTimePicker
-              disabled={active ? true : false}
+              disabled={disabled ? true : false}
               label="Date and Time"
               value={dateAndTime}
               onChange={(dateAndTime) => setDateAndTime(dateAndTime)}
@@ -59,26 +59,31 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
         <br></br>
         <TextField
           sx={{ width: "50%" }}
-          disabled={active ? true : false}
+          disabled={disabled ? true : false}
           id="outlined-basic"
           label="Frequency of Executions (days)"
           type={"number"}
           value={interval}
           onChange={(e) => setInterval(e.target.value)} // variant="outlined"
         />
-		<Stack direction="row">
-          <Button variant="contained" color="primary" onClick={handleDelete} disabled={active ? true : false}>
+        <Stack direction="row">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleDelete}
+            disabled={disabled ? true : false}
+          >
             Delete
           </Button>
           <Button
             variant="contained"
             color="primary"
             type="submit"
-            disabled={active || !formsPopulated() ? true : false}
+            disabled={disabled || !formsPopulated() ? true : false}
           >
             Save
           </Button>
-		</Stack>
+        </Stack>
       </form>
     </Box>
   );

@@ -14,6 +14,7 @@ import { insertNewExecution } from "../models/workflowsService.js";
 let completedNodes = {};
 
 const executeNode = async (workflowObj, nodeObj) => {
+  console.log(nodeObj.type);
   if (completedNodes[nodeObj.id]) {
     return;
   } else {
@@ -59,7 +60,8 @@ export const runWorkflow = async (workflowObj) => {
     (node) => node.type === "load"
   );
 
-  workflowObj.startTime = Date.now();
+  workflowObj.startTime = new Date(Date.now()).toISOString();
+  // workflowObj.startTime = Date.now();
   console.log("Workflow start time:", workflowObj.startTime);
   const promises = finalLoadNodes.map((node) => {
     return new Promise((res, rej) => {
