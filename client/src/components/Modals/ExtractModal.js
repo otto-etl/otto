@@ -11,6 +11,10 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import TextareaAutosize from "@mui/material/TextareaAutosize";
+import { Typography, IconButton } from "@mui/material";
+import { styled } from "@mui/system";
+import { Trash2 } from "lucide-react";
 import Switch from "@mui/material/Switch";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
@@ -72,193 +76,243 @@ const ExtractModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
 
   return (
     <Box>
-      <form onSubmit={handleFormSubmit}>
-        <p>Extract Details</p>
-        {error ? (
-          <Alert
-            sx={{
-              margin: "10px 0 10px 0",
-              border: "2px solid #B99",
-              whiteSpace: "pre-line",
-            }}
-            severity="error"
-          >
-            <AlertTitle sx={{ fontWeight: "700", color: "#200" }}>
-              {error.errName === "ExternalError"
-                ? "External Error:"
-                : "Internal Error:"}
-            </AlertTitle>
-            <p>{error.message}</p>
-          </Alert>
-        ) : null}
-        <TextField
-          disabled={disabled ? true : false}
-          id="outlined-basic"
-          label="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          size="small"
-        />
-        <FormControl>
-          <InputLabel id="action-type">Action Type</InputLabel>
-          <Select
-            disabled={disabled ? true : false}
-            labelId="action-type"
-            id="action-type-select"
-            value={actionType}
-            label="Action Type"
-            onChange={(e) => setActionType(e.target.value)}
-            size="small"
-          >
-            <MenuItem value={"GET"}>GET</MenuItem>
-            <MenuItem value={"POST"}>POST</MenuItem>
-          </Select>
-        </FormControl>
-        <br></br>
-        <br></br>
-        <TextField
-          disabled={disabled ? true : false}
-          id="outlined-basic"
-          label="URL"
-          value={url}
-          onChange={(e) => setURL(e.target.value)}
-          size="small"
-        />
-        <br></br>
-        <br></br>
-        <FormGroup sx={{ alignItems: "flex-start" }}>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={oAuthChecked}
-                onChange={(e) => {
-                  setOAuthChecked(e.target.checked);
-                }}
-                inputProps={{ "aria-label": "controlled" }}
-              />
-            }
-            sx={{ m: 0 }}
-            label="OAuth2"
-            defaultChecked
-            labelPlacement="end"
-          />
-        </FormGroup>
-        {oAuthChecked ? (
+      <Typography sx={{ fontSize: "20px", fontWeight: "500", padding: "20px" }}>
+        Extract Details
+      </Typography>
+
+      {/* <Box sx={{ height: "100%", padding: "20px", boxSizing: "border-box" }}> */}
+
+      <form
+        action=""
+        onSubmit={handleFormSubmit}
+        // style={{ display: "flex", flexDirection: "column", gap: "25px" }}
+        style={{
+          padding: "0 20px 20px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          // gap: "30px",
+          height: "calc(100vh - 155px)",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "30px",
+            overflow: "scroll",
+          }}
+        >
+          {error ? (
+            <Alert
+              sx={{
+                // margin: "10px 0 10px 0",
+                border: "2px solid #B99",
+                whiteSpace: "pre-line",
+              }}
+              severity="error"
+            >
+              <AlertTitle sx={{ fontWeight: "700", color: "#200" }}>
+                {error.errName === "ExternalError"
+                  ? "External Error:"
+                  : "Internal Error:"}
+              </AlertTitle>
+              <p>{error.message}</p>
+            </Alert>
+          ) : null}
           <Box>
-            <p>Client Credentials Grant Type (token send through header)</p>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-              <Box>
-                <TextField
-                  disabled={active ? true : false}
-                  id="outlined-basic"
-                  label="Access Token URL"
-                  value={accessTokenURL}
-                  onChange={(e) => setAccessTokenURL(e.target.value)}
-                  size="small"
-                  sx={{ width: "100%" }}
+            <TextField
+              disabled={disabled ? true : false}
+              id="outlined-basic"
+              label="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              sx={{ width: "100%", marginTop: "5px" }}
+              size={"small"}
+            />
+          </Box>
+
+          <Box>
+            <FormControl sx={{ width: "40%" }} size={"small"}>
+              <InputLabel id="action-type">Action Type</InputLabel>
+              <Select
+                disabled={disabled ? true : false}
+                labelId="action-type"
+                id="action-type-select"
+                value={actionType}
+                label="Action Type"
+                onChange={(e) => setActionType(e.target.value)}
+              >
+                <MenuItem value={"GET"}>GET</MenuItem>
+                <MenuItem value={"POST"}>POST</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+
+          <Box>
+            <TextField
+              disabled={disabled ? true : false}
+              id="outlined-basic"
+              label="URL"
+              value={url}
+              onChange={(e) => setURL(e.target.value)}
+              sx={{ width: "100%" }}
+              size={"small"}
+            />
+          </Box>
+          {/* <Box>
+            <FormControl>
+              <StyledTextarea
+                disabled={disabled ? true : false}
+                aria-label="json"
+                minRows={5}
+                placeholder="JSON"
+                value={json}
+                onChange={(e) => {
+                  setJSON(e.target.value);
+                }}
+              />
+            </FormControl>
+          </Box> */}
+          <FormGroup sx={{ alignItems: "flex-start" }}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={oAuthChecked}
+                  onChange={(e) => {
+                    setOAuthChecked(e.target.checked);
+                  }}
+                  inputProps={{ "aria-label": "controlled" }}
                 />
-              </Box>
-              <Box>
-                <TextField
-                  disabled={active ? true : false}
-                  id="outlined-basic"
-                  label="Client ID"
-                  value={clientID}
-                  onChange={(e) => setClientID(e.target.value)}
-                  size="small"
-                  sx={{ width: "100%" }}
-                />
-              </Box>
-              <Box>
-                <TextField
-                  disabled={active ? true : false}
-                  id="outlined-basic"
-                  label="Client Secret"
-                  value={clientSecret}
-                  onChange={(e) => setClientSecret(e.target.value)}
-                  size="small"
-                  sx={{ width: "100%" }}
-                />
-              </Box>
-              <Box>
-                <TextField
-                  disabled={active ? true : false}
-                  id="outlined-basic"
-                  label="Scope"
-                  value={scope}
-                  onChange={(e) => setScope(e.target.value)}
-                  size="small"
-                  sx={{ width: "100%" }}
-                />
+              }
+              sx={{ m: 0 }}
+              label="OAuth2"
+              defaultChecked
+              labelPlacement="end"
+            />
+          </FormGroup>
+          {oAuthChecked ? (
+            <Box>
+              <p>Client Credentials Grant Type (token send through header)</p>
+              <Box
+                sx={{ display: "flex", flexDirection: "column", gap: "20px" }}
+              >
+                <Box>
+                  <TextField
+                    disabled={disabled ? true : false}
+                    id="outlined-basic"
+                    label="Access Token URL"
+                    value={accessTokenURL}
+                    onChange={(e) => setAccessTokenURL(e.target.value)}
+                    size="small"
+                    sx={{ width: "100%" }}
+                  />
+                </Box>
+                <Box>
+                  <TextField
+                    disabled={disabled ? true : false}
+                    id="outlined-basic"
+                    label="Client ID"
+                    value={clientID}
+                    onChange={(e) => setClientID(e.target.value)}
+                    size="small"
+                    sx={{ width: "100%" }}
+                  />
+                </Box>
+                <Box>
+                  <TextField
+                    disabled={disabled ? true : false}
+                    id="outlined-basic"
+                    label="Client Secret"
+                    value={clientSecret}
+                    onChange={(e) => setClientSecret(e.target.value)}
+                    size="small"
+                    sx={{ width: "100%" }}
+                  />
+                </Box>
+                <Box>
+                  <TextField
+                    disabled={disabled ? true : false}
+                    id="outlined-basic"
+                    label="Scope"
+                    value={scope}
+                    onChange={(e) => setScope(e.target.value)}
+                    size="small"
+                    sx={{ width: "100%" }}
+                  />
+                </Box>
               </Box>
             </Box>
-          </Box>
-        ) : null}
-        <FormGroup sx={{ alignItems: "flex-start" }}>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={headerChecked}
-                onChange={(e) => {
-                  setHeaderChecked(e.target.checked);
-                }}
-                inputProps={{ "aria-label": "controlled" }}
-              />
-            }
-            sx={{ m: 0 }}
-            label="Header"
-            defaultChecked
-            labelPlacement="end"
-          />
-        </FormGroup>
-        {headerChecked ? (
-          <CodeMirror
-            readOnly={active ? true : false}
-            value={header}
-            height="200px"
-            extensions={[javascript({ jsx: true }), EditorView.lineWrapping]}
-            onChange={handleHeaderChange}
-          />
-        ) : null}
+          ) : null}
+          <FormGroup sx={{ alignItems: "flex-start" }}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={headerChecked}
+                  onChange={(e) => {
+                    setHeaderChecked(e.target.checked);
+                  }}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              }
+              sx={{ m: 0 }}
+              label="Header"
+              defaultChecked
+              labelPlacement="end"
+            />
+          </FormGroup>
+          {headerChecked ? (
+            <CodeMirror
+              readOnly={disabled ? true : false}
+              value={header}
+              height="200px"
+              extensions={[javascript({ jsx: true }), EditorView.lineWrapping]}
+              onChange={handleHeaderChange}
+            />
+          ) : null}
 
-        <FormGroup sx={{ alignItems: "flex-start" }}>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={bodyChecked}
-                onChange={(e) => {
-                  setBodyChecked(e.target.checked);
-                }}
-                inputProps={{ "aria-label": "controlled" }}
-              />
-            }
-            sx={{ m: 0 }}
-            label="Body"
-            defaultChecked
-            labelPlacement="end"
-          />
-        </FormGroup>
-        {bodyChecked ? (
-          <CodeMirror
-            readOnly={active ? true : false}
-            value={jsonBody}
-            height="200px"
-            extensions={[javascript({ jsx: true }), EditorView.lineWrapping]}
-            onChange={handleBodyChange}
-          />
-        ) : null}
-
-        <br></br>
-        <br></br>
-        <Stack direction="row">
-          <Button
-            variant="contained"
-            color="primary"
+          <FormGroup sx={{ alignItems: "flex-start" }}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={bodyChecked}
+                  onChange={(e) => {
+                    setBodyChecked(e.target.checked);
+                  }}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              }
+              sx={{ m: 0 }}
+              label="Body"
+              defaultChecked
+              labelPlacement="end"
+            />
+          </FormGroup>
+          {bodyChecked ? (
+            <CodeMirror
+              readOnly={disabled ? true : false}
+              value={jsonBody}
+              height="200px"
+              extensions={[javascript({ jsx: true }), EditorView.lineWrapping]}
+              onChange={handleBodyChange}
+            />
+          ) : null}
+        </Box>
+        <Stack
+          direction="row"
+          sx={{
+            paddingTop: "30px",
+            justifyContent: "space-between",
+          }}
+        >
+          <IconButton
+            aria-label="delete"
             onClick={handleDelete}
             disabled={disabled ? true : false}
           >
-            Delete
-          </Button>
+            <Trash2 color="#555" size={26} strokeWidth={1.5} />
+            {/* // #d32f2f */}
+          </IconButton>
           <Button
             variant="contained"
             color="primary"
@@ -269,6 +323,7 @@ const ExtractModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
           </Button>
         </Stack>
       </form>
+      {/* </Box> */}
     </Box>
   );
 };

@@ -13,7 +13,7 @@ import { Background } from "@reactflow/background";
 import { useParams } from "react-router-dom";
 import "reactflow/dist/style.css";
 
-import Modal from "./Modal";
+import Modal from "./Modals/Modal";
 import ScheduleNode from "./Nodes/ScheduleNode";
 import ExtractNode from "./Nodes/ExtractNode";
 import TransformNode from "./Nodes/TransformNode";
@@ -226,7 +226,7 @@ const WorkflowLayout = () => {
     //   currentNode.data.output = executionResult;
     // }
     let executionResult = await saveAndExecuteNode(payload);
-    console.log("execution result", executionResult.nodes);
+    // console.log("execution result", executionResult.nodes);
     setNodes(executionResult.nodes);
     setEdges(executionResult.edges);
   };
@@ -418,7 +418,6 @@ const WorkflowLayout = () => {
         wfName={wfName}
         message={message}
         active={active}
-        logView={logView}
         orphans={hasOrphans}
         handleSaveWorkflow={handleSaveWorkflow}
         handleExecuteAll={handleExecuteAll}

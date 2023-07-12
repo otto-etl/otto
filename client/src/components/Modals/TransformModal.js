@@ -38,7 +38,7 @@ const TransformModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
       "aria-controls": `simple-tabpanel-${index}`,
     };
   };
-  console.log(code);
+  // console.log(code);
   return (
     <Box>
       <form

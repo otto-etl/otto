@@ -84,6 +84,8 @@ const oAuthAndSend = async (nodeObj) => {
     oAuthChecked,
   } = nodeObj.data;
 
+  let data;
+
   //check if nodeObj.data has access token
   if (oAuthChecked) {
     if (!nodeObj.data.token) {
@@ -96,18 +98,17 @@ const oAuthAndSend = async (nodeObj) => {
       );
     }
     header["Authorization"] = "Bearer " + nodeObj.data.token.access_token;
-    let data;
     if (Object.keys(jsonBody).length === 0) {
       data = undefined;
     } else {
       data = jsonBody;
     }
-    const res = await sendAPI({
-      method: httpVerb,
-      url,
-      headers: header,
-      data,
-    });
-    return res;
   }
+  const res = await sendAPI({
+    method: httpVerb,
+    url,
+    headers: header,
+    data,
+  });
+  return res;
 };
