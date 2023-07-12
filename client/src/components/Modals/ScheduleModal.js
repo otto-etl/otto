@@ -62,6 +62,7 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
               value={name}
               onChange={(e) => setName(e.target.value)} // variant="outlined"
               sx={{ width: "100%" }}
+              size={"small"}
             />
           </Box>
           <Box>
@@ -71,6 +72,7 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DemoContainer components={["DateTimePicker", "DateTimePicker"]}>
                 <DateTimePicker
+                  size={"small"}
                   disabled={active ? true : false}
                   label="Date and Time"
                   value={dateAndTime}
@@ -88,6 +90,7 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
               type={"number"}
               value={interval}
               onChange={(e) => setInterval(e.target.value)} // variant="outlined"
+              size={"small"}
             />
           </Box>
         </Box>

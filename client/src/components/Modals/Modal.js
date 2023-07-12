@@ -6,29 +6,14 @@ import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import JsonView from "react18-json-view";
 import "react18-json-view/src/style.css";
-import ScheduleModal from "./Modals/ScheduleModal";
-import ExtractModal from "./Modals/ExtractModal";
-import TransformModal from "./Modals/TransformModal";
-import LoadModal from "./Modals/LoadModal";
+import ScheduleModal from "./ScheduleModal";
+import ExtractModal from "./ExtractModal";
+import TransformModal from "./TransformModal";
+import LoadModal from "./LoadModal";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import CustomTabPanel from "./CustomTabPanel";
+import CustomTabPanel from "../CustomTabPanel";
 import { Typography } from "@mui/material";
-
-const boxStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "97%",
-  height: "95%",
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  boxSizing: "border-box",
-  // p: 4,
-  overflowY: "scroll",
-};
 
 function BasicModal({
   modalIsOpen,
@@ -87,9 +72,22 @@ function BasicModal({
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-        sx={{ overflow: "scroll" }}
       >
-        <Box sx={boxStyle}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "97%",
+            height: "95%",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            boxSizing: "border-box",
+            // p: 4,
+            overflowY: "scroll",
+          }}
+        >
           <Stack direction="row" sx={{ height: "100%" }}>
             {/* LEFT COLUMN */}
 
@@ -124,6 +122,7 @@ function BasicModal({
                       aria-label="basic tabs example"
                     >
                       {Object.keys(input).map((key) => {
+                        console.log(key);
                         return (
                           <Tab
                             sx={{
@@ -192,17 +191,25 @@ function BasicModal({
               >
                 Output
               </Typography>
-              {nodeObj.type === "schedule" ? (
+              {/* {nodeObj.type === "schedule" ? (
                 <div>
                   <Typography sx={{ marginLeft: "20px", color: "#555" }}>
                     No output
                   </Typography>
                 </div>
-              ) : null}
-              <Box>
-                {console.log(nodeObj.data.output)}
-                {console.log(Object.keys(nodeObj.data.output).length)}
-                {nodeObj.data ? <JsonView src={nodeObj.data.output} /> : null}
+              ) : null} */}
+              <Box
+                sx={{
+                  height: "calc(100vh - 159px)",
+                  overflow: "scroll",
+                  margin: "0 20px 24px",
+                }}
+              >
+                {Object.keys(nodeObj.data.output).length > 0 ? (
+                  <JsonView src={nodeObj.data.output} />
+                ) : (
+                  <Typography sx={{ color: "#555" }}>No output</Typography>
+                )}
               </Box>
             </Box>
           </Stack>

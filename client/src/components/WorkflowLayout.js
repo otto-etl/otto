@@ -13,7 +13,7 @@ import { Background } from "@reactflow/background";
 import { useParams } from "react-router-dom";
 import "reactflow/dist/style.css";
 
-import Modal from "./Modal";
+import Modal from "./Modals/Modal";
 import ScheduleNode from "./Nodes/ScheduleNode";
 import ExtractNode from "./Nodes/ExtractNode";
 import TransformNode from "./Nodes/TransformNode";

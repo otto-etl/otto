@@ -12,6 +12,7 @@ import MenuItem from "@mui/material/MenuItem";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
 import { Typography } from "@mui/material";
 import { styled } from "@mui/system";
+import { Background } from "reactflow";
 
 const blue = {
   100: "#DAECFF",
@@ -81,27 +82,13 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
   };
 
   return (
-    <Box sx={{ height: "100%", padding: "20px", boxSizing: "border-box" }}>
-      <Typography sx={{ fontSize: "20px", fontWeight: "500" }}>
+    <Box>
+      <Typography sx={{ fontSize: "20px", fontWeight: "500", padding: "20px" }}>
         Extract Details
       </Typography>
-      {error ? (
-        <Alert
-          sx={{
-            margin: "10px 0 10px 0",
-            border: "2px solid #B99",
-            whiteSpace: "pre-line",
-          }}
-          severity="error"
-        >
-          <AlertTitle sx={{ fontWeight: "700", color: "#200" }}>
-            {error.errName === "ExternalError"
-              ? "External Error:"
-              : "Internal Error:"}
-          </AlertTitle>
-          <p>{error.message}</p>
-        </Alert>
-      ) : null}
+
+      {/* <Box sx={{ height: "100%", padding: "20px", boxSizing: "border-box" }}> */}
+
       <form
         action=""
         onSubmit={(e) => {
@@ -116,60 +103,104 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           };
           handleSubmit(e, newData);
         }}
-        style={{ display: "flex", flexDirection: "column", gap: "25px" }}
+        // style={{ display: "flex", flexDirection: "column", gap: "25px" }}
+        style={{
+          padding: "0 20px 20px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          // gap: "30px",
+          height: "calc(100vh - 166px)",
+        }}
       >
-        <Box>
-          <TextField
-            disabled={active ? true : false}
-            id="outlined-basic"
-            label="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </Box>
-
-        <Box>
-          <FormControl>
-            <InputLabel id="action-type">Action Type</InputLabel>
-            <Select
-              disabled={active ? true : false}
-              labelId="action-type"
-              id="action-type-select"
-              value={actionType}
-              label="Action Type"
-              onChange={(e) => setActionType(e.target.value)}
-            >
-              <MenuItem value={"GET"}>GET</MenuItem>
-              <MenuItem value={"POST"}>POST</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-
-        <Box>
-          <TextField
-            disabled={active ? true : false}
-            id="outlined-basic"
-            label="URL"
-            value={url}
-            onChange={(e) => setURL(e.target.value)}
-          />
-        </Box>
-
-        <Box>
-          <FormControl>
-            <StyledTextarea
-              disabled={active ? true : false}
-              aria-label="json"
-              minRows={5}
-              placeholder="JSON"
-              value={json}
-              onChange={(e) => {
-                setJSON(e.target.value);
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "30px",
+            overflow: "scroll",
+          }}
+        >
+          {error ? (
+            <Alert
+              sx={{
+                margin: "10px 0 10px 0",
+                border: "2px solid #B99",
+                whiteSpace: "pre-line",
               }}
+              severity="error"
+            >
+              <AlertTitle sx={{ fontWeight: "700", color: "#200" }}>
+                {error.errName === "ExternalError"
+                  ? "External Error:"
+                  : "Internal Error:"}
+              </AlertTitle>
+              <p>{error.message}</p>
+            </Alert>
+          ) : null}
+          <Box>
+            <TextField
+              disabled={active ? true : false}
+              id="outlined-basic"
+              label="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              sx={{ width: "100%", marginTop: "5px" }}
+              size={"small"}
             />
-          </FormControl>
+          </Box>
+
+          <Box>
+            <FormControl sx={{ width: "40%" }} size={"small"}>
+              <InputLabel id="action-type">Action Type</InputLabel>
+              <Select
+                disabled={active ? true : false}
+                labelId="action-type"
+                id="action-type-select"
+                value={actionType}
+                label="Action Type"
+                onChange={(e) => setActionType(e.target.value)}
+              >
+                <MenuItem value={"GET"}>GET</MenuItem>
+                <MenuItem value={"POST"}>POST</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+
+          <Box>
+            <TextField
+              disabled={active ? true : false}
+              id="outlined-basic"
+              label="URL"
+              value={url}
+              onChange={(e) => setURL(e.target.value)}
+              sx={{ width: "100%" }}
+              size={"small"}
+            />
+          </Box>
+          <Box>
+            <FormControl>
+              <StyledTextarea
+                disabled={active ? true : false}
+                aria-label="json"
+                minRows={5}
+                placeholder="JSON"
+                value={json}
+                onChange={(e) => {
+                  setJSON(e.target.value);
+                }}
+              />
+            </FormControl>
+          </Box>
+          <Box></Box>
         </Box>
-        <Stack direction="row">
+        <Stack
+          direction="row"
+          sx={{
+            paddingTop: "30px",
+            justifyContent: "space-between",
+          }}
+        >
           <Button
             variant="contained"
             color="primary"
@@ -188,6 +219,7 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           </Button>
         </Stack>
       </form>
+      {/* </Box> */}
     </Box>
   );
 };
