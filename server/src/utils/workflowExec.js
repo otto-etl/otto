@@ -54,12 +54,14 @@ const activateNode = async (workflowObj, nodeObj) => {
 };
 
 export const runWorkflow = async (workflowObj) => {
+  workflowObj.startTime = new Date(Date.now()).toISOString();
+
   await workflowInputvalidation(workflowObj);
   const finalLoadNodes = workflowObj.nodes.filter(
     (node) => node.type === "load"
   );
 
-  workflowObj.startTime = Date.now();
+  // workflowObj.startTime = Date.now();
   console.log("Workflow start time:", workflowObj.startTime);
   const promises = finalLoadNodes.map((node) => {
     return new Promise((res, rej) => {

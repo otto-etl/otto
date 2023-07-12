@@ -68,7 +68,7 @@ const StyledTextarea = styled(TextareaAutosize)(
   `
 );
 
-const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
+const ExtractModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
   const [name, setName] = useState(nodeObj.data.label);
   const [url, setURL] = useState(nodeObj.data.url);
   const [actionType, setActionType] = useState(nodeObj.data.httpVerb);
@@ -77,7 +77,7 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
 
   const formsPopulated = () => {
     return name && url && actionType; // do we need json populated too?
-  }  
+  };
 
   return (
     <Box>
@@ -115,7 +115,7 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           </Alert>
         ) : null}
         <TextField
-          disabled={active ? true : false}
+          disabled={disabled ? true : false}
           id="outlined-basic"
           label="Name"
           value={name}
@@ -125,7 +125,7 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
         <FormControl>
           <InputLabel id="action-type">Action Type</InputLabel>
           <Select
-            disabled={active ? true : false}
+            disabled={disabled ? true : false}
             labelId="action-type"
             id="action-type-select"
             value={actionType}
@@ -139,7 +139,7 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
         <br></br>
         <br></br>
         <TextField
-          disabled={active ? true : false}
+          disabled={disabled ? true : false}
           id="outlined-basic"
           label="URL"
           value={url}
@@ -149,7 +149,7 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
         <br></br>
         <FormControl>
           <StyledTextarea
-            disabled={active ? true : false}
+            disabled={disabled ? true : false}
             aria-label="json"
             minRows={5}
             placeholder="JSON"
@@ -166,7 +166,7 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             variant="contained"
             color="primary"
             onClick={handleDelete}
-            disabled={active ? true : false}
+            disabled={disabled ? true : false}
           >
             Delete
           </Button>
@@ -174,7 +174,7 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             variant="contained"
             color="primary"
             type="submit"
-            disabled={active || !formsPopulated() ? true : false}
+            disabled={disabled || !formsPopulated() ? true : false}
           >
             Save and Execute
           </Button>

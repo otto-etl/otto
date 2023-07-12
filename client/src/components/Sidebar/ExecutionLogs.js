@@ -26,6 +26,10 @@ const ExecutionLogs = ({
 
   const testExecutionListItems = (testExecutions) => {
     return testExecutions.map((execution, index) => {
+      const dateTime = execution.start_time.split("T");
+      const date = dateTime[0];
+      const time = dateTime[1].split(".")[0];
+
       return (
         <ListItemButton
           key={execution.id}
@@ -33,12 +37,12 @@ const ExecutionLogs = ({
           onClick={(event) => handleTestListItemClick(event, index)}
           sx={{ gap: "12px" }}
         >
-          {execution.success ? (
+          {execution.successful ? (
             <CheckCircle2 size={20} strokeWidth={2} />
           ) : (
             <AlertTriangle size={20} strokeWidth={2} />
           )}
-          <ListItemText primary={execution.primary} />
+          <ListItemText primary={date} secondary={time} />
         </ListItemButton>
       );
     });
@@ -46,6 +50,10 @@ const ExecutionLogs = ({
 
   const activeExecutionListItems = (activeExecutions) => {
     return activeExecutions.map((execution, index) => {
+      const dateTime = execution.start_time.split("T");
+      const date = dateTime[0];
+      const time = dateTime[1].split(".")[0];
+
       return (
         <ListItemButton
           key={execution.id}
@@ -53,12 +61,12 @@ const ExecutionLogs = ({
           onClick={(event) => handleActiveListItemClick(event, index)}
           sx={{ gap: "12px" }}
         >
-          {execution.success ? (
+          {execution.successful ? (
             <CheckCircle2 size={20} strokeWidth={2} />
           ) : (
             <AlertTriangle size={20} strokeWidth={2} />
           )}
-          <ListItemText primary={execution.primary} />
+          <ListItemText primary={date} secondary={time} />
         </ListItemButton>
       );
     });

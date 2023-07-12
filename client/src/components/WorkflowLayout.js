@@ -28,7 +28,7 @@ import {
   isTransformNode,
   isLoadNode,
   convertLabel,
-  workflowHasOrphanNodes
+  workflowHasOrphanNodes,
 } from "../utils/utils";
 import {
   getWorkflowAPI,
@@ -84,6 +84,7 @@ const WorkflowLayout = () => {
   const [wfError, setWfError] = useState();
   const [message, setMessage] = useState("");
   const [currentDB, setCurrentDB] = useState("");
+  const [logView, setLogView] = useState(false);
   const wfID = useParams().id;
 
   useEffect(() => {
@@ -101,11 +102,11 @@ const WorkflowLayout = () => {
   }, [setNodes, setEdges, setActive, setWfName, wfID]);
 
   useEffect(() => {
-	console.log("call to workflowHasOrphanNodes");
+    console.log("call to workflowHasOrphanNodes");
     let orphans = workflowHasOrphanNodes(nodes, edges);
-	setHasOrphans(orphans);
-	if (orphans) {
-	}
+    setHasOrphans(orphans);
+    if (orphans) {
+    }
   }, [edges]);
 
   const handleExecutionListItemClick = (executionNodes, executionEdges) => {
@@ -115,6 +116,7 @@ const WorkflowLayout = () => {
     }
     setNodes(executionNodes);
     setEdges(executionEdges);
+    setLogView(true);
   };
 
   const handleEditWorkflowListItemClick = () => {
@@ -122,6 +124,7 @@ const WorkflowLayout = () => {
     setEdges(editEdges);
     setEditNodes([]);
     setEditEdges([]);
+    setLogView(false);
   };
 
   const openModal = (nodeData) => {
@@ -245,7 +248,7 @@ const WorkflowLayout = () => {
     let newNodes = [...nodes, newNode];
     await saveWorkflow(1, { nodes: newNodes, edges });
     setNodes(newNodes);
-	setHasOrphans(true); // New nodes are always orphans
+    setHasOrphans(true); // New nodes are always orphans
   };
 
   const addExtraNodeProperties = (newNode) => {
@@ -385,7 +388,7 @@ const WorkflowLayout = () => {
       setCurrentDB("No load node yet");
     }
   };
-  
+
   const getPrevNodesOutput = (currentNodeID) => {
     const sourceEdges = edges.filter((edge) => edge.target === currentNodeID);
     const input = {};
@@ -415,7 +418,8 @@ const WorkflowLayout = () => {
         wfName={wfName}
         message={message}
         active={active}
-		orphans={hasOrphans}
+        logView={logView}
+        orphans={hasOrphans}
         handleSaveWorkflow={handleSaveWorkflow}
         handleExecuteAll={handleExecuteAll}
         handleToggleActive={handleToggleActive}
@@ -433,6 +437,7 @@ const WorkflowLayout = () => {
       ) : null}
       <div className="grid">
         <Sidebar
+          workflowID={wfID}
           handleExecutionListItemClick={handleExecutionListItemClick}
           handleEditWorkflowListItemClick={handleEditWorkflowListItemClick}
         />
@@ -469,7 +474,7 @@ const WorkflowLayout = () => {
               onDeleteNode={onDeleteNode}
               runExecution={runExecution}
               nodeObj={modalData}
-              active={active}
+              disabled={logView || active}
               getPrevNodesOutput={getPrevNodesOutput}
             />
           ) : null}
