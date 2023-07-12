@@ -22,6 +22,7 @@ const WorkflowNavbar = ({
   handleExecuteAll,
   handleToggleActive,
 }) => {
+  console.log(logView);
   return (
     <AppBar
       position={"static"}

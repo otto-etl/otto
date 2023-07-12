@@ -10,26 +10,27 @@ import { InternalError, throwWFErrorAndUpdateDB } from "./errors.js";
 import { workflowInputvalidation } from "./workflowInput.js";
 import { throwNDErrorAndUpdateDB } from "./errors.js";
 import { insertNewExecution } from "../models/workflowsService.js";
+import { executeNode } from "./nodeExec.js";
 
 let completedNodes = {};
 
-const executeNode = async (workflowObj, nodeObj) => {
-  if (completedNodes[nodeObj.id]) {
-    return;
-  } else {
-    if (nodeObj.type === "extract") {
-      await runAPI(workflowObj, nodeObj);
-    } else if (nodeObj.type === "transform") {
-      await runJSCode(workflowObj, nodeObj);
-    } else if (nodeObj.type === "load") {
-      await runPSQLCode(workflowObj, nodeObj);
-    } else if (nodeObj.type !== "schedule") {
-      const message = `Invalid Node Type: ${nodeObj.type}`;
-      await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
-    }
-    completedNodes[nodeObj.id] = true;
-  }
-};
+// const executeNode = async (workflowObj, nodeObj) => {
+//   if (completedNodes[nodeObj.id]) {
+//     return;
+//   } else {
+//     if (nodeObj.type === "extract") {
+//       await runAPI(workflowObj, nodeObj);
+//     } else if (nodeObj.type === "transform") {
+//       await runJSCode(workflowObj, nodeObj);
+//     } else if (nodeObj.type === "load") {
+//       await runPSQLCode(workflowObj, nodeObj);
+//     } else if (nodeObj.type !== "schedule") {
+//       const message = `Invalid Node Type: ${nodeObj.type}`;
+//       await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
+//     }
+//     completedNodes[nodeObj.id] = true;
+//   }
+// };
 
 const activateNode = async (workflowObj, nodeObj) => {
   nodeObj.data.output = {};
@@ -49,7 +50,12 @@ const activateNode = async (workflowObj, nodeObj) => {
       });
     });
     await Promise.all(promises);
-    await executeNode(workflowObj, nodeObj);
+
+    if (completedNodes[nodeObj.id]) {
+      return;
+    } else {
+      await executeNode(workflowObj, nodeObj);
+    }
   }
 };
 

@@ -7,7 +7,7 @@ import Stack from "@mui/material/Stack";
 import JsonView from "react18-json-view";
 import "react18-json-view/src/style.css";
 import ScheduleModal from "./ScheduleModal";
-import ExtractModal from "./ExtractModal";
+import ExtractAPIModal from "./ExtractAPIModal";
 import TransformModal from "./TransformModal";
 import LoadModal from "./LoadModal";
 import Tabs from "@mui/material/Tabs";
@@ -166,13 +166,24 @@ function BasicModal({
                   disabled={disabled}
                 />
               ) : null}
-              {nodeObj.type === "extract" ? (
-                <ExtractModal
+              {nodeObj.type === "extractApi" ? (
+                // if nodeObj.type.subtype === "api" / "mongo" / "postgres"
+                <ExtractAPIModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
                   handleDelete={handleDelete}
                   disabled={disabled}
                 />
+              ) : null}
+              {nodeObj.type === "extractMongo" ? (
+                // if nodeObj.type.subtype === "api" / "mongo" / "postgres"
+                // <ExtractModal
+                //   nodeObj={nodeObj}
+                //   handleSubmit={handleSaveExecuteNode}
+                //   handleDelete={handleDelete}
+                //   disabled={disabled}
+                // />
+                <h1>EXTRACT MONGO</h1>
               ) : null}
               {nodeObj.type === "transform" ? (
                 <TransformModal

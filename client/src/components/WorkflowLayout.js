@@ -30,6 +30,7 @@ import {
   convertLabel,
   workflowHasOrphanNodes,
 } from "../utils/utils";
+import { formatNodeLabel } from "../utils/workflowLayout";
 import {
   getWorkflowAPI,
   saveAndExecuteNode,
@@ -57,7 +58,9 @@ const snapGrid = [20, 20];
 // See comment below about React Flow nodeTypes warning
 const nodeTypes = {
   schedule: ScheduleNode,
-  extract: ExtractNode,
+  extractApi: ExtractNode,
+  extractPsql: ExtractNode,
+  extractMongo: ExtractNode,
   transform: TransformNode,
   load: LoadNode,
 };
@@ -238,7 +241,7 @@ const WorkflowLayout = () => {
       type: nodeType,
       position: { x: 650, y: -125 }, // Arbitrary hardcoded location, below menu
       data: {
-        label: `${nodeType[0].toUpperCase() + nodeType.slice(1)} node`,
+        label: formatNodeLabel(nodeType),
         output: "",
       },
     };
@@ -422,6 +425,7 @@ const WorkflowLayout = () => {
         handleSaveWorkflow={handleSaveWorkflow}
         handleExecuteAll={handleExecuteAll}
         handleToggleActive={handleToggleActive}
+        logView={logView}
       />
       {wfError ? (
         <Alert
@@ -462,7 +466,7 @@ const WorkflowLayout = () => {
           <Controls />
           <Background color={"#a7a7ae"} style={{ background: "#f3f4f6" }} />
           <Panel position="top-right">
-            <NodeCreationMenu onCreateNode={onCreateNode} />
+            <NodeCreationMenu onCreateNode={onCreateNode} logView={logView} />
           </Panel>
           {modalIsOpen ? (
             <Modal
