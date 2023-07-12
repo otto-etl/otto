@@ -76,3 +76,8 @@ export const createNewWF = async (payload) => {
   const res = await axios.post(`${host}/workflows`, payload);
   return res.data;
 };
+
+export const getExecutions = async (workflowID) => {
+  const res = await axios.get(`${host}/executions/${workflowID}`);
+  return res.data;
+};

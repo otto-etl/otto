@@ -36,7 +36,7 @@ function BasicModal({
   onSaveExecute,
   onDeleteNode,
   runExecution,
-  active,
+  disabled,
   getPrevNodesOutput,
   getPrevNodeOutput,
 }) {
@@ -126,7 +126,7 @@ function BasicModal({
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
                   handleDelete={handleDelete}
-                  active={active}
+                  disabled={disabled}
                 />
               ) : null}
               {nodeObj.type === "extract" ? (
@@ -134,7 +134,7 @@ function BasicModal({
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
                   handleDelete={handleDelete}
-                  active={active}
+                  disabled={disabled}
                 />
               ) : null}
               {nodeObj.type === "transform" ? (
@@ -142,7 +142,7 @@ function BasicModal({
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
                   handleDelete={handleDelete}
-                  active={active}
+                  disabled={disabled}
                 />
               ) : null}
               {nodeObj.type === "load" ? (
@@ -150,7 +150,7 @@ function BasicModal({
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
                   handleDelete={handleDelete}
-                  active={active}
+                  disabled={disabled}
                 />
               ) : null}
             </Container>

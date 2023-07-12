@@ -16,6 +16,7 @@ const WorkflowNavbar = ({
   wfName,
   message,
   active,
+  logView,
   orphans,
   handleSaveWorkflow,
   handleExecuteAll,
@@ -41,48 +42,50 @@ const WorkflowNavbar = ({
         <Typography variant="h6" component="h1" sx={{ m: 0, color: "#222" }}>
           {wfName}
         </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            gap: "20px",
-            alignItems: "center",
-          }}
-        >
-          <Typography>{message}</Typography>
-          <Button
-            variant="outlined"
-            disabled={active ? true : false}
-            onClick={handleSaveWorkflow}
-            sx={{ gap: "10px" }}
+        {logView ? null : (
+          <Box
+            sx={{
+              display: "flex",
+              gap: "20px",
+              alignItems: "center",
+            }}
           >
-            <Save size={16} />
-            Save
-          </Button>
-          <Button
-		    disabled = {orphans ? true : false}
-            variant="contained"
-            onClick={handleExecuteAll}
-            sx={{ gap: "10px" }}
-          >
-            <Play size={16} fill={"#FFF"} />
-            Execute Workflow
-          </Button>
-          <FormGroup sx={{ marginRight: "-10px" }}>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={active}
-                  onChange={handleToggleActive}
-                  inputProps={{ "aria-label": "controlled" }}
-                />
-              }
-              sx={{ m: 0 }}
-              label="Active"
-              defaultChecked
-              labelPlacement="start"
-            />
-          </FormGroup>
-        </Box>
+            <Typography>{message}</Typography>
+            <Button
+              variant="outlined"
+              disabled={active ? true : false}
+              onClick={handleSaveWorkflow}
+              sx={{ gap: "10px" }}
+            >
+              <Save size={16} />
+              Save
+            </Button>
+            <Button
+              disabled={orphans ? true : false}
+              variant="contained"
+              onClick={handleExecuteAll}
+              sx={{ gap: "10px" }}
+            >
+              <Play size={16} fill={"#FFF"} />
+              Execute Workflow
+            </Button>
+            <FormGroup sx={{ marginRight: "-10px" }}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={active}
+                    onChange={handleToggleActive}
+                    inputProps={{ "aria-label": "controlled" }}
+                  />
+                }
+                sx={{ m: 0 }}
+                label="Active"
+                defaultChecked
+                labelPlacement="start"
+              />
+            </FormGroup>
+          </Box>
+        )}
       </Toolbar>
     </AppBar>
   );

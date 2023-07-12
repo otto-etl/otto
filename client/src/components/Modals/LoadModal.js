@@ -12,7 +12,7 @@ import Tab from "@mui/material/Tab";
 import CustomTabPanel from "../CustomTabPanel";
 import { EditorView } from "@codemirror/view";
 
-const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
+const LoadModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
   const [name, setName] = useState(nodeObj.data.label);
   const [code, setCode] = useState(nodeObj.data.sqlCode);
   const [userName, setUserName] = useState(nodeObj.data.userName);
@@ -96,7 +96,7 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           </Alert>
         ) : null}
         <TextField
-          disabled={active ? true : false}
+          disabled={disabled ? true : false}
           id="outlined-basic"
           label="Name"
           value={name}
@@ -114,7 +114,7 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
         </Box>
         <CustomTabPanel value={tab} index={0}>
           <TextField
-            disabled={active ? true : false}
+            disabled={disabled ? true : false}
             id="outlined-basic"
             label="Username"
             value={userName}
@@ -123,7 +123,7 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           <br></br>
           <br></br>
           <TextField
-            disabled={active ? true : false}
+            disabled={disabled ? true : false}
             id="outlined-basic"
             label="Password"
             value={password}
@@ -132,7 +132,7 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           <br></br>
           <br></br>
           <TextField
-            disabled={active ? true : false}
+            disabled={disabled ? true : false}
             id="outlined-basic"
             label="Host"
             value={host}
@@ -141,7 +141,7 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           <br></br>
           <br></br>
           <TextField
-            disabled={active ? true : false}
+            disabled={disabled ? true : false}
             id="outlined-basic"
             label="Port"
             value={port}
@@ -150,7 +150,7 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           <br></br>
           <br></br>
           <TextField
-            disabled={active ? true : false}
+            disabled={disabled ? true : false}
             id="outlined-basic"
             label="Database Name"
             value={dbName}
@@ -162,7 +162,7 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
 
         <CustomTabPanel value={tab} index={1}>
           <TextField
-            disabled={active ? true : false}
+            disabled={disabled ? true : false}
             id="outlined-basic"
             label="Username"
             value={userNamePD}
@@ -171,7 +171,7 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           <br></br>
           <br></br>
           <TextField
-            disabled={active ? true : false}
+            disabled={disabled ? true : false}
             id="outlined-basic"
             label="Password"
             value={passwordPD}
@@ -180,7 +180,7 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           <br></br>
           <br></br>
           <TextField
-            disabled={active ? true : false}
+            disabled={disabled ? true : false}
             id="outlined-basic"
             label="Host"
             value={hostPD}
@@ -189,7 +189,7 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           <br></br>
           <br></br>
           <TextField
-            disabled={active ? true : false}
+            disabled={disabled ? true : false}
             id="outlined-basic"
             label="Port"
             value={portPD}
@@ -198,7 +198,7 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           <br></br>
           <br></br>
           <TextField
-            disabled={active ? true : false}
+            disabled={disabled ? true : false}
             id="outlined-basic"
             label="Database Name"
             value={dbNamePD}
@@ -208,7 +208,7 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           <br></br>
         </CustomTabPanel>
         <CodeMirror
-          readOnly={active ? true : false}
+          readOnly={disabled ? true : false}
           value={code}
           height="200px"
           extensions={[sql(config), EditorView.lineWrapping]}
@@ -221,7 +221,7 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             variant="contained"
             color="primary"
             onClick={handleDelete}
-            disabled={active ? true : false}
+            disabled={disabled ? true : false}
           >
             Delete
           </Button>
@@ -229,7 +229,7 @@ const LoadModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             variant="contained"
             color="primary"
             type="submit"
-            disabled={active || !formsPopulated() ? true : false}
+            disabled={disabled || !formsPopulated() ? true : false}
           >
             Save and Execute
           </Button>
