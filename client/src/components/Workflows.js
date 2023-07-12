@@ -34,7 +34,7 @@ const Workflows = () => {
       setWorkflows(res);
     };
     getInitialData();
-  });
+  }, [setWorkflows]);
   const handleRowClick = (params, event, details) => {
     navigate(`/workflow/${params.row.id}`);
   };

@@ -11,7 +11,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { Trash2 } from "lucide-react";
 
-const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
+const ScheduleModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
   const [name, setName] = useState(nodeObj.data.label);
   const [dateAndTime, setDateAndTime] = useState(dayjs(nodeObj.data.startTime));
   const [interval, setInterval] = useState(
@@ -56,7 +56,7 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
         >
           <Box>
             <TextField
-              disabled={active ? true : false}
+              disabled={disabled ? true : false}
               id="outlined-basic"
               label="Name"
               value={name}
@@ -73,7 +73,7 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
               <DemoContainer components={["DateTimePicker", "DateTimePicker"]}>
                 <DateTimePicker
                   size={"small"}
-                  disabled={active ? true : false}
+                  disabled={disabled ? true : false}
                   label="Date and Time"
                   value={dateAndTime}
                   onChange={(dateAndTime) => setDateAndTime(dateAndTime)}
@@ -84,7 +84,7 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           <Box>
             <TextField
               sx={{ width: "50%", marginTop: "10px", minWidth: "260px" }}
-              disabled={active ? true : false}
+              disabled={disabled ? true : false}
               id="outlined-basic"
               label="Frequency of Execution (days)"
               type={"number"}
@@ -98,28 +98,16 @@ const ScheduleModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           <IconButton
             aria-label="delete"
             onClick={handleDelete}
-            disabled={active ? true : false}
+            disabled={disabled ? true : false}
           >
             <Trash2 color="#555" size={26} strokeWidth={1.5} />
             {/* // #d32f2f */}
           </IconButton>
-          {/* <Button
-            variant="outlined"
-            color="error"
-            onClick={handleDelete}
-            disabled={active ? true : false}
-            sx={{
-              color: "#d32f2f",
-              border: "1px solid #d32f2f",
-            }}
-          >
-            Delete
-          </Button> */}
           <Button
             variant="contained"
             color="primary"
             type="submit"
-            disabled={active || !formsPopulated() ? true : false}
+            disabled={disabled || !formsPopulated() ? true : false}
           >
             Save
           </Button>

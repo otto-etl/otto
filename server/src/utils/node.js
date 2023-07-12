@@ -55,6 +55,7 @@ export const getMultipleInputData = async (workflowObj, nodeObj) => {
   for (const edge of sourceEdges) {
     const sourceNode = getNode(workflowObj, edge.source);
     if (dataIsEmpty(sourceNode.data.output.data)) {
+      console.log("Int multipleInputData");
       const message = `No input data from previous node: ${sourceNode.data.label} `;
       await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
     } else {
@@ -71,6 +72,7 @@ export const getInputData = async (workflowObj, nodeObj) => {
   const sourceEdge = edges.find((edge) => edge.target === currentNodeId);
   const sourceNode = getNode(workflowObj, sourceEdge.source);
   if (dataIsEmpty(sourceNode.data.output.data)) {
+    console.log("In single input data");
     const message = `No input data from previous node: ${sourceNode.data.label} `;
     await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
   } else {

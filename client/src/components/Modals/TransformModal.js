@@ -11,9 +11,10 @@ import Tab from "@mui/material/Tab";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
+import { EditorView } from "@codemirror/view";
 
-const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
-  // console.log("transform", nodeObj.data);
+const TransformModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
+  console.log("transform", nodeObj.data);
   const [name, setName] = useState(nodeObj.data.label);
   const [code, setCode] = useState(nodeObj.data.jsCode);
   const [error, setError] = useState(nodeObj.data.error);
@@ -76,7 +77,7 @@ const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
         <br></br>
 
         <TextField
-          disabled={active ? true : false}
+          disabled={disabled ? true : false}
           id="outlined-basic"
           label="Name"
           value={name}
@@ -98,19 +99,19 @@ const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
         </Box>
         <CustomTabPanel value={tab} index={0}>
           <CodeMirror
-            readOnly={active ? true : false}
+            readOnly={disabled ? true : false}
             value={code}
             height="200px"
-            extensions={[javascript({ jsx: true })]}
+            extensions={[javascript({ jsx: true }), EditorView.lineWrapping]}
             onChange={handleChange}
           />
         </CustomTabPanel>
         <CustomTabPanel value={tab} index={1}>
           <CodeMirror
-            readOnly={active ? true : false}
+            readOnly={disabled ? true : false}
             value={code}
             height="200px"
-            extensions={[python()]}
+            extensions={[python(), EditorView.lineWrapping]}
             onChange={handleChange}
           />
         </CustomTabPanel>
@@ -119,7 +120,7 @@ const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             variant="contained"
             color="primary"
             onClick={handleDelete}
-            disabled={active ? true : false}
+            disabled={disabled ? true : false}
           >
             Delete
           </Button>
@@ -127,7 +128,7 @@ const TransformModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             variant="contained"
             color="primary"
             type="submit"
-            disabled={active || !formsPopulated() ? true : false}
+            disabled={disabled || !formsPopulated() ? true : false}
           >
             Save and Execute
           </Button>
