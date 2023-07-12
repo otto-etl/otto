@@ -91,7 +91,14 @@ function BasicModal({
           <Stack direction="row" sx={{ height: "100%" }}>
             {/* LEFT COLUMN */}
 
-            <Box sx={{ flex: 1, padding: 0, backgroundColor: "#f3f4f6" }}>
+            <Box
+              sx={{
+                flex: 1,
+                padding: 0,
+                backgroundColor: "#f3f4f6",
+                borderRight: "1px solid #E4E4E4",
+              }}
+            >
               <Typography
                 sx={{ fontSize: "20px", fontWeight: "500", padding: "20px" }}
               >
@@ -185,7 +192,14 @@ function BasicModal({
               ) : null}
             </Box>
             {/* RIGHT COLUMN */}
-            <Box sx={{ flex: 1, padding: 0, backgroundColor: "#f3f4f6" }}>
+            <Box
+              sx={{
+                flex: 1,
+                padding: 0,
+                backgroundColor: "#f3f4f6",
+                borderLeft: "1px solid #E4E4E4",
+              }}
+            >
               <Typography
                 sx={{ fontSize: "20px", fontWeight: "500", padding: "20px" }}
               >

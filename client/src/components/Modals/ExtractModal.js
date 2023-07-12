@@ -10,9 +10,9 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
-import { Typography } from "@mui/material";
+import { Typography, IconButton } from "@mui/material";
 import { styled } from "@mui/system";
-import { Background } from "reactflow";
+import { Trash2 } from "lucide-react";
 
 const blue = {
   100: "#DAECFF",
@@ -110,7 +110,7 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           flexDirection: "column",
           justifyContent: "space-between",
           // gap: "30px",
-          height: "calc(100vh - 166px)",
+          height: "calc(100vh - 155px)",
         }}
       >
         <Box
@@ -124,7 +124,7 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
           {error ? (
             <Alert
               sx={{
-                margin: "10px 0 10px 0",
+                // margin: "10px 0 10px 0",
                 border: "2px solid #B99",
                 whiteSpace: "pre-line",
               }}
@@ -192,7 +192,6 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
               />
             </FormControl>
           </Box>
-          <Box></Box>
         </Box>
         <Stack
           direction="row"
@@ -201,14 +200,15 @@ const ExtractModal = ({ nodeObj, handleSubmit, active, handleDelete }) => {
             justifyContent: "space-between",
           }}
         >
-          <Button
-            variant="contained"
-            color="primary"
+          <IconButton
+            aria-label="delete"
             onClick={handleDelete}
             disabled={active ? true : false}
           >
-            Delete
-          </Button>
+            <Trash2 color="#555" size={26} strokeWidth={1.5} />
+            {/* // #d32f2f */}
+          </IconButton>
+
           <Button
             variant="contained"
             color="primary"
