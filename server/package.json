@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "cors": "^2.8.5",
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.22",
+    "oauth2-mock-server": "^6.0.0"
   }
 }
