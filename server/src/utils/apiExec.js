@@ -5,15 +5,11 @@ import axios from "axios";
 
 export const runAPI = async (workflowObj, nodeObj) => {
   await nodeInputvalidation(workflowObj, nodeObj);
-  const input = {
-    url: nodeObj.data.url,
-    method: nodeObj.data.httpVerb,
-    data: nodeObj.jsonBody,
-  };
   let data;
-
   try {
-    data = await sendAPI(input);
+    //change to oAuthAndSend
+    data = await oAuthAndSend(nodeObj);
+    console.log("oAuthAndSned result", data);
   } catch (e) {
     const status = e.toJSON().status;
     const code = e.toJSON().code;
@@ -47,7 +43,71 @@ export const runAPI = async (workflowObj, nodeObj) => {
   return { data };
 };
 
-const sendAPI = async ({ method, url, data }) => {
-  const response = await axios({ method, url, data });
+const sendAPI = async ({ method, url, data, headers }) => {
+  const response = await axios({ method, url, data, headers });
   return response.data;
+};
+
+const getAccessToken = async (
+  nodeObj,
+  accessTokenURL,
+  clientID,
+  clientSecret,
+  scope
+) => {
+  const headers = {
+    Authorization:
+      "Basic " +
+      new Buffer.from(clientID + ":" + clientSecret).toString("base64"),
+    "Content-Type": "application/x-www-form-urlencoded",
+  };
+  const data = { grant_type: "client_credentials", scope: scope };
+  const response = await axios({
+    method: "POST",
+    url: accessTokenURL,
+    data,
+    headers,
+  });
+  nodeObj.data["token"] = response.data;
+};
+
+const oAuthAndSend = async (nodeObj) => {
+  let {
+    httpVerb,
+    url,
+    header,
+    jsonBody,
+    accessTokenURL,
+    clientID,
+    clientSecret,
+    scope,
+    oAuthChecked,
+  } = nodeObj.data;
+
+  //check if nodeObj.data has access token
+  if (oAuthChecked) {
+    if (!nodeObj.data.token) {
+      await getAccessToken(
+        nodeObj,
+        accessTokenURL,
+        clientID,
+        clientSecret,
+        scope
+      );
+    }
+    header["Authorization"] = "Bearer " + nodeObj.data.token.access_token;
+    let data;
+    if (Object.keys(jsonBody).length === 0) {
+      data = undefined;
+    } else {
+      data = jsonBody;
+    }
+    const res = await sendAPI({
+      method: httpVerb,
+      url,
+      headers: header,
+      data,
+    });
+    return res;
+  }
 };
