@@ -5,7 +5,7 @@ export const isScheduleNode = (nodeId, nodes) => {
 
 export const isExtractNode = (nodeId, nodes) => {
   const nodeToCheck = nodes.find((node) => node.id === nodeId);
-  return nodeToCheck && nodeToCheck.type === "extract";
+  return nodeToCheck && nodeToCheck.type.slice(0, 7) === "extract";
 };
 
 export const isTransformNode = (nodeId, nodes) => {
@@ -37,27 +37,39 @@ export const convertLabel = (label) => {
 export const workflowHasOrphanNodes = (nodes, edges) => {
   let nodeEdgeTracker = {};
   let hasOrphans = false;
-  nodes.forEach(node => {
-    nodeEdgeTracker[node.id] = {type: node.type, hasSource: false, hasTarget: false};
+  nodes.forEach((node) => {
+    nodeEdgeTracker[node.id] = {
+      type: node.type,
+      hasSource: false,
+      hasTarget: false,
+    };
   });
-  edges.forEach(edge => {
+  edges.forEach((edge) => {
     if (edge.source) {
-	  nodeEdgeTracker[edge.source].hasTarget = true;
-	}
+      nodeEdgeTracker[edge.source].hasTarget = true;
+    }
     if (edge.target) {
       nodeEdgeTracker[edge.target].hasSource = true;
     }
   });
-  Object.keys(nodeEdgeTracker).forEach(node => {
-    if (nodeEdgeTracker[node].type === "schedule" && !nodeEdgeTracker[node].hasTarget) {
-	  hasOrphans = true;
-	}
-    else if (nodeEdgeTracker[node].type === "load" && !nodeEdgeTracker[node].hasSource) {
-	  hasOrphans = true;
-	}
-	else if ((nodeEdgeTracker[node].type === "extract" || nodeEdgeTracker[node].type === "transform") && (!nodeEdgeTracker[node].hasSource || !nodeEdgeTracker[node].hasTarget)) {
-	  hasOrphans = true;	
-	}
+  Object.keys(nodeEdgeTracker).forEach((node) => {
+    if (
+      nodeEdgeTracker[node].type === "schedule" &&
+      !nodeEdgeTracker[node].hasTarget
+    ) {
+      hasOrphans = true;
+    } else if (
+      nodeEdgeTracker[node].type === "load" &&
+      !nodeEdgeTracker[node].hasSource
+    ) {
+      hasOrphans = true;
+    } else if (
+      (nodeEdgeTracker[node].type === "extract" ||
+        nodeEdgeTracker[node].type === "transform") &&
+      (!nodeEdgeTracker[node].hasSource || !nodeEdgeTracker[node].hasTarget)
+    ) {
+      hasOrphans = true;
+    }
   });
   return hasOrphans;
-}
+};

@@ -178,6 +178,8 @@ const WorkflowLayout = () => {
         isExtractNode(edge.target, nodes)) ||
       (isExtractNode(edge.source, nodes) &&
         isTransformNode(edge.target, nodes)) ||
+      (isTransformNode(edge.source, nodes) &&
+        isTransformNode(edge.target, nodes)) ||
       (isTransformNode(edge.source, nodes) && isLoadNode(edge.target, nodes))
     );
   };

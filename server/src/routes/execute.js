@@ -54,9 +54,7 @@ executeRouter.post("/node", async (req, res, next) => {
     //get workflow object
     const workflowObj = await getWorkflow(workflowID);
     const nodeObj = getNode(workflowObj, nodeID);
-
-    executeNode(workflowObj, nodeObj);
-
+    await executeNode(workflowObj, nodeObj);
     res
       .status(200)
       .json({ nodes: workflowObj.nodes, edges: workflowObj.edges });
