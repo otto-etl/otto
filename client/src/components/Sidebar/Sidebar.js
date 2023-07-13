@@ -17,20 +17,31 @@ const Sidebar = ({
 
   React.useEffect(() => {
     const getLogs = async () => {
-      const executions = await getExecutions(workflowID);
-      console.log(executions);
+      // const executions = await getExecutions(workflowID);
+      const executionSource = new EventSource(
+        `http://localhost:3001/executions/${workflowID}`
+      );
+      console.log("executionsEvent triggered");
       const test = [];
       const active = [];
-      executions.forEach((execution) => {
-        if (execution.workflow.active) {
-          active.push(execution);
-        } else {
-          test.push(execution);
+      executionSource.onmessage = (event) => {
+        let executions = JSON.parse(event.data);
+        console.log("executions", executions);
+        if (!Array.isArray(executions) && typeof executions === "object") {
+          executions = [executions];
         }
-      });
-
-      setTestExecutions(test);
-      setActiveExecutions(active);
+        if (executions) {
+          executions.forEach((execution) => {
+            if (execution.workflow.active) {
+              active.push(execution);
+            } else {
+              test.push(execution);
+            }
+          });
+        }
+        setTestExecutions(test);
+        setActiveExecutions(active);
+      };
     };
 
     getLogs();
