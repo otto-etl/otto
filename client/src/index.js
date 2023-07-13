@@ -6,6 +6,15 @@ import App from "./App";
 import { capitalize } from "@mui/material";
 
 const theme = createTheme({
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 1200,
+      md: 1500,
+      lg: 1800,
+      xl: 2100,
+    },
+  },
   typography: {
     fontFamily: ["Inter", "sans-serif"].join(","),
   },
