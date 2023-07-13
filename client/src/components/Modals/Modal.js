@@ -79,8 +79,15 @@ function BasicModal({
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "97%",
-            height: "95%",
+            // width: "97%",
+            width: {
+              xs: 900,
+              sm: 1200,
+              md: 1500,
+              lg: 1800,
+              xl: 2100,
+            },
+            // height: "95%",
             bgcolor: "background.paper",
             boxShadow: 24,
             boxSizing: "border-box",
@@ -149,7 +156,10 @@ function BasicModal({
                         index={Number(key)}
                         scrollOffset={"236px"}
                       >
-                        <JsonView src={input[key].data} />
+                        <JsonView
+                          src={input[key].data}
+                          collapseObjectsAfterLength={100}
+                        />
                       </CustomTabPanel>
                     );
                   })}
@@ -231,7 +241,10 @@ function BasicModal({
                 }}
               >
                 {Object.keys(nodeObj.data.output).length > 0 ? (
-                  <JsonView src={nodeObj.data.output} />
+                  <JsonView
+                    src={nodeObj.data.output}
+                    collapseObjectsAfterLength={100}
+                  />
                 ) : (
                   <Typography sx={{ color: "#555" }}>No output</Typography>
                 )}
