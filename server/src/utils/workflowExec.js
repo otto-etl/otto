@@ -10,6 +10,8 @@ import { InternalError, throwWFErrorAndUpdateDB } from "./errors.js";
 import { workflowInputvalidation } from "./workflowInput.js";
 import { throwNDErrorAndUpdateDB } from "./errors.js";
 import { insertNewExecution } from "../models/workflowsService.js";
+import { executeNode } from "./nodeExec.js";
+import { getSSERes } from "../routes/executionRoutes.js";
 
 let completedNodes = {};
 
@@ -74,5 +76,9 @@ export const runWorkflow = async (workflowObj) => {
   console.log("workflow completed", workflowObj.id);
   await updateWorkflowError(workflowObj.id, null);
   workflowObj.error = null;
-  await insertNewExecution("TRUE", workflowObj);
+  const newExecution = await insertNewExecution("TRUE", workflowObj);
+  const SSERes = getSSERes();
+  console.log("sse", SSERes);
+  SSERes.write("data:" + JSON.stringify(newExecution));
+  SSERes.write("\n\n");
 };

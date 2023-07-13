@@ -9,7 +9,6 @@ export const runAPI = async (workflowObj, nodeObj) => {
   try {
     //change to oAuthAndSend
     data = await oAuthAndSend(nodeObj);
-    console.log("oAuthAndSned result", data);
   } catch (e) {
     const status = e.toJSON().status;
     const code = e.toJSON().code;
