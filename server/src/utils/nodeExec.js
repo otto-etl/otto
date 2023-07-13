@@ -6,6 +6,8 @@ import { throwNDErrorAndUpdateDB } from "./errors.js";
 export const executeNode = async (workflowObj, nodeObj) => {
   if (nodeObj.type === "extractApi") {
     await runAPI(workflowObj, nodeObj);
+  } else if (nodeObj.type === "extractPsql") {
+    await runPSQLCode(workflowObj, nodeObj);
   } else if (nodeObj.type === "transform") {
     await runJSCode(workflowObj, nodeObj);
   } else if (nodeObj.type === "load") {

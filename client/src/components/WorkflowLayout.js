@@ -132,6 +132,7 @@ const WorkflowLayout = () => {
 
   const openModal = (nodeData) => {
     setModalIsOpen(true);
+    console.log("openModal", nodeData);
     setModalData(nodeData);
   };
 
@@ -237,6 +238,7 @@ const WorkflowLayout = () => {
   };
 
   const onCreateNode = async (nodeType) => {
+    console.log("nodeType", nodeType);
     let newNodeId = crypto.randomUUID();
     let newNode = {
       id: newNodeId,
