@@ -47,67 +47,75 @@ const sendAPI = async ({ method, url, data, headers }) => {
   return response.data;
 };
 
-const getAccessToken = async (
-  nodeObj,
-  accessTokenURL,
-  clientID,
-  clientSecret,
-  scope
-) => {
-  const headers = {
-    Authorization:
-      "Basic " +
-      new Buffer.from(clientID + ":" + clientSecret).toString("base64"),
-    "Content-Type": "application/x-www-form-urlencoded",
-  };
-  const data = { grant_type: "client_credentials", scope: scope };
-  const response = await axios({
-    method: "POST",
-    url: accessTokenURL,
-    data,
-    headers,
-  });
-  nodeObj.data["token"] = response.data;
+const getAccessToken = async (nodeObj, workflowObj) => {
+  try {
+    const { accessTokenURL, clientID, clientSecret, scope } = nodeObj.data;
+    const headers = {
+      Authorization:
+        "Basic " +
+        new Buffer.from(clientID + ":" + clientSecret).toString("base64"),
+      "Content-Type": "application/x-www-form-urlencoded",
+    };
+    const data = { grant_type: "client_credentials", scope: scope };
+    const response = await sendAPI({
+      method: "POST",
+      url: accessTokenURL,
+      data,
+      headers,
+    });
+    nodeObj.data["token"] = response;
+  } catch (e) {
+    const message =
+      "failed to get access token, please ckech client id and client secret";
+    throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
+  }
 };
 
 const oAuthAndSend = async (nodeObj) => {
-  let {
-    httpVerb,
-    url,
-    header,
-    jsonBody,
-    accessTokenURL,
-    clientID,
-    clientSecret,
-    scope,
-    oAuthChecked,
-  } = nodeObj.data;
+  let { httpVerb, url, header, jsonBody, oAuthChecked } = nodeObj.data;
+  let dataToSend;
+  let headerToSend;
 
-  let data;
-
-  //check if nodeObj.data has access token
-  if (oAuthChecked) {
-    if (!nodeObj.data.token) {
-      await getAccessToken(
-        nodeObj,
-        accessTokenURL,
-        clientID,
-        clientSecret,
-        scope
-      );
-    }
-    header["Authorization"] = "Bearer " + nodeObj.data.token.access_token;
-    if (Object.keys(jsonBody).length === 0) {
-      data = undefined;
-    } else {
-      data = jsonBody;
-    }
+  //set header to include oAuth token if OAuth is checked
+  //get access token for the first time if there is no token property
+  if (oAuthChecked && !nodeObj.data.token) {
+    await getAccessToken(nodeObj);
+    //copy header object and add authorization token
+    headerToSend = setHeader(header, nodeObj);
   }
-  const res = await sendAPI({
-    method: httpVerb,
-    url,
-    headers: header,
-    data,
-  });
+
+  //set data to jsonbody if jsonbody exists
+  if (Object.keys(jsonBody).length === 0) {
+    dataToSend = undefined;
+  } else {
+    dataToSend = jsonBody;
+  }
+
+  let res;
+  try {
+    res = await sendAPI({
+      method: httpVerb,
+      url,
+      headers: headerToSend,
+      data: dataToSend,
+    });
+  } catch (e) {
+    // if api call failed re-get access token and reset headers and then send
+    await getAccessToken(nodeObj);
+    headerToSend = setHeader(header, nodeObj);
+    res = await sendAPI({
+      method: httpVerb,
+      url,
+      headers: headerToSend,
+      data: dataToSend,
+    });
+  }
   return res;
+};
+
+const setHeader = (header, nodeObj) => {
+  return {
+    ...header,
+    Authorization: "Bearer " + nodeObj.data.token.access_token,
+  };
 };

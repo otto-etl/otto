@@ -1,7 +1,5 @@
 import React from "react";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Button from "@mui/material/Button";
+import { Divider, Menu, MenuItem, Button } from "@mui/material";
 
 /*
 const boxStyle = {
@@ -18,23 +16,24 @@ const boxStyle = {
 };
 */
 
-const NodeCreationMenu = (props) => {
+const NodeCreationMenu = ({ onCreateNode, logView }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
 
   const handleCreateNode = (event) => {
     const nodeType = event.target.dataset.value;
-    props.onCreateNode(nodeType);
+    onCreateNode(nodeType);
     handleClose();
   };
 
-  return (
+  return logView ? null : (
     <div>
       <Button
         id="basic-button"
@@ -57,9 +56,17 @@ const NodeCreationMenu = (props) => {
         <MenuItem data-value="schedule" onClick={handleCreateNode}>
           Schedule
         </MenuItem>
-        <MenuItem data-value="extract" onClick={handleCreateNode}>
-          Extract
+        <Divider />
+        <MenuItem data-value="extractApi" onClick={handleCreateNode}>
+          Extract API
         </MenuItem>
+        <MenuItem data-value="extractPsql" onClick={handleCreateNode}>
+          Extract PostgreSQL
+        </MenuItem>
+        <MenuItem data-value="extractMongo" onClick={handleCreateNode}>
+          Extract MongoDB
+        </MenuItem>
+        <Divider />
         <MenuItem data-value="transform" onClick={handleCreateNode}>
           Transform
         </MenuItem>
