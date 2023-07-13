@@ -47,6 +47,7 @@ export const throwNDErrorAndUpdateDB = async (
   nodeObj,
   errMessage
 ) => {
+  console.log("throwNDerror fun", workflowObj.nodes);
   nodeObj.data.error = {
     name: "NodeError",
     message: errMessage,
@@ -60,6 +61,7 @@ export const throwEXErrorAndUpdateDB = async (
   nodeObj,
   errMessage
 ) => {
+  console.log("throwEXerror func", workflowObj.nodes);
   nodeObj.data.error = {
     name: "ExternalError",
     message: errMessage,
