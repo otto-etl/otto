@@ -7,7 +7,8 @@ import Stack from "@mui/material/Stack";
 import JsonView from "react18-json-view";
 import "react18-json-view/src/style.css";
 import ScheduleModal from "./ScheduleModal";
-import ExtractModal from "./ExtractModal";
+import ExtractAPIModal from "./ExtractAPIModal";
+import ExtractMongoModal from "./ExtractMongoModal";
 import TransformModal from "./TransformModal";
 import LoadModal from "./LoadModal";
 import Tabs from "@mui/material/Tabs";
@@ -79,8 +80,15 @@ function BasicModal({
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "97%",
-            height: "95%",
+            // width: "97%",
+            width: {
+              xs: 900,
+              sm: 1200,
+              md: 1500,
+              lg: 1800,
+              xl: 2100,
+            },
+            // height: "95%",
             bgcolor: "background.paper",
             boxShadow: 24,
             boxSizing: "border-box",
@@ -149,7 +157,10 @@ function BasicModal({
                         index={Number(key)}
                         scrollOffset={"236px"}
                       >
-                        <JsonView src={input[key].data} />
+                        <JsonView
+                          src={input[key].data}
+                          collapseObjectsAfterLength={100}
+                        />
                       </CustomTabPanel>
                     );
                   })}
@@ -166,8 +177,17 @@ function BasicModal({
                   disabled={disabled}
                 />
               ) : null}
-              {nodeObj.type === "extract" ? (
-                <ExtractModal
+              {nodeObj.type === "extractApi" ? (
+                // if nodeObj.type.subtype === "api" / "mongo" / "postgres"
+                <ExtractAPIModal
+                  nodeObj={nodeObj}
+                  handleSubmit={handleSaveExecuteNode}
+                  handleDelete={handleDelete}
+                  disabled={disabled}
+                />
+              ) : null}
+              {nodeObj.type === "extractMongo" ? (
+                <ExtractMongoModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
                   handleDelete={handleDelete}
@@ -220,7 +240,10 @@ function BasicModal({
                 }}
               >
                 {Object.keys(nodeObj.data.output).length > 0 ? (
-                  <JsonView src={nodeObj.data.output} />
+                  <JsonView
+                    src={nodeObj.data.output}
+                    collapseObjectsAfterLength={100}
+                  />
                 ) : (
                   <Typography sx={{ color: "#555" }}>No output</Typography>
                 )}

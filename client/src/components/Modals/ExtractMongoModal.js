@@ -11,9 +11,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import TextareaAutosize from "@mui/material/TextareaAutosize";
 import { Typography, IconButton } from "@mui/material";
-import { styled } from "@mui/system";
 import { Trash2 } from "lucide-react";
 import Switch from "@mui/material/Switch";
 import CodeMirror from "@uiw/react-codemirror";
@@ -77,15 +75,11 @@ const ExtractModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
   return (
     <Box>
       <Typography sx={{ fontSize: "20px", fontWeight: "500", padding: "20px" }}>
-        Extract Details
+        Extract Mongo Details
       </Typography>
 
-      {/* <Box sx={{ height: "100%", padding: "20px", boxSizing: "border-box" }}> */}
-
       <form
-        action=""
         onSubmit={handleFormSubmit}
-        // style={{ display: "flex", flexDirection: "column", gap: "25px" }}
         style={{
           padding: "0 20px 20px",
           display: "flex",

@@ -1,16 +1,14 @@
 import express from "express";
 import { startCron, stopCron } from "../utils/scheduleExec.js";
-import { runJSCode } from "../utils/jsCodeExec.js";
-import { runAPI } from "../utils/apiExec.js";
-import { runPSQLCode } from "../utils/psqlExec.js";
 import { getNode, resetSubsequentOutputs } from "../utils/node.js";
 import { getWorkflow, updateNodesEdges } from "../models/workflowsService.js";
 import { runWorkflow } from "../utils/workflowExec.js";
-import { throwNDErrorAndUpdateDB } from "../utils/errors.js";
-const router = express.Router();
+import { executeNode } from "../utils/nodeExec.js";
+
+const executeRouter = express.Router();
 
 //start cron job
-router.put("/workflow/:id", async (req, res, next) => {
+executeRouter.put("/workflow/:id", async (req, res, next) => {
   const workflowID = req.params.id;
   try {
     const workflowObj = await getWorkflow(workflowID);
@@ -25,7 +23,7 @@ router.put("/workflow/:id", async (req, res, next) => {
 });
 
 //stop cron job
-router.put("/stopworkflow/:id", async (req, res, next) => {
+executeRouter.put("/stopworkflow/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
     const workflowObj = await getWorkflow(id);
@@ -40,7 +38,7 @@ router.put("/stopworkflow/:id", async (req, res, next) => {
 });
 
 //execute node
-router.post("/node", async (req, res, next) => {
+executeRouter.post("/node", async (req, res, next) => {
   let { workflowID, nodeID, nodes, edges } = req.body;
   try {
     resetSubsequentOutputs(nodes, edges, nodeID);
@@ -56,19 +54,7 @@ router.post("/node", async (req, res, next) => {
     //get workflow object
     const workflowObj = await getWorkflow(workflowID);
     const nodeObj = getNode(workflowObj, nodeID);
-
-    //execute node according to node type
-    let resData;
-    if (nodeObj.type === "extract") {
-      resData = await runAPI(workflowObj, nodeObj);
-    } else if (nodeObj.type === "transform") {
-      resData = await runJSCode(workflowObj, nodeObj);
-    } else if (nodeObj.type === "load") {
-      resData = await runPSQLCode(workflowObj, nodeObj);
-    } else if (nodeObj.type !== "schedule") {
-      const message = `Invalid Node Type: ${nodeObj.type}`;
-      await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
-    }
+    await executeNode(workflowObj, nodeObj);
     res
       .status(200)
       .json({ nodes: workflowObj.nodes, edges: workflowObj.edges });
@@ -78,7 +64,7 @@ router.post("/node", async (req, res, next) => {
 });
 
 //execute workflow
-router.post("/workflow/:id", async (req, res, next) => {
+executeRouter.post("/workflow/:id", async (req, res, next) => {
   const workflowID = req.params.id;
   const { nodes, edges } = req.body;
   try {
@@ -99,4 +85,4 @@ router.post("/workflow/:id", async (req, res, next) => {
   }
 });
 
-export default router;
+export default executeRouter;
