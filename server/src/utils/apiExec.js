@@ -4,14 +4,16 @@ import { nodeInputvalidation } from "./nodeInput.js";
 import axios from "axios";
 
 export const runAPI = async (workflowObj, nodeObj) => {
+  console.log("runapi workflowobj nodes");
   await nodeInputvalidation(workflowObj, nodeObj);
   let data;
   try {
     //change to oAuthAndSend
-    data = await oAuthAndSend(nodeObj);
+    data = await oAuthAndSend(nodeObj, workflowObj);
   } catch (e) {
-    const status = e.toJSON().status;
-    const code = e.toJSON().code;
+    e = JSON.parse(e.message);
+    const status = e.status;
+    const code = e.code;
     if ((!status && code !== "ENOTFOUND") || status >= 500) {
       let errorDesc;
       switch (
@@ -35,7 +37,6 @@ export const runAPI = async (workflowObj, nodeObj) => {
       await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
     }
   }
-
   nodeObj.data.output = { data };
   nodeObj.data.error = null;
   await updateNodes(workflowObj);
@@ -67,11 +68,11 @@ const getAccessToken = async (nodeObj, workflowObj) => {
   } catch (e) {
     const message =
       "failed to get access token, please ckech client id and client secret";
-    throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
+    await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
   }
 };
 
-const oAuthAndSend = async (nodeObj) => {
+const oAuthAndSend = async (nodeObj, workflowObj) => {
   let { httpVerb, url, header, jsonBody, oAuthChecked } = nodeObj.data;
   let dataToSend;
   let headerToSend;
@@ -79,7 +80,7 @@ const oAuthAndSend = async (nodeObj) => {
   //set header to include oAuth token if OAuth is checked
   //get access token for the first time if there is no token property
   if (oAuthChecked && !nodeObj.data.token) {
-    await getAccessToken(nodeObj);
+    await getAccessToken(nodeObj, workflowObj);
     //copy header object and add authorization token
     headerToSend = setHeader(header, nodeObj);
   }
@@ -101,14 +102,25 @@ const oAuthAndSend = async (nodeObj) => {
     });
   } catch (e) {
     // if api call failed re-get access token and reset headers and then send
-    await getAccessToken(nodeObj);
-    headerToSend = setHeader(header, nodeObj);
-    res = await sendAPI({
-      method: httpVerb,
-      url,
-      headers: headerToSend,
-      data: dataToSend,
-    });
+    if (oAuthChecked) {
+      await getAccessToken(nodeObj, workflowObj);
+      headerToSend = setHeader(header, nodeObj);
+      res = await sendAPI({
+        method: httpVerb,
+        url,
+        headers: headerToSend,
+        data: dataToSend,
+      });
+    } else {
+      const error = new Error(
+        JSON.stringify({
+          message: e.message,
+          status: e.status,
+          code: e.code,
+        })
+      );
+      throw error;
+    }
   }
   return res;
 };
