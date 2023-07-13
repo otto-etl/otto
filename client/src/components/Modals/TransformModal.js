@@ -96,7 +96,8 @@ const TransformModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
               label="Name"
               value={name}
               onChange={(e) => setName(e.target.value)} // variant="outlined"
-              sx={{ width: "100%" }}
+              sx={{ width: "100%", marginTop: "5px" }}
+              size={"small"}
             />
           </Box>
           <Box>

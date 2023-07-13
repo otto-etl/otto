@@ -75,7 +75,7 @@ const ExtractModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
   return (
     <Box>
       <Typography sx={{ fontSize: "20px", fontWeight: "500", padding: "20px" }}>
-        Extract API Details
+        Extract Mongo Details
       </Typography>
 
       <form
