@@ -30,7 +30,7 @@ const ExtractModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
   const [headerChecked, setHeaderChecked] = useState(
     !!nodeObj.data.headerChecked
   );
-  const [oAuthChecked, setOAuthChecked] = useState(!!nodeObj.data.bodyChecked);
+  const [oAuthChecked, setOAuthChecked] = useState(!!nodeObj.data.oAuthChecked);
   const [accessTokenURL, setAccessTokenURL] = useState(
     nodeObj.data.accessTokenURL
   );
@@ -66,6 +66,7 @@ const ExtractModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
       accessTokenURL: accessTokenURL,
       clientID: clientID,
       clientSecret: clientSecret,
+      token: nodeObj.data.token,
       scope: scope,
       output: "",
     };
