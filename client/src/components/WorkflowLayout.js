@@ -105,7 +105,7 @@ const WorkflowLayout = () => {
   }, [setNodes, setEdges, setActive, setWfName, wfID]);
 
   useEffect(() => {
-    console.log("call to workflowHasOrphanNodes");
+    // console.log("call to workflowHasOrphanNodes");
     let orphans = workflowHasOrphanNodes(nodes, edges);
     setHasOrphans(orphans);
     if (orphans) {
@@ -270,10 +270,23 @@ const WorkflowLayout = () => {
         newNode.data.intervalInMinutes = TOTAL_MINUTES_IN_A_DAY;
         break;
       }
-      case "extract": {
+      case "extractApi": {
         newNode.data.url = "https://dog.ceo/api/breeds/list/all";
         newNode.data.json = {};
         newNode.data.httpVerb = "GET";
+        break;
+      }
+      case "extractMongo": {
+        newNode.data.host = "cluster0.4opmjhz.mongodb.net";
+        newNode.data.port = "";
+        newNode.data.defaultDatabase = "test";
+        newNode.data.username = "joewebsta";
+        newNode.data.password = "MFEpWmcerh9Kjm3H";
+        newNode.data.collection = "users";
+        newNode.data.query = "{}";
+        newNode.data.limit = "10";
+        newNode.data.connectionFormat = "Standard";
+
         break;
       }
       case "transform": {
@@ -418,9 +431,11 @@ const WorkflowLayout = () => {
   The thing is we did define it outside of the component -- that was directly from the tutorial -- so I need to look into why this is still happening
   */
 
+  // console.log(nodes);
+
   return (
     <>
-      <GlobalNavbar />
+      <GlobalNavbar onHomePage={false} />
       <WorkflowNavbar
         wfName={wfName}
         message={message}

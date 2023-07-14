@@ -9,6 +9,7 @@ export const errorHandler = async (err, req, res, next) => {
       SSERes.write("data:" + JSON.stringify(newExecution));
       SSERes.write("\n\n");
     }
+
     res.status(422).json({
       errName: err.name,
       errMessage: err.message,

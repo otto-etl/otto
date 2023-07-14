@@ -22,13 +22,12 @@ const Sidebar = ({
       executionSource = new EventSource(
         `http://localhost:3001/executions/${workflowID}`
       );
-      console.log("executionsEvent triggered");
 
       executionSource.onmessage = (event) => {
         const test = [];
         const active = [];
         let executions = JSON.parse(event.data);
-        console.log("executions", executions);
+        // console.log("executions", executions);
         if (!Array.isArray(executions) && typeof executions === "object") {
           executions = [executions];
         }
@@ -60,7 +59,6 @@ const Sidebar = ({
     setSelectedTestIndex(null);
     setSelectedActiveIndex(null);
     handleEditWorkflowListItemClick();
-    console.log("UPDATE REACT FLOW STATE");
   };
 
   const handleTestListItemClick = (event, index) => {
@@ -70,7 +68,6 @@ const Sidebar = ({
     const nodes = testExecutions[index].workflow.nodes;
     const edges = testExecutions[index].workflow.edges;
     handleExecutionListItemClick(nodes, edges);
-    console.log("UPDATE REACT FLOW STATE");
   };
 
   const handleActiveListItemClick = (event, index) => {

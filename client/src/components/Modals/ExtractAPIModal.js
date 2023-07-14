@@ -43,11 +43,11 @@ const ExtractModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
     return name && url && actionType; // do we need json populated too?
   };
 
-  const handleHeaderChange = React.useCallback((value, viewupdate) => {
+  const handleHeaderChange = React.useCallback((value) => {
     setHeader(value);
   }, []);
 
-  const handleBodyChange = React.useCallback((value, viewupdate) => {
+  const handleBodyChange = React.useCallback((value) => {
     setJsonBody(value);
   }, []);
 

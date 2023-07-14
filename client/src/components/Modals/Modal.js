@@ -38,6 +38,8 @@ function BasicModal({
       setInput({});
     }
   }, [getPrevNodeOutput, getPrevNodesOutput, nodeObj]);
+
+  // REFACTOR handleSaveExecute and handleSaveNode
   const handleSaveExecuteNode = (event, formValues) => {
     event.preventDefault();
     handleSaveNode(formValues);
@@ -45,7 +47,7 @@ function BasicModal({
   };
 
   const handleSaveNode = (formValues) => {
-    console.log(formValues);
+    // console.log(formValues);
     onSaveExecute(nodeObj.id, formValues);
   };
 
@@ -66,7 +68,6 @@ function BasicModal({
     setTab(newValue);
   }, []);
 
-  console.log(nodeObj.type);
 
   return (
     <div>
@@ -115,7 +116,8 @@ function BasicModal({
               >
                 Input
               </Typography>
-              {nodeObj.type === "schedule" || nodeObj.type === "extract" ? (
+              {nodeObj.type === "schedule" ||
+              nodeObj.type.slice(0, 7) === "extract" ? (
                 <div>
                   <Typography sx={{ marginLeft: "20px", color: "#555" }}>
                     No input
@@ -140,7 +142,7 @@ function BasicModal({
                       aria-label="basic tabs example"
                     >
                       {Object.keys(input).map((key) => {
-                        console.log(key);
+                        // console.log(key);
                         return (
                           <Tab
                             sx={{
