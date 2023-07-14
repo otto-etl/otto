@@ -20,7 +20,7 @@ const Sidebar = ({
     const getLogs = async () => {
       // const executions = await getExecutions(workflowID);
       executionSource = new EventSource(
-        `http://localhost:3001/executions/${workflowID}`
+        `https://localhost:3001/executions/${workflowID}`
       );
 
       executionSource.onmessage = (event) => {

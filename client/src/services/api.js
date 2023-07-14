@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const host = "http://localhost:3001";
-
+const host = "https://localhost:3001";
+// const host = "/";
 export const getWorkflowAPI = async (id) => {
   const res = await axios.get(`${host}/workflows/${id}`);
   return res.data;
