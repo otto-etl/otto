@@ -83,7 +83,6 @@ export const runWorkflow = async (workflowObj) => {
   workflowObj.error = null;
   const newExecution = await insertNewExecution("TRUE", workflowObj);
   const SSERes = getSSERes();
-  console.log("sse", SSERes);
   SSERes.write("data:" + JSON.stringify(newExecution));
   SSERes.write("\n\n");
 };

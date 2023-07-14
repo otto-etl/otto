@@ -6,7 +6,6 @@ export const errorHandler = async (err, req, res, next) => {
     if (err.data.startTime) {
       const newExecution = await insertNewExecution("FALSE", err.data);
       const SSERes = getSSERes();
-      console.log("sse", SSERes);
       SSERes.write("data:" + JSON.stringify(newExecution));
       SSERes.write("\n\n");
     }

@@ -4,7 +4,6 @@ import { getExecutions } from "../models/workflowsService.js";
 
 let SSERes;
 router.get("/:id", async (req, res, next) => {
-  console.log("execution route");
   const workflowID = req.params.id;
   try {
     const executions = await getExecutions(workflowID);

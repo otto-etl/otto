@@ -4,7 +4,7 @@ import { AppBar, Button, Toolbar } from "@mui/material";
 import ottoLogo from "../../assets/otto.png";
 import { useNavigate } from "react-router-dom";
 
-const GlobalNavbar = () => {
+const GlobalNavbar = ( { onHomePage }) => {
   const navigate = useNavigate();
 
   return (
@@ -29,7 +29,7 @@ const GlobalNavbar = () => {
           alt="otto logo"
           style={{ height: 25 }}
         />
-        <Button
+        {!onHomePage ? <Button
           variant="text"
           sx={{
             color: "white",
@@ -42,7 +42,7 @@ const GlobalNavbar = () => {
           }}
         >
           All Workflows
-        </Button>
+        </Button> : null}
       </Toolbar>
     </AppBar>
   );
