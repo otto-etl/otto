@@ -50,6 +50,7 @@ export const startCron = async (workflowObj) => {
   } else {
     //if workflow is not active, use start time from the schedule node
     startTime = scheduleNodeObj.data.startTime;
+    workflowObj.active = true;
     await activateWorkflow(workflowID);
   }
 

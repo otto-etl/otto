@@ -16,15 +16,17 @@ const Sidebar = ({
   const [activeExecutions, setActiveExecutions] = React.useState([]);
 
   React.useEffect(() => {
+    let executionSource;
     const getLogs = async () => {
       // const executions = await getExecutions(workflowID);
-      const executionSource = new EventSource(
+      executionSource = new EventSource(
         `http://localhost:3001/executions/${workflowID}`
       );
       console.log("executionsEvent triggered");
-      const test = [];
-      const active = [];
+
       executionSource.onmessage = (event) => {
+        const test = [];
+        const active = [];
         let executions = JSON.parse(event.data);
         console.log("executions", executions);
         if (!Array.isArray(executions) && typeof executions === "object") {
@@ -39,12 +41,15 @@ const Sidebar = ({
             }
           });
         }
-        setTestExecutions(test);
-        setActiveExecutions(active);
+        setTestExecutions((prev) => prev.concat(test));
+        setActiveExecutions((prev) => prev.concat(active));
       };
     };
-
     getLogs();
+    return () => {
+      console.log("close SSE connection");
+      executionSource.close();
+    };
   }, []);
 
   const handleEditListItemClick = (event, index) => {

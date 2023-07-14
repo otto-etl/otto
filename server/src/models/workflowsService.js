@@ -36,6 +36,7 @@ export const updateNodes = async (workflowObj) => {
 };
 
 export const activateWorkflow = async (workflowID) => {
+  console.log(workflowID, "activated");
   return await db.any(
     "UPDATE workflow SET active=true, updated_at = NOW() WHERE id = ${workflowID}",
     {

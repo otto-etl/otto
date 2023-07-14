@@ -39,35 +39,17 @@ export const runPSQLCode = async (workflowObj, nodeObj) => {
   //test if connection to db can be made with provided credentials
   await testConnection(db, workflowObj, nodeObj);
 
-  //get input data from previous nodes, currently assuming one input
-  //also throws NodeError if previous node is missing input data
-
-  let inputData = await getInputData(workflowObj, nodeObj);
-  //assuming load node only have 1 source of input && extractPsql has no input
-  if (nodeObj.type === "load") {
-    inputData = inputData.data;
-  } else {
-    inputData = null;
-  }
-
-  //add returning statement if the code doesn't have one
   sqlCode = addReturnStr(sqlCode);
-  let returnValues = [];
+  //add returning statement if the code doesn't have one
+  let returnValues;
 
   //for each row in the input dataset, insert into db
   try {
-    if (inputData) {
-      const insertFields = getInputFields(sqlCode);
-      for (const obj of inputData) {
-        const returnValue = await db.any(
-          sqlCode,
-          matchDataPropsWithVarNames(insertFields, obj)
-        );
-        returnValues = returnValues.concat(returnValue);
-      }
-    } else {
-      const returnValue = await db.any(sqlCode);
-      returnValues = returnValue;
+    if (nodeObj.type === "load") {
+      returnValues = await runSqlForLoad(sqlCode, workflowObj, nodeObj, db);
+    }
+    if (nodeObj.type === "extractPsql") {
+      returnValues = await runSqlForExtract(sqlCode, db);
     }
   } catch (e) {
     const message = `Error running psql code: ${e.message}`;
@@ -78,6 +60,25 @@ export const runPSQLCode = async (workflowObj, nodeObj) => {
   nodeObj.data.error = null;
   await updateNodes(workflowObj);
   return returnValues;
+};
+
+const runSqlForLoad = async (sqlCode, workflowObj, nodeObj, db) => {
+  let returnValues = [];
+  let inputData = await getInputData(workflowObj, nodeObj);
+  inputData = inputData.data;
+  const insertFields = getInputFields(sqlCode);
+  for (const obj of inputData) {
+    const returnValue = await db.any(
+      sqlCode,
+      matchDataPropsWithVarNames(insertFields, obj)
+    );
+    returnValues = returnValues.concat(returnValue);
+  }
+  return returnValues;
+};
+
+const runSqlForExtract = async (sqlCode, db) => {
+  return await db.any(sqlCode);
 };
 
 // connect to PSQL with user credentials
