@@ -67,7 +67,7 @@ const getAccessToken = async (nodeObj, workflowObj) => {
     nodeObj.data["token"] = response;
   } catch (e) {
     const message =
-      "failed to get access token, please ckech client id and client secret";
+      "failed to get access token, please check client id and client secret";
     await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
   }
 };
