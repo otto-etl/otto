@@ -2,6 +2,7 @@ import { insertNewExecution } from "../models/workflowsService.js";
 import { NodeError, WorkflowError } from "../utils/errors.js";
 import { getSSERes } from "../routes/executionRoutes.js";
 export const errorHandler = async (err, req, res, next) => {
+  console.log("reached error handler");
   if (err instanceof NodeError || err instanceof WorkflowError) {
     if (err.data.startTime) {
       const newExecution = await insertNewExecution("FALSE", err.data);

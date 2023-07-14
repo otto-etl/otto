@@ -42,7 +42,6 @@ executeRouter.post("/node", async (req, res, next) => {
   let { workflowID, nodeID, nodes, edges } = req.body;
   try {
     resetSubsequentOutputs(nodes, edges, nodeID);
-    console.log(nodes);
     nodes = JSON.stringify(nodes);
     edges = JSON.stringify(edges);
     //update nodes and edges in DB by workflowID

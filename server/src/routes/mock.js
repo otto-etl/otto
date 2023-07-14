@@ -114,7 +114,6 @@ router.post("/execute/node", (req, res) => {
 
 router.post("/execute/workflow/:id", (req, res) => {
   console.log("Got the request");
-  console.log(req.body.nodes[0].position);
 
   const newWorkflowObject = {
     nodes: [
