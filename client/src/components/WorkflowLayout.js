@@ -418,7 +418,7 @@ const WorkflowLayout = () => {
 
   return (
     <>
-      <GlobalNavbar />
+      <GlobalNavbar onHomePage={false} />
       <WorkflowNavbar
         wfName={wfName}
         message={message}
