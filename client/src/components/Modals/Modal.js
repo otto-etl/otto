@@ -9,6 +9,7 @@ import "react18-json-view/src/style.css";
 import ScheduleModal from "./ScheduleModal";
 import ExtractAPIModal from "./ExtractAPIModal";
 import ExtractMongoModal from "./ExtractMongoModal";
+import ExtractPsqlModal from "./ExtractPsqlModal";
 import TransformModal from "./TransformModal";
 import LoadModal from "./LoadModal";
 import Tabs from "@mui/material/Tabs";
@@ -67,7 +68,6 @@ function BasicModal({
     setTab(newValue);
   }, []);
 
-  // console.log(nodeObj.data.output);
 
   return (
     <div>
@@ -193,6 +193,14 @@ function BasicModal({
               ) : null}
               {nodeObj.type === "extractMongo" ? (
                 <ExtractMongoModal
+                  nodeObj={nodeObj}
+                  handleSubmit={handleSaveExecuteNode}
+                  handleDelete={handleDelete}
+                  disabled={disabled}
+                />
+              ) : null}
+              {nodeObj.type === "extractPsql" ? (
+                <ExtractPsqlModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
                   handleDelete={handleDelete}

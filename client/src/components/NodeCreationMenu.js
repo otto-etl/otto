@@ -29,6 +29,7 @@ const NodeCreationMenu = ({ onCreateNode, logView }) => {
 
   const handleCreateNode = (event) => {
     const nodeType = event.target.dataset.value;
+    console.log("string");
     onCreateNode(nodeType);
     handleClose();
   };
