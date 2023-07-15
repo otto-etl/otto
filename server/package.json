@@ -5,8 +5,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/index.js",
-    "start": "src/index.js",
+    "dev": "NODE_ENV=DEVELOPMENT nodemon src/index.js",
+    "start": "NODE_ENV=PRODUCTION node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

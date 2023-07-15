@@ -20,18 +20,20 @@ app.use("/mock", mockRoutes);
 app.use(errorHandler);
 const PORT = process.env.PORT || 3001;
 
-https
-  .createServer(
-    {
-      key: fs.readFileSync("otto_cert/key.pem"),
-      cert: fs.readFileSync("otto_cert/cert.pem"),
-    },
-    app
-  )
-  .listen(PORT, () => {
-    console.log(`Listening on port ${PORT}`);
-  });
+if (process.env.NODE_ENV === "PRODUCTION") {
+  https
+    .createServer(
+      {
+        key: fs.readFileSync(process.env.KEY_PATH),
+        cert: fs.readFileSync(process.env.CERT_PATH),
+      },
+      app
+    )
+    .listen(PORT, () => {
+      console.log(`Production mode, listening on port ${PORT}`);
+    });
+}
 
-// app.listen(PORT, () => {
-
-// });
+app.listen(PORT, () => {
+  console.log(`Development mode, using http, listening on port ${PORT}`);
+});

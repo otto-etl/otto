@@ -1,7 +1,9 @@
 import axios from "axios";
-
-const host = "https://localhost:3001";
-// const host = "/";
+const host =
+  process.env.NODE_ENV === "PRODUCTION"
+    ? process.env.REACT_APP_PRODUCTION_URL
+    : process.env.REACT_APP_DEVELOPMENT_URL;
+console.log(host);
 export const getWorkflowAPI = async (id) => {
   const res = await axios.get(`${host}/workflows/${id}`);
   return res.data;

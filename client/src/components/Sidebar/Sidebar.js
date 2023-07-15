@@ -19,9 +19,11 @@ const Sidebar = ({
     let executionSource;
     const getLogs = async () => {
       // const executions = await getExecutions(workflowID);
-      executionSource = new EventSource(
-        `https://localhost:3001/executions/${workflowID}`
-      );
+      const baseURL =
+        process.env.NODE_ENV === "PRODUCTION"
+          ? process.env.REACT_APP_PRODUCTION_URL.PRODUCTION_URL
+          : process.env.REACT_APP_PRODUCTION_URL.DEVELOPMENT_URL;
+      executionSource = new EventSource(`${baseURL}/executions/${workflowID}`);
 
       executionSource.onmessage = (event) => {
         const test = [];
