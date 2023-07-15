@@ -37,6 +37,7 @@ import {
   saveWorkflow,
   saveAndExecuteWorkflow,
   toggleWorkflowStatus,
+  getMetrics,
 } from "../services/api";
 import "../index.css";
 
@@ -105,7 +106,6 @@ const WorkflowLayout = () => {
   }, [setNodes, setEdges, setActive, setWfName, wfID]);
 
   useEffect(() => {
-    console.log("call to workflowHasOrphanNodes");
     let orphans = workflowHasOrphanNodes(nodes, edges);
     setHasOrphans(orphans);
     if (orphans) {
@@ -231,7 +231,7 @@ const WorkflowLayout = () => {
     //   currentNode.data.output = executionResult;
     // }
     let executionResult = await saveAndExecuteNode(payload);
-    // console.log("execution result", executionResult.nodes);
+    // console.log("execution result", executionResult.nodes);	
     setNodes(executionResult.nodes);
     setEdges(executionResult.edges);
   };

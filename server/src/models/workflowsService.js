@@ -114,3 +114,65 @@ export const getExecutions = async (id) => {
     id,
   });
 };
+
+// Metrics db
+
+export const instantiateWorkflowMetrics = async (workflowObj) => {
+  return await db.one(
+    "INSERT INTO metric (workflow_id, total_executions, success_rate, avg_milliseconds_to_complete_workflow, node_failure_count, avg_milliseconds_to_complete_node, avg_volume_extracted_data) VALUES " +
+      "(${workflow_id}, 0, -1, -1, '{}', '{}', '{}'",
+    {
+	  workflow_id: workflowObj.id,
+	}
+  );
+}
+
+export const updateTotalExecutions = async (workflowID) => {
+  return await db.any(
+    "UPDATE metric SET total_executions = total_executions + 1 WHERE workflow_id = ${workflowID}",
+    {
+	  workflowID: workflowID,
+	}
+  );
+}
+
+export const getMetricsForWorkflow = async (workflowID) => {
+  return await db.one("SELECT * FROM metric WHERE workflow_id = ${workflowID}", { workflowID: workflowID });
+};
+
+export const updateSuccessRate = async (workflowID, successful) => {
+  const totalExecutions = await db.one("SELECT total_executions FROM metric WHERE workflow_id = ${workflowID}", { workflowID: workflowID, });
+  const oldSuccessRate = await db.one("SELECT success_rate FROM metric WHERE workflow_id = ${workflowID}", { workflowID: workflowID, });
+  if (oldSuccessRate.success_rate === -1) {
+	const newSuccessRate = successful ? 100 : 0;
+	console.log(newSuccessRate);
+    return await db.any("UPDATE metric SET success_rate = ${successRate} WHERE workflow_id = ${workflowID}", 
+	  { 
+	    successRate: newSuccessRate, 
+		workflowID: workflowID, 
+	  }
+     );
+  }
+  const currentSuccessRate = oldSuccessRate.success_rate * totalExecutions.total_executions;
+  const newSuccessRate = successful ? (currentSuccessRate + 100) / (totalExecutions.total_executions + 1) : (currentSuccessRate) / (totalExecutions.total_executions + 1);
+  return await db.any("UPDATE metric SET success_rate = ${successRate} WHERE workflow_id = ${workflowID}", 
+    { successRate: newSuccessRate,
+	  workflowID: workflowID 
+	}
+  );  
+}
+
+export const updateAverageTimeTaken = async (workflowID, timeTaken) => {
+  const totalExecutions = await db.one("SELECT total_executions FROM metric WHERE workflow_id = ${workflowID}", { workflowID: workflowID, });
+  const oldAverageTimeTaken = await db.one("SELECT avg_milliseconds_to_complete_workflow FROM metric WHERE workflow_id = ${workflowID}", { workflowID: workflowID, });
+  if (oldAverageTimeTaken.avg_milliseconds_to_complete_workflow === -1) {
+    return await db.any("UPDATE metric SET avg_milliseconds_to_complete_workflow = ${time_taken} WHERE workflow_id = ${workflowID}", { time_taken: timeTaken, workflowID: workflowID, });
+  }
+  const totalTimeTaken = oldAverageTimeTaken.avg_milliseconds_to_complete_workflow * totalExecutions.total_executions;
+  const newTimeTaken = (totalTimeTaken + timeTaken) / (totalExecutions.total_executions + 1);
+  return await db.any("UPDATE metric SET avg_milliseconds_to_complete_workflow = ${time_taken} WHERE workflow_id = ${workflowID}", 
+    { time_taken: newTimeTaken,
+	  workflowID: workflowID 
+	}
+  );  
+};

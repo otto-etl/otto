@@ -11,6 +11,7 @@ import { workflowInputvalidation } from "./workflowInput.js";
 import { throwNDErrorAndUpdateDB } from "./errors.js";
 import { insertNewExecution } from "../models/workflowsService.js";
 import { executeNode } from "./nodeExec.js";
+import { updateMetrics } from "./metricsExec.js";
 import { getSSERes } from "../routes/executionRoutes.js";
 
 let completedNodes = {};
@@ -79,6 +80,7 @@ export const runWorkflow = async (workflowObj) => {
 
   completedNodes = {};
   console.log("workflow completed", workflowObj.id);
+  updateMetrics(workflowObj, new Date(Date.now()).toISOString());
   await updateWorkflowError(workflowObj.id, null);
   workflowObj.error = null;
   const newExecution = await insertNewExecution("TRUE", workflowObj);
