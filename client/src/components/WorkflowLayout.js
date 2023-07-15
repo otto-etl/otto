@@ -334,7 +334,8 @@ const WorkflowLayout = () => {
 
   const handleExecuteAll = async (e) => {
     e.preventDefault();
-    handleMessage(`Executing ${wfName}`, `Execution finished`, 2000, 2000);
+    // handleMessage(`Executing ${wfName}`, `Execution finished`, 2000, 2000);
+    handleMessage(`Executing workflow...`, `Execution finished`, 2000, 2000);
     const res = await saveAndExecuteWorkflow(wfID, {
       workflowID: wfID,
       nodes,

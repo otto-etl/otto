@@ -43,7 +43,7 @@ const GlobalNavbar = ({ onHomePage }) => {
             style={{ height: 28, width: 28 }}
           />
           <Typography
-            fontFamily={"Quicksand"}
+            fontFamily={"Quicksand, sans-serif"}
             sx={{
               fontSize: "32px",
               fontWeight: "700",
