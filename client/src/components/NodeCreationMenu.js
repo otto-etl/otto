@@ -1,5 +1,6 @@
 import React from "react";
 import { Divider, Menu, MenuItem, Button } from "@mui/material";
+import { Plus } from "lucide-react";
 
 /*
 const boxStyle = {
@@ -37,13 +38,17 @@ const NodeCreationMenu = ({ onCreateNode, logView }) => {
   return logView ? null : (
     <div>
       <Button
+        // variant="contained"
+        variant="outlined"
         id="basic-button"
         aria-controls={open ? "basic-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
+        sx={{ textTransform: "capitalize", display: "flex", gap: "10px" }}
       >
-        CREATE NODE
+        <Plus size={16} />
+        Create Node
       </Button>
       <Menu
         id="basic-menu"
@@ -53,6 +58,7 @@ const NodeCreationMenu = ({ onCreateNode, logView }) => {
         MenuListProps={{
           "aria-labelledby": "basic-button",
         }}
+        sx={{ mt: "10px" }}
       >
         <MenuItem data-value="schedule" onClick={handleCreateNode}>
           Schedule

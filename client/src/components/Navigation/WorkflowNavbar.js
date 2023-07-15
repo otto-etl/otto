@@ -22,7 +22,6 @@ const WorkflowNavbar = ({
   handleExecuteAll,
   handleToggleActive,
 }) => {
-
   return (
     <AppBar
       position={"static"}
@@ -67,7 +66,11 @@ const WorkflowNavbar = ({
               onClick={handleExecuteAll}
               sx={{ gap: "10px" }}
             >
-              <Play size={16} fill={"#FFF"} />
+              {orphans ? (
+                <Play size={16} fill={"#afafaf"} />
+              ) : (
+                <Play size={16} fill={"#FFF"} />
+              )}
               Execute Workflow
             </Button>
             <FormGroup sx={{ marginRight: "-10px" }}>

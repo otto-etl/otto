@@ -344,7 +344,7 @@ const WorkflowLayout = () => {
     if (res.errMessage) {
       if (res.errName === "NodeError" || res.errName === "ExternalError")
         res.errMessage =
-          "Node execution failure, please checked the failed node";
+          "Node execution failure. Please check the failed node.";
       setWfError(res.errMessage);
       setTimeout(() => {
         setWfError(null);
@@ -360,9 +360,11 @@ const WorkflowLayout = () => {
     setActive(e.target.checked);
     await toggleWorkflowStatus(wfID, e.target.checked);
     if (e.target.checked) {
-      handleMessage(`Workflow ${wfName} is now active!`, null, 2000, null);
+      // handleMessage(`Workflow ${wfName} is now active!`, null, 2000, null);
+      handleMessage(`Workflow is now active!`, null, 2000, null);
     } else {
-      handleMessage(`Workflow ${wfName} is now inactive!`, null, 2000, null);
+      // handleMessage(`Workflow ${wfName} is now inactive!`, null, 2000, null);
+      handleMessage(`Workflow is now inactive!`, null, 2000, null);
     }
     getCurrentDB(nodes, e.target.checked);
   };
@@ -447,18 +449,24 @@ const WorkflowLayout = () => {
         handleToggleActive={handleToggleActive}
         logView={logView}
       />
-      {wfError ? (
-        <Alert
-          sx={{ margin: "10px 0 0 0", border: "2px solid #B99" }}
-          severity="error"
-        >
-          <AlertTitle sx={{ fontWeight: "700", color: "#200" }}>
-            Error:
-          </AlertTitle>
-          <p style={{ fontWeight: "600", textIndent: "10px" }}>{wfError}</p>
-        </Alert>
-      ) : null}
+
       <div className="grid">
+        {wfError ? (
+          <Alert
+            sx={{
+              border: "1px solid #B99",
+              position: "absolute",
+              top: "15px",
+              left: "calc(50% - 149px)",
+              marginLeft: "298px",
+              transform: "translate(-50%, 0)",
+              zIndex: "1",
+            }}
+            severity="error"
+          >
+            <AlertTitle sx={{ marginBottom: 0 }}>{wfError}</AlertTitle>
+          </Alert>
+        ) : null}
         <Sidebar
           workflowID={wfID}
           handleExecutionListItemClick={handleExecutionListItemClick}
