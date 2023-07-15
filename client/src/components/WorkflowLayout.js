@@ -1,13 +1,13 @@
 import "./Workflow.css";
 import React, { useState, useEffect, useCallback } from "react";
 import ReactFlow, {
-  ReactFlowProvider,
   useNodesState,
   useEdgesState,
   addEdge,
   updateEdge,
   Panel,
   Controls,
+  MiniMap,
 } from "reactflow";
 import { Background } from "@reactflow/background";
 import { useParams } from "react-router-dom";
@@ -89,6 +89,19 @@ const WorkflowLayout = () => {
   const [currentDB, setCurrentDB] = useState("");
   const [logView, setLogView] = useState(false);
   const wfID = useParams().id;
+
+  const nodeColor = (node) => {
+    switch (node.type) {
+      case "schedule":
+        return "#ed912d";
+      case "transform":
+        return "#319a9c";
+      case "load":
+        return "#a56fd2";
+      default:
+        return "#5d92f5";
+    }
+  };
 
   useEffect(() => {
     const getWorkflow = async () => {
@@ -496,6 +509,13 @@ const WorkflowLayout = () => {
           <Panel position="top-right">
             <NodeCreationMenu onCreateNode={onCreateNode} logView={logView} />
           </Panel>
+          {/* <MiniMap nodeColor={nodeColor} nodeStrokeWidth={3} zoomable pannable /> */}
+          <MiniMap
+            nodeStrokeWidth={3}
+            nodeColor={nodeColor}
+            zoomable
+            pannable
+          />
           {modalIsOpen ? (
             <Modal
               modalIsOpen={modalIsOpen}
