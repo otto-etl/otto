@@ -14,7 +14,7 @@ try {
 }
 
 export const getAllWorkflows = async () => {
-  return await db.many("SELECT * FROM workflow");
+  return await db.any("SELECT * FROM workflow");
 };
 
 export const getActiveWorkflows = async () => {
