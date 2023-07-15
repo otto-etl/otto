@@ -27,6 +27,9 @@ const theme = createTheme({
             backgroundColor: "#3c4bcb",
             textTransform: "capitalize",
             fontSize: "16px",
+            "&:hover": {
+              backgroundColor: "#2433B2",
+            },
           },
         },
         {
@@ -36,6 +39,9 @@ const theme = createTheme({
             border: "1px solid #3c4bcb",
             textTransform: "capitalize",
             fontSize: "16px",
+            "&:hover": {
+              backgroundColor: "#EBEDFE",
+            },
           },
         },
       ],
