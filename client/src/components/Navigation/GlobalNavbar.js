@@ -29,10 +29,10 @@ const GlobalNavbar = ({ onHomePage }) => {
           to="/"
           style={{
             display: "flex",
-            "align-items": "center",
+            alignItems: "center",
             color: "white",
-            "text-decoration": "none",
-            "justify-content": "space-between",
+            textDecoration: "none",
+            justifyContent: "space-between",
             gap: "10px",
           }}
         >

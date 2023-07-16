@@ -2,21 +2,6 @@ import React from "react";
 import { Divider, Menu, MenuItem, Button } from "@mui/material";
 import { Plus } from "lucide-react";
 
-/*
-const boxStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 1400,
-  height: 800,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
-*/
-
 const NodeCreationMenu = ({ onCreateNode, logView }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -38,7 +23,6 @@ const NodeCreationMenu = ({ onCreateNode, logView }) => {
   return logView ? null : (
     <div>
       <Button
-        // variant="contained"
         variant="outlined"
         id="basic-button"
         aria-controls={open ? "basic-menu" : undefined}
@@ -47,7 +31,7 @@ const NodeCreationMenu = ({ onCreateNode, logView }) => {
         onClick={handleClick}
         sx={{ textTransform: "capitalize", display: "flex", gap: "10px" }}
       >
-        <Plus size={16} />
+        <Plus size={18} />
         Create Node
       </Button>
       <Menu
