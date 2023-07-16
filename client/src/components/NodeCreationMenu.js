@@ -2,7 +2,7 @@ import React from "react";
 import { Divider, Menu, MenuItem, Button } from "@mui/material";
 import { Plus } from "lucide-react";
 
-const NodeCreationMenu = ({ onCreateNode, logView }) => {
+const NodeCreationMenu = ({ onCreateNode, logView, active }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -20,7 +20,7 @@ const NodeCreationMenu = ({ onCreateNode, logView }) => {
     handleClose();
   };
 
-  return logView ? null : (
+  return logView || active ? null : (
     <div>
       <Button
         variant="outlined"

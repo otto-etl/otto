@@ -14,6 +14,7 @@ import ReactFlow, {
 import { Background } from "@reactflow/background";
 import { useParams } from "react-router-dom";
 
+import ViewAlert from "./Alert/ViewAlert";
 import Modal from "./Modals/Modal";
 import ScheduleNode from "./Nodes/ScheduleNode";
 import ExtractNode from "./Nodes/ExtractNode";
@@ -40,7 +41,7 @@ import {
   toggleWorkflowStatus,
 } from "../services/api";
 
-import { Alert, AlertTitle } from "@mui/material";
+import { Alert, AlertTitle, Box } from "@mui/material";
 
 const connectionLineStyle = { stroke: "#fff" };
 const snapGrid = [20, 20];
@@ -473,6 +474,7 @@ const WorkflowLayout = () => {
           workflowID={wfID}
           handleExecutionListItemClick={handleExecutionListItemClick}
           handleEditWorkflowListItemClick={handleEditWorkflowListItemClick}
+          active={active}
         />
         <ReactFlow
           style={{ flex: 1 }}
@@ -496,9 +498,21 @@ const WorkflowLayout = () => {
           <Controls />
           <Background color={"#a7a7ae"} style={{ background: "#f3f4f6" }} />
           <Panel position="top-right">
-            <NodeCreationMenu onCreateNode={onCreateNode} logView={logView} />
+            <NodeCreationMenu
+              onCreateNode={onCreateNode}
+              logView={logView}
+              active={active}
+            />
           </Panel>
-          {/* <MiniMap nodeColor={nodeColor} nodeStrokeWidth={3} zoomable pannable /> */}
+          <Panel position="top-center">
+            {logView && !active ? <ViewAlert message={"Log View"} /> : null}
+            {!logView && active ? (
+              <ViewAlert message={"Workflow is Active"} />
+            ) : null}
+            {logView && active ? (
+              <ViewAlert message={"Log View - Workflow is Active"} />
+            ) : null}
+          </Panel>
           <MiniMap
             nodeStrokeWidth={3}
             nodeColor={nodeColor}

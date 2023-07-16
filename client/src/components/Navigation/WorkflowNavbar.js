@@ -51,15 +51,18 @@ const WorkflowNavbar = ({
             }}
           >
             <Typography>{message}</Typography>
-            <Button
-              variant="outlined"
-              disabled={active ? true : false}
-              onClick={handleSaveWorkflow}
-              sx={{ gap: "10px" }}
-            >
-              <Save size={16} />
-              Save
-            </Button>
+            {active ? null : (
+              <Button
+                variant="outlined"
+                disabled={active ? true : false}
+                onClick={handleSaveWorkflow}
+                sx={{ gap: "10px" }}
+              >
+                <Save size={16} />
+                Save
+              </Button>
+            )}
+
             <Button
               disabled={orphans ? true : false}
               variant="contained"
