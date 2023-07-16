@@ -1,4 +1,6 @@
 import "./Workflow.css";
+import "reactflow/dist/style.css";
+import "../index.css";
 import React, { useState, useEffect, useCallback } from "react";
 import ReactFlow, {
   useNodesState,
@@ -11,7 +13,6 @@ import ReactFlow, {
 } from "reactflow";
 import { Background } from "@reactflow/background";
 import { useParams } from "react-router-dom";
-import "reactflow/dist/style.css";
 
 import Modal from "./Modals/Modal";
 import ScheduleNode from "./Nodes/ScheduleNode";
@@ -38,20 +39,8 @@ import {
   saveAndExecuteWorkflow,
   toggleWorkflowStatus,
 } from "../services/api";
-import "../index.css";
 
-import {
-  AppBar,
-  Box,
-  Button,
-  Typography,
-  FormControlLabel,
-  FormGroup,
-  Switch,
-  Toolbar,
-} from "@mui/material";
-import Alert from "@mui/material/Alert";
-import AlertTitle from "@mui/material/AlertTitle";
+import { Alert, AlertTitle } from "@mui/material";
 
 const connectionLineStyle = { stroke: "#fff" };
 const snapGrid = [20, 20];

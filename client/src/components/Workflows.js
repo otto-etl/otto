@@ -28,9 +28,6 @@ const columns = [
   { field: "name", headerName: "Name", width: 550 },
   {
     field: "active",
-    // valueGetter: (params) => {
-    // return params.value ? "Active" : "Inactive";
-    // },
     headerName: "Status",
     width: 150,
     renderCell: (params) => {
