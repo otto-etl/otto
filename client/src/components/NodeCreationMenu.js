@@ -1,22 +1,8 @@
 import React from "react";
 import { Divider, Menu, MenuItem, Button } from "@mui/material";
+import { Plus } from "lucide-react";
 
-/*
-const boxStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 1400,
-  height: 800,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
-*/
-
-const NodeCreationMenu = ({ onCreateNode, logView }) => {
+const NodeCreationMenu = ({ onCreateNode, logView, active }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -34,16 +20,19 @@ const NodeCreationMenu = ({ onCreateNode, logView }) => {
     handleClose();
   };
 
-  return logView ? null : (
+  return logView || active ? null : (
     <div>
       <Button
+        variant="outlined"
         id="basic-button"
         aria-controls={open ? "basic-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
+        sx={{ textTransform: "capitalize", display: "flex", gap: "10px" }}
       >
-        CREATE NODE
+        <Plus size={18} />
+        Create Node
       </Button>
       <Menu
         id="basic-menu"
@@ -53,6 +42,7 @@ const NodeCreationMenu = ({ onCreateNode, logView }) => {
         MenuListProps={{
           "aria-labelledby": "basic-button",
         }}
+        sx={{ mt: "10px" }}
       >
         <MenuItem data-value="schedule" onClick={handleCreateNode}>
           Schedule

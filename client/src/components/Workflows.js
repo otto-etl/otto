@@ -1,47 +1,67 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllWorkflows, createNewWF } from "../services/api";
+import { getAllWorkflows } from "../services/api";
 import GlobalNavbar from "./Navigation/GlobalNavbar";
 import NewWFModal from "./Modals/NewWFModal.js";
-import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
+import { DataGrid } from "@mui/x-data-grid";
+import {
+  Button,
+  IconButton,
+  Stack,
+  Container,
+  Typography,
+  Box,
+} from "@mui/material";
+import { Plus, Trash2 } from "lucide-react";
 
 const gridStyles = {
   "& .MuiDataGrid-columnHeaders": {
-    backgroundColor: "rgba(25, 118, 210, 0.08)",
-	fontSize: 16
+    backgroundColor: "#f3f4f6 ",
   },
   "& .MuiDataGrid-row": {
     cursor: "pointer",
-    "&:nth-child(2n)": { backgroundColor: "#FCFCFC" } 
-  }
- }
+  },
+  fontSize: "16px",
+};
 
 const columns = [
-  {
-    field: "id",
-    headerName: "ID",
-    width: 70,
-  },
-  { field: "name", headerName: "Workflow Name", width: 170 },
+  { field: "name", headerName: "Name", width: 550 },
   {
     field: "active",
-    valueGetter: (params) => {
-      return params.value ? "Active" : "Inactive";
-    },
     headerName: "Status",
-    width: 90,
+    width: 150,
+    renderCell: (params) => {
+      return (
+        <Box>
+          {params.value ? (
+            <Typography sx={{ color: "#247c44", fontWeight: "500" }}>
+              Active
+            </Typography>
+          ) : (
+            <Typography sx={{ color: "#555" }}>Inactive</Typography>
+          )}
+        </Box>
+      );
+    },
   },
   {
     field: "delete",
-	headerName: "",
-	width: 90,
-	renderCell: (params) => {
-	  return <Button color="primary">Delete</Button>
-	}
-  }
+    headerName: "",
+    width: 30,
+
+    renderCell: () => {
+      return (
+        <IconButton
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <Trash2 size={18} />
+        </IconButton>
+      );
+    },
+  },
 ];
 
 const Workflows = () => {
@@ -56,6 +76,7 @@ const Workflows = () => {
     };
     getInitialData();
   }, [setWorkflows]);
+
   const handleRowClick = (params, event, details) => {
     navigate(`/workflow/${params.row.id}`);
   };
@@ -72,32 +93,49 @@ const Workflows = () => {
   return (
     <>
       <GlobalNavbar onHomePage={true} />
-	  <Stack direction="row" sx={{margin:"10px 20px 10px 20px"}} spacing={20} justifyContent="space-between">
-	    <h4>Workflows</h4>
-       <Button
-          color="primary"
-          onClick={(e) => {
-            e.preventDefault();
-            setNewWFVisible(true);
-          }}
+      <Container sx={{ maxWidth: "800px !important", marginTop: "60px" }}>
+        <Stack
+          direction="row"
+          spacing={20}
+          justifyContent="space-between"
+          alignItems="center"
+          marginBottom={"20px"}
         >
-          Create New Workflow
-        </Button>
-	  </Stack>
-      <div style={{ height: 400, width: "100%"}}>
-        <DataGrid
-          rows={workflows}
-          columns={columns}
-          onRowClick={handleRowClick}
-		  sx={gridStyles}
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 5 },
-            },
-          }}
-          pageSizeOptions={[5, 10]}
-        />
-      </div>
+          <Typography
+            sx={{
+              fontSize: "28px",
+              fontWeight: "500",
+            }}
+          >
+            Workflows
+          </Typography>
+          <Button
+            variant="contained"
+            onClick={(e) => {
+              e.preventDefault();
+              setNewWFVisible(true);
+            }}
+            sx={{ gap: "10px" }}
+            size="small"
+          >
+            <Plus size={18} />
+            Create Workflow
+          </Button>
+        </Stack>
+        <div style={{ height: "631px", width: "100%" }}>
+          <DataGrid
+            rows={workflows}
+            columns={columns}
+            onRowClick={handleRowClick}
+            sx={gridStyles}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 10 },
+              },
+            }}
+          />
+        </div>
+      </Container>
       {newWFVisible ? (
         <NewWFModal
           newWFVisible={newWFVisible}

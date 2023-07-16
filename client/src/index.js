@@ -19,6 +19,18 @@ const theme = createTheme({
     fontFamily: ["Inter", "sans-serif"].join(","),
   },
   components: {
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          "&.Mui-selected": {
+            backgroundColor: "#EBEDFE",
+            "&:hover": {
+              backgroundColor: "#EBEDFE",
+            },
+          },
+        },
+      },
+    },
     MuiButton: {
       variants: [
         {

@@ -4,43 +4,6 @@
   display: flex;
 }
 
-/* #modal-container {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  overflow: auto;
-}
-#modal-container:empty {
-  display: none;
-} */
-
-/* #modal {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin: 10% 0 78px 50%;
-  padding-left: 30px;
-  transform: translateX(-50%);
-  width: 40%;
-  height: 50%;
-  box-sizing: border-box;
-  background-color: #cccccc;
-  border-radius: 4px;
-  position: relative;
-  line-height: 18px;
-  overflow-wrap: break-word;
-  font-size: 14px;
-  z-index: 3;
-}
-
-#modal:after {
-  content: "";
-  clear: both;
-  display: block;
-} */
-
 .react-flow__renderer {
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
     "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
@@ -61,6 +24,14 @@
 
 .react-flow__edge-path {
   stroke: #a7a7ae !important;
+}
+
+.react-flow__handle {
+  background-color: #6e6e6e !important;
+}
+
+.react-flow__connection-path {
+  stroke: #3c4bcb !important;
 }
 
 .react-flow__attribution {

@@ -8,6 +8,7 @@ const Sidebar = ({
   workflowID,
   handleExecutionListItemClick,
   handleEditWorkflowListItemClick,
+  active,
 }) => {
   const [selectedEditIndex, setSelectedEditIndex] = React.useState(0);
   const [selectedTestIndex, setSelectedTestIndex] = React.useState(null);
@@ -92,6 +93,7 @@ const Sidebar = ({
       <EditWorkflow
         selectedEditIndex={selectedEditIndex}
         handleEditListItemClick={handleEditListItemClick}
+        active={active}
       />
       <Divider sx={{ mb: "20px" }} />
       <ExecutionLogs
