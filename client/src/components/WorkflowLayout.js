@@ -37,7 +37,6 @@ import {
   saveWorkflow,
   saveAndExecuteWorkflow,
   toggleWorkflowStatus,
-  getMetrics,
 } from "../services/api";
 import "../index.css";
 

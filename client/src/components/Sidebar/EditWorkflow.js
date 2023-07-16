@@ -2,7 +2,7 @@ import React from "react";
 import { List, ListItemButton, ListItemText } from "@mui/material";
 import { Workflow } from "lucide-react";
 
-const EditWorkflow = ({ selectedEditIndex, handleEditListItemClick }) => {
+const EditWorkflow = ({ selectedEditIndex, handleEditListItemClick, handleActiveMetricsClick }) => {
   return (
     <List component="nav" sx={{ pt: 0, pb: "20px" }}>
       <ListItemButton
