@@ -25,29 +25,29 @@ const Sidebar = ({
       executionSource = new EventSource(
         `http://localhost:3001/executions/${workflowID}`
       );
-      //console.log("executionsEvent triggered");
-      const test = [];
-      const active = [];
 
       executionSource.onmessage = (event) => {
         const test = [];
         const active = [];
         let executions = JSON.parse(event.data);
-        // console.log("executions", executions);
         if (!Array.isArray(executions) && typeof executions === "object") {
           executions = [executions];
         }
+
         if (executions) {
-          executions.forEach((execution) => {
-            if (execution.workflow.active) {
-              active.push(execution);
-            } else {
-              test.push(execution);
-            }
-          });
+          executions
+            .sort((a, b) => b.start_time.localeCompare(a.start_time))
+            .forEach((execution) => {
+              if (execution.workflow.active) {
+                active.push(execution);
+              } else {
+                test.push(execution);
+              }
+            });
         }
-        setTestExecutions((prev) => prev.concat(test));
-        setActiveExecutions((prev) => prev.concat(active));
+
+        setTestExecutions((prev) => test.concat(prev));
+        setActiveExecutions((prev) => active.concat(prev));
       };
     };
     getLogs();
@@ -85,11 +85,11 @@ const Sidebar = ({
     handleExecutionListItemClick(nodes, edges);
     console.log("UPDATE REACT FLOW STATE");
   };
-  
+
   const handleMetricsButtonClick = (event) => {
-	event.preventDefault();
+    event.preventDefault();
     setMetricsModalOpen(true);
-  }
+  };
 
   const handleCloseMetricsModal = (e) => {
     e.preventDefault();
@@ -110,13 +110,23 @@ const Sidebar = ({
         handleEditListItemClick={handleEditListItemClick}
         active={active}
       />
-	  <Button className="MuiListItemButton-root MuiTypography-root" onClick={handleMetricsButtonClick}
-	          sx={{backgroundColor:"rgba(25, 118, 210, 0.08)", width:250, height:45, color: "#000000"}}>Active Metrics</Button>
+      <Button
+        className="MuiListItemButton-root MuiTypography-root"
+        onClick={handleMetricsButtonClick}
+        sx={{
+          backgroundColor: "rgba(25, 118, 210, 0.08)",
+          width: 250,
+          height: 45,
+          color: "#000000",
+        }}
+      >
+        Active Metrics
+      </Button>
       {metricsModalOpen ? (
         <MetricsModal
           metricsModalOpen={metricsModalOpen}
           handleCloseMetricsModal={handleCloseMetricsModal}
-		  workflowID={workflowID}
+          workflowID={workflowID}
         />
       ) : null}
       <Divider sx={{ mb: "20px" }} />
