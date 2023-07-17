@@ -1,18 +1,20 @@
 import React from "react";
 import ExecutionLogs from "./ExecutionLogs";
 import EditWorkflow from "./EditWorkflow";
-import { Box, Divider } from "@mui/material";
-import { getExecutions } from "../../services/api";
+import MetricsModal from "../Modals/MetricsModal.js";
+import { Box, Button, Divider, Modal } from "@mui/material";
 import { uniqueNewExecutions } from "../../utils/utils";
 
 const Sidebar = ({
   workflowID,
   handleExecutionListItemClick,
   handleEditWorkflowListItemClick,
+  active,
 }) => {
   const [selectedEditIndex, setSelectedEditIndex] = React.useState(0);
   const [selectedTestIndex, setSelectedTestIndex] = React.useState(null);
   const [selectedActiveIndex, setSelectedActiveIndex] = React.useState(null);
+  const [metricsModalOpen, setMetricsModalOpen] = React.useState(false);
   const [testExecutions, setTestExecutions] = React.useState([]);
   const [activeExecutions, setActiveExecutions] = React.useState([]);
 
@@ -37,20 +39,22 @@ const Sidebar = ({
         }
 
         if (executions) {
-          executions.forEach((execution) => {
-            if (execution.workflow.active) {
-              active.unshift(execution);
-            } else {
-              test.unshift(execution);
-            }
-          });
+
+
+          executions
+            .sort((a, b) => b.start_time.localeCompare(a.start_time))
+            .forEach((execution) => {
+              if (execution.workflow.active) {
+                active.push(execution);
+              } else {
+                test.push(execution);
+              }
+            });
         }
-        setTestExecutions((prev) =>
-          prev.concat(uniqueNewExecutions(prev, test))
-        );
-        setActiveExecutions((prev) =>
-          prev.concat(uniqueNewExecutions(prev, active))
-        );
+
+        setTestExecutions((prev) => uniqueNewExecutions(prev, test).concat(prev));
+        setActiveExecutions((prev) => uniqueNewExecutions(prev, active).concat(prev));
+
       };
     };
     getLogs();
@@ -89,6 +93,16 @@ const Sidebar = ({
     console.log("UPDATE REACT FLOW STATE");
   };
 
+  const handleMetricsButtonClick = (event) => {
+    event.preventDefault();
+    setMetricsModalOpen(true);
+  };
+
+  const handleCloseMetricsModal = (e) => {
+    e.preventDefault();
+    setMetricsModalOpen(false);
+  };
+
   return (
     <Box
       sx={{
@@ -101,7 +115,27 @@ const Sidebar = ({
       <EditWorkflow
         selectedEditIndex={selectedEditIndex}
         handleEditListItemClick={handleEditListItemClick}
+        active={active}
       />
+      <Button
+        className="MuiListItemButton-root MuiTypography-root"
+        onClick={handleMetricsButtonClick}
+        sx={{
+          backgroundColor: "rgba(25, 118, 210, 0.08)",
+          width: 250,
+          height: 45,
+          color: "#000000",
+        }}
+      >
+        Active Metrics
+      </Button>
+      {metricsModalOpen ? (
+        <MetricsModal
+          metricsModalOpen={metricsModalOpen}
+          handleCloseMetricsModal={handleCloseMetricsModal}
+          workflowID={workflowID}
+        />
+      ) : null}
       <Divider sx={{ mb: "20px" }} />
       <ExecutionLogs
         testExecutions={testExecutions}

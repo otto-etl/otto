@@ -4,6 +4,7 @@ import { throwWFErrorAndUpdateDB } from "./errors.js";
 import { workflowInputvalidation } from "./workflowInput.js";
 import { insertNewExecution } from "../models/workflowsService.js";
 import { executeNode } from "./nodeExec.js";
+import { updateMetrics } from "./metricsExec.js";
 import { getSSERes } from "../routes/executionRoutes.js";
 
 let completedNodes = {};
@@ -87,6 +88,7 @@ export const runWorkflowCron = async (workflowObj) => {
     await Promise.all(promises);
     completedNodes = {};
     console.log("workflow completed", workflowObj.id);
+    updateMetrics(workflowObj, new Date(Date.now()).toISOString());
     await updateWorkflowError(workflowObj.id, null);
     workflowObj.error = null;
     executionSuccess = "TRUE";
@@ -119,3 +121,4 @@ export const runWorkflowCron = async (workflowObj) => {
     }
   }
 };
+

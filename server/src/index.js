@@ -7,6 +7,7 @@ import mockRoutes from "./routes/mock.js";
 import workflowRoutes from "./routes/workflow.js";
 import executeRoutes from "./routes/execute.js";
 import executionRoutes from "./routes/executionRoutes.js";
+import metricsRoutes from "./routes/metricsRoutes.js";
 import { errorHandler } from "./middleware.js/errorHandler.js";
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use("/workflows", workflowRoutes);
 app.use("/execute", executeRoutes);
 app.use("/executions", executionRoutes);
+app.use("/metrics", metricsRoutes);
 app.use("/mock", mockRoutes);
 app.use(errorHandler);
 const PORT = process.env.PORT || 3001;

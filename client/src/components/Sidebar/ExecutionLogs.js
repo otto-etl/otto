@@ -38,9 +38,9 @@ const ExecutionLogs = ({
           sx={{ gap: "12px" }}
         >
           {execution.successful ? (
-            <CheckCircle2 size={20} strokeWidth={2} />
+            <CheckCircle2 size={20} strokeWidth={2} color="#247c44" />
           ) : (
-            <AlertTriangle size={20} strokeWidth={2} />
+            <AlertTriangle size={20} strokeWidth={2} color="#902b2b" />
           )}
           <ListItemText primary={date} secondary={time} />
         </ListItemButton>
@@ -62,9 +62,9 @@ const ExecutionLogs = ({
           sx={{ gap: "12px" }}
         >
           {execution.successful ? (
-            <CheckCircle2 size={20} strokeWidth={2} />
+            <CheckCircle2 size={20} strokeWidth={2} color="#247c44" />
           ) : (
-            <AlertTriangle size={20} strokeWidth={2} />
+            <AlertTriangle size={20} strokeWidth={2} color="#902b2b" />
           )}
           <ListItemText primary={date} secondary={time} />
         </ListItemButton>
@@ -97,7 +97,10 @@ const ExecutionLogs = ({
         </Box>
 
         {/* ACTIVE EXECUTION TAB */}
-        <TabPanel value="1" sx={{ p: 0 }}>
+        <TabPanel
+          value="1"
+          sx={{ p: 0, height: "calc(100vh - 329px)", overflow: "scroll" }}
+        >
           {testExecutions.length === 0 ? (
             <Typography
               sx={{
@@ -113,7 +116,10 @@ const ExecutionLogs = ({
             </List>
           )}
         </TabPanel>
-        <TabPanel value="2" sx={{ p: 0 }}>
+        <TabPanel
+          value="2"
+          sx={{ p: 0, height: "calc(100vh - 329px)", overflow: "scroll" }}
+        >
           {activeExecutions.length === 0 ? (
             <Typography
               sx={{

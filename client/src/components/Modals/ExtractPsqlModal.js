@@ -64,7 +64,7 @@ const ExtractPsqlModal = ({
   return (
     <Box>
       <Typography sx={{ fontSize: "20px", fontWeight: "500", padding: "20px" }}>
-        Extract Postgress Details
+        Extract Postgres Details
       </Typography>
 
       <form
