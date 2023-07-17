@@ -25,3 +25,7 @@ before running the INSERT query in the etl.sql file, modify the userName and pas
     },
 
 Run the insert query
+
+### setting up the .env file in the client root folder with the following variables
+REACT_APP_PRODUCTION_URL=https://localhost:3001
+REACT_APP_DEVELOPMENT_URL=http://localhost:3001
