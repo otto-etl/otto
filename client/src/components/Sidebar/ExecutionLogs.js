@@ -38,9 +38,9 @@ const ExecutionLogs = ({
           sx={{ gap: "12px" }}
         >
           {execution.successful ? (
-            <CheckCircle2 size={20} strokeWidth={2} />
+            <CheckCircle2 size={20} strokeWidth={2} color="#247c44" />
           ) : (
-            <AlertTriangle size={20} strokeWidth={2} />
+            <AlertTriangle size={20} strokeWidth={2} color="#902b2b" />
           )}
           <ListItemText primary={date} secondary={time} />
         </ListItemButton>
@@ -62,9 +62,9 @@ const ExecutionLogs = ({
           sx={{ gap: "12px" }}
         >
           {execution.successful ? (
-            <CheckCircle2 size={20} strokeWidth={2} />
+            <CheckCircle2 size={20} strokeWidth={2} color="#247c44" />
           ) : (
-            <AlertTriangle size={20} strokeWidth={2} />
+            <AlertTriangle size={20} strokeWidth={2} color="#902b2b" />
           )}
           <ListItemText primary={date} secondary={time} />
         </ListItemButton>
