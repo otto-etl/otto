@@ -462,6 +462,7 @@ const WorkflowLayout = () => {
           workflowID={wfID}
           handleExecutionListItemClick={handleExecutionListItemClick}
           handleEditWorkflowListItemClick={handleEditWorkflowListItemClick}
+          setWfError={setWfError}
         />
         <ReactFlow
           style={{ flex: 1 }}

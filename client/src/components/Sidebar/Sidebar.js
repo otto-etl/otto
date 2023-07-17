@@ -3,6 +3,7 @@ import ExecutionLogs from "./ExecutionLogs";
 import EditWorkflow from "./EditWorkflow";
 import { Box, Divider } from "@mui/material";
 import { getExecutions } from "../../services/api";
+import { uniqueNewExecutions } from "../../utils/utils";
 
 const Sidebar = ({
   workflowID,
@@ -21,29 +22,35 @@ const Sidebar = ({
       // const executions = await getExecutions(workflowID);
       const baseURL =
         process.env.NODE_ENV === "PRODUCTION"
-          ? process.env.REACT_APP_PRODUCTION_URL.PRODUCTION_URL
-          : process.env.REACT_APP_PRODUCTION_URL.DEVELOPMENT_URL;
+          ? process.env.REACT_APP_PRODUCTION_URL
+          : process.env.REACT_APP_DEVELOPMENT_URL;
       executionSource = new EventSource(`${baseURL}/executions/${workflowID}`);
 
       executionSource.onmessage = (event) => {
+        console.log("on message triggered");
         const test = [];
         const active = [];
         let executions = JSON.parse(event.data);
-        // console.log("executions", executions);
+
         if (!Array.isArray(executions) && typeof executions === "object") {
           executions = [executions];
         }
+
         if (executions) {
           executions.forEach((execution) => {
             if (execution.workflow.active) {
-              active.push(execution);
+              active.unshift(execution);
             } else {
-              test.push(execution);
+              test.unshift(execution);
             }
           });
         }
-        setTestExecutions((prev) => prev.concat(test));
-        setActiveExecutions((prev) => prev.concat(active));
+        setTestExecutions((prev) =>
+          prev.concat(uniqueNewExecutions(prev, test))
+        );
+        setActiveExecutions((prev) =>
+          prev.concat(uniqueNewExecutions(prev, active))
+        );
       };
     };
     getLogs();
