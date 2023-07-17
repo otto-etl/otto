@@ -43,11 +43,11 @@ const ExtractModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
     return name && url && actionType; // do we need json populated too?
   };
 
-  const handleHeaderChange = React.useCallback((value, viewupdate) => {
+  const handleHeaderChange = React.useCallback((value) => {
     setHeader(value);
   }, []);
 
-  const handleBodyChange = React.useCallback((value, viewupdate) => {
+  const handleBodyChange = React.useCallback((value) => {
     setJsonBody(value);
   }, []);
 
@@ -57,9 +57,9 @@ const ExtractModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
       prev: nodeObj.data.prev,
       label: name,
       url: url,
-      jsonBody: jsonBody ? JSON.parse(jsonBody) : {},
+      jsonBody: jsonBody ? jsonBody : {},
       bodyChecked: bodyChecked,
-      header: header ? JSON.parse(header) : {},
+      header: header ? header : {},
       headerChecked: headerChecked,
       httpVerb: actionType,
       oAuthChecked: oAuthChecked,

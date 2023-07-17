@@ -9,6 +9,7 @@ import "react18-json-view/src/style.css";
 import ScheduleModal from "./ScheduleModal";
 import ExtractAPIModal from "./ExtractAPIModal";
 import ExtractMongoModal from "./ExtractMongoModal";
+import ExtractPsqlModal from "./ExtractPsqlModal";
 import TransformModal from "./TransformModal";
 import LoadModal from "./LoadModal";
 import Tabs from "@mui/material/Tabs";
@@ -37,6 +38,8 @@ function BasicModal({
       setInput({});
     }
   }, [getPrevNodeOutput, getPrevNodesOutput, nodeObj]);
+
+  // REFACTOR handleSaveExecute and handleSaveNode
   const handleSaveExecuteNode = (event, formValues) => {
     event.preventDefault();
     handleSaveNode(formValues);
@@ -44,7 +47,7 @@ function BasicModal({
   };
 
   const handleSaveNode = (formValues) => {
-    console.log(formValues);
+    // console.log(formValues);
     onSaveExecute(nodeObj.id, formValues);
   };
 
@@ -64,6 +67,7 @@ function BasicModal({
   const handleTabChange = React.useCallback((e, newValue) => {
     setTab(newValue);
   }, []);
+
 
   return (
     <div>
@@ -112,7 +116,8 @@ function BasicModal({
               >
                 Input
               </Typography>
-              {nodeObj.type === "schedule" || nodeObj.type === "extract" ? (
+              {nodeObj.type === "schedule" ||
+              nodeObj.type.slice(0, 7) === "extract" ? (
                 <div>
                   <Typography sx={{ marginLeft: "20px", color: "#555" }}>
                     No input
@@ -137,7 +142,7 @@ function BasicModal({
                       aria-label="basic tabs example"
                     >
                       {Object.keys(input).map((key) => {
-                        console.log(key);
+                        // console.log(key);
                         return (
                           <Tab
                             sx={{
@@ -188,6 +193,14 @@ function BasicModal({
               ) : null}
               {nodeObj.type === "extractMongo" ? (
                 <ExtractMongoModal
+                  nodeObj={nodeObj}
+                  handleSubmit={handleSaveExecuteNode}
+                  handleDelete={handleDelete}
+                  disabled={disabled}
+                />
+              ) : null}
+              {nodeObj.type === "extractPsql" ? (
+                <ExtractPsqlModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
                   handleDelete={handleDelete}

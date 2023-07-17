@@ -9,6 +9,7 @@ const Sidebar = ({
   workflowID,
   handleExecutionListItemClick,
   handleEditWorkflowListItemClick,
+  active,
 }) => {
   const [selectedEditIndex, setSelectedEditIndex] = React.useState(0);
   const [selectedTestIndex, setSelectedTestIndex] = React.useState(null);
@@ -18,17 +19,21 @@ const Sidebar = ({
   const [activeExecutions, setActiveExecutions] = React.useState([]);
 
   React.useEffect(() => {
+    let executionSource;
     const getLogs = async () => {
       // const executions = await getExecutions(workflowID);
-      const executionSource = new EventSource(
+      executionSource = new EventSource(
         `http://localhost:3001/executions/${workflowID}`
       );
       //console.log("executionsEvent triggered");
       const test = [];
       const active = [];
+
       executionSource.onmessage = (event) => {
+        const test = [];
+        const active = [];
         let executions = JSON.parse(event.data);
-        console.log("executions", executions);
+        // console.log("executions", executions);
         if (!Array.isArray(executions) && typeof executions === "object") {
           executions = [executions];
         }
@@ -41,12 +46,15 @@ const Sidebar = ({
             }
           });
         }
-        setTestExecutions(test);
-        setActiveExecutions(active);
+        setTestExecutions((prev) => prev.concat(test));
+        setActiveExecutions((prev) => prev.concat(active));
       };
     };
-
     getLogs();
+    return () => {
+      console.log("close SSE connection");
+      executionSource.close();
+    };
   }, []);
 
   const handleEditListItemClick = (event, index) => {
@@ -57,7 +65,6 @@ const Sidebar = ({
     setSelectedTestIndex(null);
     setSelectedActiveIndex(null);
     handleEditWorkflowListItemClick();
-    console.log("UPDATE REACT FLOW STATE");
   };
 
   const handleTestListItemClick = (event, index) => {
@@ -67,7 +74,6 @@ const Sidebar = ({
     const nodes = testExecutions[index].workflow.nodes;
     const edges = testExecutions[index].workflow.edges;
     handleExecutionListItemClick(nodes, edges);
-    console.log("UPDATE REACT FLOW STATE");
   };
 
   const handleActiveListItemClick = (event, index) => {
@@ -102,6 +108,7 @@ const Sidebar = ({
       <EditWorkflow
         selectedEditIndex={selectedEditIndex}
         handleEditListItemClick={handleEditListItemClick}
+        active={active}
       />
 	  <Button className="MuiListItemButton-root MuiTypography-root" onClick={handleMetricsButtonClick}
 	          sx={{backgroundColor:"rgba(25, 118, 210, 0.08)", width:250, height:45, color: "#000000"}}>Active Metrics</Button>

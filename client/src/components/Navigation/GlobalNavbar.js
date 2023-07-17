@@ -1,10 +1,12 @@
 import React from "react";
-import { AppBar, Button, Toolbar } from "@mui/material";
+import { AppBar, Button, Toolbar, Typography } from "@mui/material";
 
-import ottoLogo from "../../assets/otto.png";
-import { useNavigate } from "react-router-dom";
+// import ottoLogo from "../../assets/otto.png";
+import ottoLogo from "../../assets/otto.svg";
+// import ottoLogo from "../../assets/otto.svg";
+import { useNavigate, Link } from "react-router-dom";
 
-const GlobalNavbar = () => {
+const GlobalNavbar = ({ onHomePage }) => {
   const navigate = useNavigate();
 
   return (
@@ -23,26 +25,50 @@ const GlobalNavbar = () => {
           backgroundColor: "#3c4bcb",
         }}
       >
-        <img
-          src={ottoLogo}
-          className="otto logo"
-          alt="otto logo"
-          style={{ height: 25 }}
-        />
-        <Button
-          variant="text"
-          sx={{
+        <Link
+          to="/"
+          style={{
+            display: "flex",
+            alignItems: "center",
             color: "white",
-            textTransform: "capitalize",
-            fontSize: "16px",
-          }}
-          onClick={(e) => {
-            e.preventDefault();
-            navigate("/");
+            textDecoration: "none",
+            justifyContent: "space-between",
+            gap: "10px",
           }}
         >
-          All Workflows
-        </Button>
+          <img
+            src={ottoLogo}
+            className="otto logo"
+            alt="otto logo"
+            style={{ height: 28, width: 28 }}
+          />
+          <Typography
+            fontFamily={"Quicksand, sans-serif"}
+            sx={{
+              fontSize: "32px",
+              fontWeight: "700",
+              marginTop: "-6px",
+            }}
+          >
+            otto
+          </Typography>
+        </Link>
+        {!onHomePage ? (
+          <Button
+            variant="text"
+            sx={{
+              color: "white",
+              textTransform: "capitalize",
+              fontSize: "16px",
+            }}
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/");
+            }}
+          >
+            All Workflows
+          </Button>
+        ) : null}
       </Toolbar>
     </AppBar>
   );

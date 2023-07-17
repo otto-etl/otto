@@ -1,18 +1,20 @@
 import "./Workflow.css";
+import "reactflow/dist/style.css";
+import "../index.css";
 import React, { useState, useEffect, useCallback } from "react";
 import ReactFlow, {
-  ReactFlowProvider,
   useNodesState,
   useEdgesState,
   addEdge,
   updateEdge,
   Panel,
   Controls,
+  MiniMap,
 } from "reactflow";
 import { Background } from "@reactflow/background";
 import { useParams } from "react-router-dom";
-import "reactflow/dist/style.css";
 
+import ViewAlert from "./Alert/ViewAlert";
 import Modal from "./Modals/Modal";
 import ScheduleNode from "./Nodes/ScheduleNode";
 import ExtractNode from "./Nodes/ExtractNode";
@@ -38,20 +40,8 @@ import {
   saveAndExecuteWorkflow,
   toggleWorkflowStatus,
 } from "../services/api";
-import "../index.css";
 
-import {
-  AppBar,
-  Box,
-  Button,
-  Typography,
-  FormControlLabel,
-  FormGroup,
-  Switch,
-  Toolbar,
-} from "@mui/material";
-import Alert from "@mui/material/Alert";
-import AlertTitle from "@mui/material/AlertTitle";
+import { Alert, AlertTitle, Box } from "@mui/material";
 
 const connectionLineStyle = { stroke: "#fff" };
 const snapGrid = [20, 20];
@@ -90,6 +80,19 @@ const WorkflowLayout = () => {
   const [logView, setLogView] = useState(false);
   const wfID = useParams().id;
 
+  const nodeColor = (node) => {
+    switch (node.type) {
+      case "schedule":
+        return "#ed912d";
+      case "transform":
+        return "#319a9c";
+      case "load":
+        return "#a56fd2";
+      default:
+        return "#5d92f5";
+    }
+  };
+
   useEffect(() => {
     const getWorkflow = async () => {
       const response = await getWorkflowAPI(wfID);
@@ -105,6 +108,7 @@ const WorkflowLayout = () => {
   }, [setNodes, setEdges, setActive, setWfName, wfID]);
 
   useEffect(() => {
+    //console.log("call to workflowHasOrphanNodes");
     let orphans = workflowHasOrphanNodes(nodes, edges);
     setHasOrphans(orphans);
     if (orphans) {
@@ -131,6 +135,7 @@ const WorkflowLayout = () => {
 
   const openModal = (nodeData) => {
     setModalIsOpen(true);
+    console.log("openModal", nodeData);
     setModalData(nodeData);
   };
 
@@ -236,6 +241,7 @@ const WorkflowLayout = () => {
   };
 
   const onCreateNode = async (nodeType) => {
+    console.log("nodeType", nodeType);
     let newNodeId = crypto.randomUUID();
     let newNode = {
       id: newNodeId,
@@ -267,10 +273,23 @@ const WorkflowLayout = () => {
         newNode.data.intervalInMinutes = TOTAL_MINUTES_IN_A_DAY;
         break;
       }
-      case "extract": {
+      case "extractApi": {
         newNode.data.url = "https://dog.ceo/api/breeds/list/all";
         newNode.data.json = {};
         newNode.data.httpVerb = "GET";
+        break;
+      }
+      case "extractMongo": {
+        newNode.data.host = "cluster0.4opmjhz.mongodb.net";
+        newNode.data.port = "";
+        newNode.data.defaultDatabase = "test";
+        newNode.data.username = "joewebsta";
+        newNode.data.password = "MFEpWmcerh9Kjm3H";
+        newNode.data.collection = "users";
+        newNode.data.query = "{}";
+        newNode.data.limit = "10";
+        newNode.data.connectionFormat = "Standard";
+
         break;
       }
       case "transform": {
@@ -318,7 +337,8 @@ const WorkflowLayout = () => {
 
   const handleExecuteAll = async (e) => {
     e.preventDefault();
-    handleMessage(`Executing ${wfName}`, `Execution finished`, 2000, 2000);
+    // handleMessage(`Executing ${wfName}`, `Execution finished`, 2000, 2000);
+    handleMessage(`Executing workflow...`, `Execution finished`, 2000, 2000);
     const res = await saveAndExecuteWorkflow(wfID, {
       workflowID: wfID,
       nodes,
@@ -327,7 +347,7 @@ const WorkflowLayout = () => {
     if (res.errMessage) {
       if (res.errName === "NodeError" || res.errName === "ExternalError")
         res.errMessage =
-          "Node execution failure, please checked the failed node";
+          "Node execution failure. Please check the failed node.";
       setWfError(res.errMessage);
       setTimeout(() => {
         setWfError(null);
@@ -343,9 +363,11 @@ const WorkflowLayout = () => {
     setActive(e.target.checked);
     await toggleWorkflowStatus(wfID, e.target.checked);
     if (e.target.checked) {
-      handleMessage(`Workflow ${wfName} is now active!`, null, 2000, null);
+      // handleMessage(`Workflow ${wfName} is now active!`, null, 2000, null);
+      handleMessage(`Workflow is now active!`, null, 2000, null);
     } else {
-      handleMessage(`Workflow ${wfName} is now inactive!`, null, 2000, null);
+      // handleMessage(`Workflow ${wfName} is now inactive!`, null, 2000, null);
+      handleMessage(`Workflow is now inactive!`, null, 2000, null);
     }
     getCurrentDB(nodes, e.target.checked);
   };
@@ -415,9 +437,11 @@ const WorkflowLayout = () => {
   The thing is we did define it outside of the component -- that was directly from the tutorial -- so I need to look into why this is still happening
   */
 
+  // console.log(nodes);
+
   return (
     <>
-      <GlobalNavbar />
+      <GlobalNavbar onHomePage={false} />
       <WorkflowNavbar
         wfName={wfName}
         message={message}
@@ -428,22 +452,29 @@ const WorkflowLayout = () => {
         handleToggleActive={handleToggleActive}
         logView={logView}
       />
-      {wfError ? (
-        <Alert
-          sx={{ margin: "10px 0 0 0", border: "2px solid #B99" }}
-          severity="error"
-        >
-          <AlertTitle sx={{ fontWeight: "700", color: "#200" }}>
-            Error:
-          </AlertTitle>
-          <p style={{ fontWeight: "600", textIndent: "10px" }}>{wfError}</p>
-        </Alert>
-      ) : null}
+
       <div className="grid">
+        {wfError ? (
+          <Alert
+            sx={{
+              border: "1px solid #B99",
+              position: "absolute",
+              top: "15px",
+              left: "calc(50% - 149px)",
+              marginLeft: "298px",
+              transform: "translate(-50%, 0)",
+              zIndex: "1",
+            }}
+            severity="error"
+          >
+            <AlertTitle sx={{ marginBottom: 0 }}>{wfError}</AlertTitle>
+          </Alert>
+        ) : null}
         <Sidebar
           workflowID={wfID}
           handleExecutionListItemClick={handleExecutionListItemClick}
           handleEditWorkflowListItemClick={handleEditWorkflowListItemClick}
+          active={active}
         />
         <ReactFlow
           style={{ flex: 1 }}
@@ -467,8 +498,27 @@ const WorkflowLayout = () => {
           <Controls />
           <Background color={"#a7a7ae"} style={{ background: "#f3f4f6" }} />
           <Panel position="top-right">
-            <NodeCreationMenu onCreateNode={onCreateNode} logView={logView} />
+            <NodeCreationMenu
+              onCreateNode={onCreateNode}
+              logView={logView}
+              active={active}
+            />
           </Panel>
+          <Panel position="top-center">
+            {logView && !active ? <ViewAlert message={"Log View"} /> : null}
+            {!logView && active ? (
+              <ViewAlert message={"Workflow is Active"} />
+            ) : null}
+            {logView && active ? (
+              <ViewAlert message={"Log View - Workflow is Active"} />
+            ) : null}
+          </Panel>
+          <MiniMap
+            nodeStrokeWidth={3}
+            nodeColor={nodeColor}
+            zoomable
+            pannable
+          />
           {modalIsOpen ? (
             <Modal
               modalIsOpen={modalIsOpen}

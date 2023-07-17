@@ -22,7 +22,6 @@ const WorkflowNavbar = ({
   handleExecuteAll,
   handleToggleActive,
 }) => {
-  console.log(logView);
   return (
     <AppBar
       position={"static"}
@@ -52,22 +51,29 @@ const WorkflowNavbar = ({
             }}
           >
             <Typography>{message}</Typography>
-            <Button
-              variant="outlined"
-              disabled={active ? true : false}
-              onClick={handleSaveWorkflow}
-              sx={{ gap: "10px" }}
-            >
-              <Save size={16} />
-              Save
-            </Button>
+            {active ? null : (
+              <Button
+                variant="outlined"
+                disabled={active ? true : false}
+                onClick={handleSaveWorkflow}
+                sx={{ gap: "10px" }}
+              >
+                <Save size={16} />
+                Save
+              </Button>
+            )}
+
             <Button
               disabled={orphans ? true : false}
               variant="contained"
               onClick={handleExecuteAll}
               sx={{ gap: "10px" }}
             >
-              <Play size={16} fill={"#FFF"} />
+              {orphans ? (
+                <Play size={16} fill={"#afafaf"} />
+              ) : (
+                <Play size={16} fill={"#FFF"} />
+              )}
               Execute Workflow
             </Button>
             <FormGroup sx={{ marginRight: "-10px" }}>
