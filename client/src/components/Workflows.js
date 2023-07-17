@@ -21,6 +21,12 @@ const gridStyles = {
   "& .MuiDataGrid-row": {
     cursor: "pointer",
   },
+  "& .MuiDataGrid-row:hover [data-delete-icon]": {
+    visibility: "visible",
+  },
+  "& .MuiDataGrid-cell:focus": {
+    outline: "none",
+  },
   fontSize: "16px",
 };
 
@@ -52,9 +58,11 @@ const columns = [
     renderCell: () => {
       return (
         <IconButton
+          data-delete-icon={true}
           sx={{
             display: "flex",
             justifyContent: "center",
+            visibility: "hidden",
           }}
         >
           <Trash2 size={18} />
