@@ -24,15 +24,16 @@ export const runPSQLCode = async (workflowObj, nodeObj) => {
     sqlCode,
   } = nodeObj.data;
 
-  const cnCredentials = workflowObj.active
-    ? {
-        userName: userNamePD,
-        password: passwordPD,
-        dbName: dbNamePD,
-        host: hostPD,
-        port: portPD,
-      }
-    : { userName, password, dbName, host, port };
+  const cnCredentials =
+    workflowObj.active && nodeObj.type === "load"
+      ? {
+          userName: userNamePD,
+          password: passwordPD,
+          dbName: dbNamePD,
+          host: hostPD,
+          port: portPD,
+        }
+      : { userName, password, dbName, host, port };
 
   const db = connectPSQL(cnCredentials);
 

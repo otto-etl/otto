@@ -1,19 +1,15 @@
 import { getNode } from "./node.js";
 import { updateWorkflowError } from "../models/workflowsService.js";
-import {
-  ExternalError,
-  NodeError,
-  throwWFErrorAndUpdateDB,
-  WorkflowError,
-} from "./errors.js";
+import { throwWFErrorAndUpdateDB } from "./errors.js";
 import { workflowInputvalidation } from "./workflowInput.js";
-import { throwNDErrorAndUpdateDB } from "./errors.js";
 import { insertNewExecution } from "../models/workflowsService.js";
 import { executeNode } from "./nodeExec.js";
 import { updateMetrics } from "./metricsExec.js";
 import { getSSERes } from "../routes/executionRoutes.js";
 
 let completedNodes = {};
+let retries = {};
+const retryMax = 3;
 
 const activateNode = async (workflowObj, nodeObj) => {
   nodeObj.data.output = {};
@@ -44,6 +40,36 @@ const activateNode = async (workflowObj, nodeObj) => {
 
 export const runWorkflow = async (workflowObj) => {
   let executionSuccess = "";
+  workflowObj.startTime = new Date(Date.now()).toISOString();
+
+  await workflowInputvalidation(workflowObj);
+  const finalLoadNodes = workflowObj.nodes.filter(
+    (node) => node.type === "load"
+  );
+
+  // workflowObj.startTime = Date.now();
+  console.log("Workflow start time:", workflowObj.startTime);
+  const promises = finalLoadNodes.map((node) => {
+    return new Promise((res, rej) => {
+      res(activateNode(workflowObj, node));
+    });
+  });
+  await Promise.all(promises);
+  completedNodes = {};
+  console.log("workflow completed", workflowObj.id);
+  await updateWorkflowError(workflowObj.id, null);
+  workflowObj.error = null;
+  executionSuccess = "TRUE";
+
+  const newExecution = await insertNewExecution(executionSuccess, workflowObj);
+  const SSERes = getSSERes();
+  SSERes.write("data:" + JSON.stringify(newExecution));
+  SSERes.write("\n\n");
+};
+
+export const runWorkflowCron = async (workflowObj) => {
+  let executionSuccess = "";
+  const SSERes = getSSERes();
   try {
     workflowObj.startTime = new Date(Date.now()).toISOString();
 
@@ -66,22 +92,33 @@ export const runWorkflow = async (workflowObj) => {
     await updateWorkflowError(workflowObj.id, null);
     workflowObj.error = null;
     executionSuccess = "TRUE";
+    const newExecution = await insertNewExecution(
+      executionSuccess,
+      workflowObj
+    );
+    SSERes.write("data:" + JSON.stringify(newExecution));
+    SSERes.write("\n\n");
   } catch (e) {
+    //when error implement retry
     executionSuccess = "FALSE";
-    if (!workflowObj.active) {
-      if (e.name === "NodeError") {
-        throw new NodeError(e.message, workflowObj);
-      } else if (e.name === "WorkflowError") {
-        throw new WorkflowError(e.message, workflowObj);
-      } else if (e.name === "ExternalError") {
-        throw new ExternalError(e.message, workflowObj);
-      } else {
-        throw new Error(e.message);
-      }
+    const newExecution = await insertNewExecution(
+      executionSuccess,
+      workflowObj
+    );
+    SSERes.write("data:" + JSON.stringify(newExecution));
+    SSERes.write("\n\n");
+    if (retries[workflowObj.id] >= 0) {
+      retries[workflowObj.id] = retries[workflowObj.id] + 1;
+    } else {
+      retries[workflowObj.id] = 0;
+    }
+
+    if (retries[workflowObj.id] === retryMax) {
+      retries[workflowObj.id] = 0;
+    } else if (e.name === "NodeError" && retries[workflowObj.id] <= retryMax) {
+      console.log(`retrying ${retries[workflowObj.id]}`);
+      await runWorkflowCron(workflowObj);
     }
   }
-  const newExecution = await insertNewExecution(executionSuccess, workflowObj);
-  const SSERes = getSSERes();
-  SSERes.write("data:" + JSON.stringify(newExecution));
-  SSERes.write("\n\n");
 };
+

@@ -6,7 +6,7 @@ import {
   getActiveWorkflows,
   setStartTime,
 } from "../models/workflowsService.js";
-import { runWorkflow } from "./workflowExec.js";
+import { runWorkflow, runWorkflowCron } from "./workflowExec.js";
 import { throwWFErrorAndUpdateDB } from "./errors.js";
 import { updateWorkflowError } from "../models/workflowsService.js";
 import { nodeInputvalidation } from "./nodeInput.js";
@@ -83,7 +83,7 @@ export const startCron = async (workflowObj) => {
   //use timeout to start cron after the timeout delay
   const timeoutID = setTimeout(() => {
     const task = cron.schedule(`*/${intervalInMinutes} * * * *`, () => {
-      runWorkflow(workflowObj);
+      runWorkflowCron(workflowObj);
       const dbStartTime = nextStartTime(startTimeInMilsec, intervalInMinutes);
       //update the db to reflect the next correct start time
       setStartTime(workflowID, dbStartTime);

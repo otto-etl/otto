@@ -73,3 +73,9 @@ export const workflowHasOrphanNodes = (nodes, edges) => {
   });
   return hasOrphans;
 };
+
+export const uniqueNewExecutions = (prev, newData) => {
+  return newData.filter((newObj) => {
+    return !prev.map((oldObj) => oldObj.id).includes(newObj.id);
+  });
+};

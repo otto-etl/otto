@@ -3,7 +3,7 @@ import ExecutionLogs from "./ExecutionLogs";
 import EditWorkflow from "./EditWorkflow";
 import MetricsModal from "../Modals/MetricsModal.js";
 import { Box, Button, Divider, Modal } from "@mui/material";
-import { getExecutions } from "../../services/api";
+import { uniqueNewExecutions } from "../../utils/utils";
 
 const Sidebar = ({
   workflowID,
@@ -22,19 +22,25 @@ const Sidebar = ({
     let executionSource;
     const getLogs = async () => {
       // const executions = await getExecutions(workflowID);
-      executionSource = new EventSource(
-        `http://localhost:3001/executions/${workflowID}`
-      );
+      const baseURL =
+        process.env.NODE_ENV === "PRODUCTION"
+          ? process.env.REACT_APP_PRODUCTION_URL
+          : process.env.REACT_APP_DEVELOPMENT_URL;
+      executionSource = new EventSource(`${baseURL}/executions/${workflowID}`);
 
       executionSource.onmessage = (event) => {
+        console.log("on message triggered");
         const test = [];
         const active = [];
         let executions = JSON.parse(event.data);
+
         if (!Array.isArray(executions) && typeof executions === "object") {
           executions = [executions];
         }
 
         if (executions) {
+
+
           executions
             .sort((a, b) => b.start_time.localeCompare(a.start_time))
             .forEach((execution) => {
@@ -46,8 +52,9 @@ const Sidebar = ({
             });
         }
 
-        setTestExecutions((prev) => test.concat(prev));
-        setActiveExecutions((prev) => active.concat(prev));
+        setTestExecutions((prev) => uniqueNewExecutions(prev, test).concat(prev));
+        setActiveExecutions((prev) => uniqueNewExecutions(prev, active).concat(prev));
+
       };
     };
     getLogs();
