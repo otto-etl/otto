@@ -13,7 +13,7 @@ import { errorHandler } from "./middleware.js/errorHandler.js";
 const app = express();
 // app.use(express.static("build"));
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "800kb" }));
 app.use("/workflows", workflowRoutes);
 app.use("/execute", executeRoutes);
 app.use("/executions", executionRoutes);
