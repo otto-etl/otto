@@ -470,7 +470,7 @@ const WorkflowLayout = () => {
             <AlertTitle sx={{ marginBottom: 0 }}>{wfError}</AlertTitle>
           </Alert>
         ) : null}
-        <Sidebar
+        <Sidebar 
           workflowID={wfID}
           handleExecutionListItemClick={handleExecutionListItemClick}
           handleEditWorkflowListItemClick={handleEditWorkflowListItemClick}
