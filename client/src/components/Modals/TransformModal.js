@@ -1,16 +1,12 @@
 import React, { useState } from "react";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
-import CustomTabPanel from "../CustomTabPanel";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
-import { python } from "@codemirror/lang-python";
 import { EditorView } from "@codemirror/view";
 import { Typography, IconButton } from "@mui/material";
 import { Trash2 } from "lucide-react";
@@ -30,17 +26,6 @@ const TransformModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
     setCode(value);
   }, []);
 
-  const handleTabChange = React.useCallback((e, newValue) => {
-    setTab(newValue);
-  }, []);
-
-  const a11yProps = (index) => {
-    return {
-      id: `simple-tab-${index}`,
-      "aria-controls": `simple-tabpanel-${index}`,
-    };
-  };
-  // console.log(code);
   return (
     <Box>
       <Typography sx={{ fontSize: "20px", fontWeight: "500", padding: "20px" }}>
@@ -63,7 +48,6 @@ const TransformModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          // gap: "30px",
           height: "calc(100vh - 155px)",
         }}
       >
@@ -95,43 +79,31 @@ const TransformModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
               id="outlined-basic"
               label="Name"
               value={name}
-              onChange={(e) => setName(e.target.value)} // variant="outlined"
+              onChange={(e) => setName(e.target.value)}
               sx={{ width: "100%", marginTop: "5px" }}
               size={"small"}
             />
           </Box>
           <Box>
-            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-              <Tabs
-                value={tab}
-                onChange={handleTabChange}
-                aria-label="basic tabs example"
-              >
-                <Tab label="Javascript" {...a11yProps(0)} />
-                <Tab label="Python" {...a11yProps(1)} />
-              </Tabs>
-            </Box>
-            <CustomTabPanel value={tab} index={0}>
+            <Typography sx={{ color: "#555" }}>JavaScript</Typography>
+            <Box
+              sx={{
+                marginTop: "10px",
+                fontSize: "14px",
+                border: "1px solid #ddd",
+              }}
+            >
               <CodeMirror
                 readOnly={disabled ? true : false}
                 value={code}
-                height="200px"
+                height="500px"
                 extensions={[
                   javascript({ jsx: true }),
                   EditorView.lineWrapping,
                 ]}
                 onChange={handleChange}
               />
-            </CustomTabPanel>
-            <CustomTabPanel value={tab} index={1}>
-              <CodeMirror
-                readOnly={disabled ? true : false}
-                value={code}
-                height="200px"
-                extensions={[python(), EditorView.lineWrapping]}
-                onChange={handleChange}
-              />
-            </CustomTabPanel>
+            </Box>
           </Box>
         </Box>
 
@@ -148,7 +120,6 @@ const TransformModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
             disabled={disabled ? true : false}
           >
             <Trash2 color="#555" size={26} strokeWidth={1.5} />
-            {/* // #d32f2f */}
           </IconButton>
 
           <Button
