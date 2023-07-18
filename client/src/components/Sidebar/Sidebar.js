@@ -4,6 +4,7 @@ import EditWorkflow from "./EditWorkflow";
 import MetricsModal from "../Modals/MetricsModal.js";
 import { Box, Button, Divider, Modal } from "@mui/material";
 import { getExecutions, getMetrics } from "../../services/api";
+import { uniqueNewExecutions } from "../../utils/utils";
 
 const Sidebar = ({
   workflowID,
@@ -22,32 +23,39 @@ const Sidebar = ({
     let executionSource;
     const getLogs = async () => {
       // const executions = await getExecutions(workflowID);
-      executionSource = new EventSource(
-        `http://localhost:3001/executions/${workflowID}`
-      );
-      //console.log("executionsEvent triggered");
-      const test = [];
-      const active = [];
+      const baseURL =
+        process.env.NODE_ENV === "PRODUCTION"
+          ? process.env.REACT_APP_PRODUCTION_URL
+          : process.env.REACT_APP_DEVELOPMENT_URL;
+      executionSource = new EventSource(`${baseURL}/executions/${workflowID}`);
 
       executionSource.onmessage = (event) => {
+        console.log("on message triggered");
         const test = [];
         const active = [];
         let executions = JSON.parse(event.data);
-        // console.log("executions", executions);
+
         if (!Array.isArray(executions) && typeof executions === "object") {
           executions = [executions];
         }
+
         if (executions) {
-          executions.forEach((execution) => {
-            if (execution.workflow.active) {
-              active.push(execution);
-            } else {
-              test.push(execution);
-            }
-          });
+
+
+          executions
+            .sort((a, b) => b.start_time.localeCompare(a.start_time))
+            .forEach((execution) => {
+              if (execution.workflow.active) {
+                active.push(execution);
+              } else {
+                test.push(execution);
+              }
+            });
         }
-        setTestExecutions((prev) => prev.concat(test));
-        setActiveExecutions((prev) => prev.concat(active));
+
+        setTestExecutions((prev) => uniqueNewExecutions(prev, test).concat(prev));
+        setActiveExecutions((prev) => uniqueNewExecutions(prev, active).concat(prev));
+
       };
     };
     getLogs();
@@ -85,16 +93,16 @@ const Sidebar = ({
     handleExecutionListItemClick(nodes, edges);
     console.log("UPDATE REACT FLOW STATE");
   };
-  
+
   const handleMetricsButtonClick = (event) => {
-	event.preventDefault();
-	setMetricsModalOpen(true);
-  }
+	  event.preventDefault();
+	  setMetricsModalOpen(true);
+  };
   
   const parseMetrics = async () => {
     const metricsData = await getMetrics(workflowID);
-	return metricsData;
-  }
+	  return metricsData;
+  };
 
   const handleCloseMetricsModal = (e) => {
     e.preventDefault();
@@ -116,13 +124,14 @@ const Sidebar = ({
         active={active}
       />
 	  <Button className="css-1jqvl0s-MuiButtonBase-root-MuiListItemButton-root MuiTypography-root" onClick={handleMetricsButtonClick}
-	          sx={{backgroundColor:"#ebedfe", width:250, height:45, color: "#000000", textTransform:"none", fontSize:"1rem", fontWeight:"400"}}>Active Metrics</Button>
+	          sx={{backgroundColor:"#ebedfe", width:250, height:45, color: "#000000", 
+                 textTransform:"none", fontSize:"1rem", fontWeight:"400"}}>Active Metrics</Button>
       {metricsModalOpen ? (
         <MetricsModal
 		  metrics={parseMetrics()}
           metricsModalOpen={metricsModalOpen}
           handleCloseMetricsModal={handleCloseMetricsModal}
-		  workflowID={workflowID}
+          workflowID={workflowID}
         />
       ) : null}
       <Divider sx={{ mb: "20px" }} />
