@@ -39,12 +39,16 @@ const lableUniqueCheck = async (workflowObj, nodeObj) => {
 const apiNodeCheck = async (workflowObj, nodeObj) => {
   try {
     if (nodeObj.data.headerChecked) {
-      nodeObj.data.header = JSON.parse(nodeObj.data.header);
+      if (typeof nodeObj.data.header === "string") {
+        nodeObj.data.header = JSON.parse(nodeObj.data.header);
+      }
     } else {
       nodeObj.data.header = null;
     }
     if (nodeObj.data.bodyChecked) {
-      nodeObj.data.jsonBody = JSON.parse(nodeObj.data.jsonBody);
+      if (typeof nodeObj.data.jsonBody === "string") {
+        nodeObj.data.jsonBody = JSON.parse(nodeObj.data.jsonBody);
+      }
     } else {
       nodeObj.data.jsonBody = null;
     }
