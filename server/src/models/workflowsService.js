@@ -15,7 +15,10 @@ try {
 }
 
 export const getAllWorkflows = async () => {
-  return await db.any("SELECT * FROM workflow");
+  const workflowObjs = await db.any("SELECT * FROM workflow");
+  return workflowObjs.map((workflowObj) => {
+    return { ...workflowObj, nodes: JSON.parse(decrypt(workflowObj.nodes)) };
+  });
 };
 
 export const getActiveWorkflows = async () => {
@@ -86,7 +89,7 @@ export const setStartTime = async (workflowID, startTime) => {
 };
 
 export const insertNewWF = async (name, nodes, edges) => {
-  return await db.one(
+  const newWorkflowObj = await db.one(
     "INSERT INTO workflow (name, nodes, edges, created_at, updated_at, active) VALUES " +
       "(${name}, ${nodes}, ${edges}, NOW(), NOW(), false) RETURNING *",
     {
@@ -95,6 +98,10 @@ export const insertNewWF = async (name, nodes, edges) => {
       edges: edges,
     }
   );
+  return {
+    ...newWorkflowObj,
+    nodes: JSON.parse(decrypt(newWorkflowObj.nodes)),
+  };
 };
 
 export const updateWorkflowError = async (workflowID, error) => {
