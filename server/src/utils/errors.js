@@ -1,6 +1,7 @@
 import {
   updateWorkflowError,
   updateNodes,
+  updateNodeFailureMetrics
 } from "../models/workflowsService.js";
 
 export class NodeError extends Error {
@@ -51,6 +52,7 @@ export const throwNDErrorAndUpdateDB = async (
     name: "NodeError",
     message: errMessage,
   };
+  await updateNodeFailureMetrics(workflowObj.id, nodeObj.id);
   await updateNodes(workflowObj);
   throw new NodeError(errMessage, workflowObj);
 };

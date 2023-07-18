@@ -3,7 +3,7 @@ import ExecutionLogs from "./ExecutionLogs";
 import EditWorkflow from "./EditWorkflow";
 import MetricsModal from "../Modals/MetricsModal.js";
 import { Box, Button, Divider, Modal } from "@mui/material";
-import { getExecutions } from "../../services/api";
+import { getExecutions, getMetrics } from "../../services/api";
 
 const Sidebar = ({
   workflowID,
@@ -88,7 +88,12 @@ const Sidebar = ({
   
   const handleMetricsButtonClick = (event) => {
 	event.preventDefault();
-    setMetricsModalOpen(true);
+	setMetricsModalOpen(true);
+  }
+  
+  const parseMetrics = async () => {
+    const metricsData = await getMetrics(workflowID);
+	return metricsData;
   }
 
   const handleCloseMetricsModal = (e) => {
@@ -114,6 +119,7 @@ const Sidebar = ({
 	          sx={{backgroundColor:"rgba(25, 118, 210, 0.08)", width:250, height:45, color: "#000000"}}>Active Metrics</Button>
       {metricsModalOpen ? (
         <MetricsModal
+		  metrics={parseMetrics()}
           metricsModalOpen={metricsModalOpen}
           handleCloseMetricsModal={handleCloseMetricsModal}
 		  workflowID={workflowID}
