@@ -84,5 +84,6 @@ export const getExecutions = async (workflowID) => {
 
 export const getMetrics = async (workflowID) => {
   const res = await axios.get(`${host}/metrics/${workflowID}`);
+  console.log(res);
   return res.data;
 };

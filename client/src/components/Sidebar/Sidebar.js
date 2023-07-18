@@ -115,8 +115,8 @@ const Sidebar = ({
         handleEditListItemClick={handleEditListItemClick}
         active={active}
       />
-	  <Button className="MuiListItemButton-root MuiTypography-root" onClick={handleMetricsButtonClick}
-	          sx={{backgroundColor:"rgba(25, 118, 210, 0.08)", width:250, height:45, color: "#000000"}}>Active Metrics</Button>
+	  <Button className="css-1jqvl0s-MuiButtonBase-root-MuiListItemButton-root MuiTypography-root" onClick={handleMetricsButtonClick}
+	          sx={{backgroundColor:"#ebedfe", width:250, height:45, color: "#000000", textTransform:"none", fontSize:"1rem", fontWeight:"400"}}>Active Metrics</Button>
       {metricsModalOpen ? (
         <MetricsModal
 		  metrics={parseMetrics()}

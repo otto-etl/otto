@@ -39,7 +39,9 @@ const activateNode = async (workflowObj, nodeObj) => {
     } else {
 	  let nodeStartTime = new Date(Date.now()).toISOString();
       await executeNode(workflowObj, nodeObj);
-	  updateNodeMetrics(workflowObj, nodeObj, nodeStartTime);
+	  if (workflowObj.active) {
+	    updateNodeMetrics(workflowObj, nodeObj, nodeStartTime);
+	  }
     }
   }
 };
@@ -64,7 +66,10 @@ export const runWorkflow = async (workflowObj) => {
     await Promise.all(promises);
     completedNodes = {};
     console.log("workflow completed", workflowObj.id);
-    updateMetrics(workflowObj, new Date(Date.now()).toISOString());
+	console.log(workflowObj.active);
+	if (workflowObj.active) {
+	  updateMetrics(workflowObj, new Date(Date.now()).toISOString());
+	}
     await updateWorkflowError(workflowObj.id, null);
     workflowObj.error = null;
     executionSuccess = "TRUE";

@@ -92,10 +92,11 @@ const MetricsModal = ({ metrics, metricsModalOpen, handleCloseMetricsModal, work
 
   useEffect(() => {
     metrics.then(metricData => {
+	  console.log(metricData);
 	  setNewMetrics(metricData);
 	  setTotalExecutions(metricData.total_executions);
-	  setSuccessRate(`${metricData.success_rate}%`);
-	  setCompletionTime(`${metricData.avg_milliseconds_to_complete_workflow} ms`);
+	  setSuccessRate(metricData.success_rate === -1 ? "N/A" : `${metricData.success_rate}%`);
+	  setCompletionTime(metricData.avg_milliseconds_to_complete_workflow === -1 ? "N/A" : `${metricData.avg_milliseconds_to_complete_workflow} ms`);
 	  setNodeMetrics(parseNodeMetrics(metricData));
 	});
   }, [metrics]);

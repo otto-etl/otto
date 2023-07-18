@@ -52,7 +52,9 @@ export const throwNDErrorAndUpdateDB = async (
     name: "NodeError",
     message: errMessage,
   };
-  await updateNodeFailureMetrics(workflowObj.id, nodeObj.id);
+  if (workflowObj.active) {
+    await updateNodeFailureMetrics(workflowObj.id, nodeObj.id);
+  }
   await updateNodes(workflowObj);
   throw new NodeError(errMessage, workflowObj);
 };
