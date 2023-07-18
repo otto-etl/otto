@@ -6,6 +6,9 @@ You don't need to change the database name or the port, just modify the PGUSER a
 - PGPASSWORD=password
 - DBNAME=etl
 - PORT=3001
+- KEY_PATH=otto_cert/key.pem
+- CERT_PATH=otto_cert/cert.pem
+- ENCRYPT_PATH=otto_keys
 
 ### create databse and tables
 run the create database and create table queries in the etl.sql file (in the root of the server folder) in your local postgres
@@ -29,3 +32,4 @@ Run the insert query
 ### setting up the .env file in the client root folder with the following variables
 REACT_APP_PRODUCTION_URL=https://localhost:3001
 REACT_APP_DEVELOPMENT_URL=http://localhost:3001
+
