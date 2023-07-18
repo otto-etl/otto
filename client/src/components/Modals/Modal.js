@@ -17,6 +17,8 @@ import Tab from "@mui/material/Tab";
 import CustomTabPanel from "../CustomTabPanel";
 import { Typography } from "@mui/material";
 
+const TRUNCATE_LENGTH = 51;
+
 function BasicModal({
   modalIsOpen,
   handleOpen,
@@ -68,6 +70,13 @@ function BasicModal({
     setTab(newValue);
   }, []);
 
+  const truncateNodeInputOutputData = (data, truncateLength) => {
+    if (Array.isArray(data)) {
+      return data.slice(0, truncateLength);
+    } else {
+      return data;
+    }
+  };
 
   return (
     <div>
@@ -163,7 +172,10 @@ function BasicModal({
                         scrollOffset={"236px"}
                       >
                         <JsonView
-                          src={input[key].data}
+                          src={truncateNodeInputOutputData(
+                            input[key].data,
+                            TRUNCATE_LENGTH
+                          )}
                           collapseObjectsAfterLength={100}
                         />
                       </CustomTabPanel>
@@ -254,7 +266,10 @@ function BasicModal({
               >
                 {Object.keys(nodeObj.data.output).length > 0 ? (
                   <JsonView
-                    src={nodeObj.data.output}
+                    src={truncateNodeInputOutputData(
+                      nodeObj.data.output.data,
+                      TRUNCATE_LENGTH
+                    )}
                     collapseObjectsAfterLength={100}
                   />
                 ) : (
