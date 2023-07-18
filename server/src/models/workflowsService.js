@@ -194,15 +194,15 @@ export const updateSuccessRate = async (workflowID, successful) => {
     { workflowID: workflowID }
   );
   if (oldSuccessRate.success_rate === -1) {
-    const newSuccessRate = successful ? 100 : 0;
-    console.log(newSuccessRate);
-    return await db.any(
-      "UPDATE metric SET success_rate = ${successRate} WHERE workflow_id = ${workflowID}",
-      {
-        successRate: newSuccessRate,
-        workflowID: workflowID,
-      }
-    );
+
+	const newSuccessRate = successful ? 100 : 0;
+    return await db.any("UPDATE metric SET success_rate = ${successRate} WHERE workflow_id = ${workflowID}", 
+	  { 
+	    successRate: newSuccessRate, 
+		workflowID: workflowID, 
+	  }
+     );
+
   }
   const currentSuccessRate =
     oldSuccessRate.success_rate * totalExecutions.total_executions;
@@ -240,3 +240,64 @@ export const updateAverageTimeTaken = async (workflowID, timeTaken) => {
     { time_taken: newTimeTaken, workflowID: workflowID }
   );
 };
+
+export const updateAverageNodeTimeTaken = async (workflowID, nodeID, nodeName, nodeType, nodeTimeTaken) => {
+  const nodeCompletionTimeMetrics = await db.one("SELECT avg_milliseconds_to_complete_node FROM metric WHERE workflow_id = ${workflowID}", { workflowID: workflowID, });
+  let nodeCompletionObj = nodeCompletionTimeMetrics.avg_milliseconds_to_complete_node;
+  if (!nodeCompletionObj[nodeID]) {
+    nodeCompletionObj[nodeID] = { name: nodeName, type: nodeType, executions: 1, avg_time: nodeTimeTaken };
+  }
+  else {
+    const totalTimeTaken = nodeCompletionObj[nodeID].avg_time * nodeCompletionObj[nodeID].executions;
+	const newTimeTaken = (totalTimeTaken + nodeTimeTaken) / (nodeCompletionObj[nodeID].executions + 1);
+    nodeCompletionObj[nodeID].executions += 1;
+	nodeCompletionObj[nodeID].avg_time = newTimeTaken;
+  }
+  const nodeCompletionJSON = JSON.stringify(nodeCompletionObj);
+  return await db.any("UPDATE metric SET avg_milliseconds_to_complete_node = ${nodeCompletionJSON} WHERE workflow_id = ${workflowID}",
+    {
+      nodeCompletionJSON: nodeCompletionJSON,
+	  workflowID: workflowID
+    }
+  );
+}
+
+export const updateAverageNodeData = async (workflowID, nodeID, nodeName, nodeType, nodeData) => {
+  const nodeDataMetrics = await db.one("SELECT avg_volume_extracted_data FROM metric WHERE workflow_id = ${workflowID}", { workflowID: workflowID, });
+  const nodeDataVolume = Buffer.byteLength(JSON.stringify(nodeData.output));
+  let nodeDataObj = nodeDataMetrics.avg_volume_extracted_data;
+  if (!nodeDataObj[nodeID]) {
+    nodeDataObj[nodeID] = { name: nodeName, type: nodeType, executions: 1, avg_volume: nodeDataVolume };
+  }
+  else {
+    const totalData = nodeDataObj[nodeID].avg_volume * nodeDataObj[nodeID].executions;
+	const newTotalData = (totalData + nodeDataVolume) / (nodeDataObj[nodeID].executions + 1);
+    nodeDataObj[nodeID].executions += 1;
+	nodeDataObj[nodeID].avg_volume = newTotalData;
+  }
+  const nodeDataVolumeJSON = JSON.stringify(nodeDataObj);
+  return await db.any("UPDATE metric SET avg_volume_extracted_data = ${nodeDataVolumeJSON} WHERE workflow_id = ${workflowID}",
+    {
+      nodeDataVolumeJSON: nodeDataVolumeJSON,
+	  workflowID: workflowID
+    }
+  );
+}
+
+export const updateNodeFailureMetrics = async (workflowID, nodeID) => {
+  const nodeFailureMetrics = await db.one("SELECT node_failure_count FROM metric WHERE workflow_id = ${workflowID}", { workflowID: workflowID, });
+  let nodeFailureObj = nodeFailureMetrics.node_failure_count; 
+  if (!nodeFailureObj[nodeID]) {
+    nodeFailureObj[nodeID] = 1;
+  }
+  else {
+    nodeFailureObj[nodeID] += 1;
+  }
+  const nodeFailureJSON = JSON.stringify(nodeFailureObj);
+  return await db.any("UPDATE metric SET node_failure_count = ${nodeFailureJSON} WHERE workflow_id = ${workflowID}",
+    {
+       nodeFailureJSON: nodeFailureJSON,
+	   workflowID: workflowID
+	}
+  );
+}

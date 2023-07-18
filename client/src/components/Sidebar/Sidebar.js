@@ -3,6 +3,7 @@ import ExecutionLogs from "./ExecutionLogs";
 import EditWorkflow from "./EditWorkflow";
 import MetricsModal from "../Modals/MetricsModal.js";
 import { Box, Button, Divider, Modal } from "@mui/material";
+import { getExecutions, getMetrics } from "../../services/api";
 import { uniqueNewExecutions } from "../../utils/utils";
 
 const Sidebar = ({
@@ -94,8 +95,13 @@ const Sidebar = ({
   };
 
   const handleMetricsButtonClick = (event) => {
-    event.preventDefault();
-    setMetricsModalOpen(true);
+	  event.preventDefault();
+	  setMetricsModalOpen(true);
+  };
+  
+  const parseMetrics = async () => {
+    const metricsData = await getMetrics(workflowID);
+	  return metricsData;
   };
 
   const handleCloseMetricsModal = (e) => {
@@ -117,20 +123,12 @@ const Sidebar = ({
         handleEditListItemClick={handleEditListItemClick}
         active={active}
       />
-      <Button
-        className="MuiListItemButton-root MuiTypography-root"
-        onClick={handleMetricsButtonClick}
-        sx={{
-          backgroundColor: "rgba(25, 118, 210, 0.08)",
-          width: 250,
-          height: 45,
-          color: "#000000",
-        }}
-      >
-        Active Metrics
-      </Button>
+	  <Button className="css-1jqvl0s-MuiButtonBase-root-MuiListItemButton-root MuiTypography-root" onClick={handleMetricsButtonClick}
+	          sx={{backgroundColor:"#ebedfe", width:250, height:45, color: "#000000", 
+                 textTransform:"none", fontSize:"1rem", fontWeight:"400"}}>Active Metrics</Button>
       {metricsModalOpen ? (
         <MetricsModal
+		  metrics={parseMetrics()}
           metricsModalOpen={metricsModalOpen}
           handleCloseMetricsModal={handleCloseMetricsModal}
           workflowID={workflowID}
