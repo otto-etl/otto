@@ -115,6 +115,10 @@ export const updateWorkflowError = async (workflowID, error) => {
 };
 
 export const insertNewExecution = async (successful, workflowObj) => {
+  const encryptedWorkflow = {
+    ...workflowObj,
+    nodes: encrypt(JSON.stringify(workflowObj.nodes)),
+  };
   const newExecution = await db.one(
     "INSERT INTO execution (start_time, end_time, successful, workflow_id, current_version, workflow) VALUES " +
       "(${start_time}, NOW(), ${successful}, ${workflow_id}, TRUE, ${workflowObj}) RETURNING *",
@@ -122,13 +126,15 @@ export const insertNewExecution = async (successful, workflowObj) => {
       start_time: workflowObj.startTime,
       successful: successful,
       workflow_id: workflowObj.id,
-      workflowObj: encrypt(JSON.stringify(workflowObj)),
+      workflowObj: JSON.stringify(encryptedWorkflow),
     }
   );
-  return {
-    ...newExecution,
-    workflow: JSON.parse(decrypt(newExecution.workflow)),
+  const newWorkflowObj = newExecution.workflow;
+  newExecution.workflow = {
+    ...newWorkflowObj,
+    nodes: JSON.parse(decrypt(newWorkflowObj.nodes)),
   };
+  return newExecution;
 };
 
 export const getExecutions = async (id) => {
@@ -139,9 +145,13 @@ export const getExecutions = async (id) => {
     }
   );
   return executions.map((execution) => {
+    const workflowObj = execution.workflow;
     return {
       ...execution,
-      workflow: JSON.parse(decrypt(execution.workflow)),
+      workflow: {
+        ...workflowObj,
+        nodes: JSON.parse(decrypt(workflowObj.nodes)),
+      },
     };
   });
 };
