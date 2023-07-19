@@ -124,8 +124,8 @@ const Sidebar = ({
         active={active}
       />
 	  <Button className="css-1jqvl0s-MuiButtonBase-root-MuiListItemButton-root MuiTypography-root" onClick={handleMetricsButtonClick}
-	          sx={{backgroundColor:"#ebedfe", width:250, height:45, color: "#000000", 
-                 textTransform:"none", fontSize:"1rem", fontWeight:"400"}}>Active Metrics</Button>
+	          sx={{width:250, height:45, color: "#000000", backgroundColor: "rgb(235, 237, 254, 0.4)",
+                 margin:"0 0 22px 0", textTransform:"none", fontSize:"1rem", fontWeight:"400"}}>Active Metrics</Button>
       {metricsModalOpen ? (
         <MetricsModal
 		  metrics={parseMetrics()}
