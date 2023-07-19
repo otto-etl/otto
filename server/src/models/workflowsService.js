@@ -49,7 +49,7 @@ export const updateNodes = async (workflowObj) => {
 };
 
 export const activateWorkflow = async (workflowID) => {
-  console.log(workflowID, "activated");
+  resetWorkflowMetrics(workflowID);
   return await db.any(
     "UPDATE workflow SET active=true, updated_at = NOW() WHERE id = ${workflowID}",
     {
@@ -98,6 +98,7 @@ export const insertNewWF = async (name, nodes, edges) => {
       edges: edges,
     }
   );
+  instantiateWorkflowMetrics(newWorkflowObj.id);
   return {
     ...newWorkflowObj,
     nodes: JSON.parse(decrypt(newWorkflowObj.nodes)),
@@ -158,15 +159,22 @@ export const getExecutions = async (id) => {
 
 // Metrics db
 
-export const instantiateWorkflowMetrics = async (workflowObj) => {
-  return await db.one(
+export const instantiateWorkflowMetrics = async (workflowID) => {
+  console.log("instantiate called", workflowID);
+  return await db.any(
     "INSERT INTO metric (workflow_id, total_executions, success_rate, avg_milliseconds_to_complete_workflow, node_failure_count, avg_milliseconds_to_complete_node, avg_volume_extracted_data) VALUES " +
-      "(${workflow_id}, 0, -1, -1, '{}', '{}', '{}'",
+      "(${workflow_id}, 0, -1, -1, '{}', '{}', '{}');",
     {
-      workflow_id: workflowObj.id,
+      workflow_id: workflowID,
     }
   );
 };
+
+export const resetWorkflowMetrics = async (workflowID) => {
+  console.log("reset called", workflowID);
+  await db.any("DELETE FROM metric WHERE workflow_id = ${workflowID}", { workflowID: workflowID});
+  instantiateWorkflowMetrics(workflowID);
+}
 
 export const updateTotalExecutions = async (workflowID) => {
   return await db.any(
@@ -284,15 +292,17 @@ export const updateAverageNodeData = async (workflowID, nodeID, nodeName, nodeTy
   );
 }
 
-export const updateNodeFailureMetrics = async (workflowID, nodeID) => {
+export const updateNodeFailureMetrics = async (workflowID, nodeID, nodeName, nodeType) => {
   const nodeFailureMetrics = await db.one("SELECT node_failure_count FROM metric WHERE workflow_id = ${workflowID}", { workflowID: workflowID, });
   let nodeFailureObj = nodeFailureMetrics.node_failure_count; 
   if (!nodeFailureObj[nodeID]) {
-    nodeFailureObj[nodeID] = 1;
+    nodeFailureObj[nodeID] = {failures: 1 };
   }
   else {
-    nodeFailureObj[nodeID] += 1;
+    nodeFailureObj[nodeID].failures += 1;
   }
+  nodeFailureObj[nodeID].name = nodeName;
+  nodeFailureObj[nodeID].type = nodeType;
   const nodeFailureJSON = JSON.stringify(nodeFailureObj);
   return await db.any("UPDATE metric SET node_failure_count = ${nodeFailureJSON} WHERE workflow_id = ${workflowID}",
     {
