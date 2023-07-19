@@ -15,6 +15,7 @@ import {
 import CodeMirror from "@uiw/react-codemirror";
 import { sql, SQLConfig, StandardSQL } from "@codemirror/lang-sql";
 import { EditorView } from "@codemirror/view";
+import { Trash2 } from "lucide-react";
 
 const ExtractPsqlModal = ({
   nodeObj,
@@ -118,21 +119,29 @@ const ExtractPsqlModal = ({
             sx={{
               display: "flex",
               flexDirection: "column",
-              gap: "10px",
+              gap: "30px",
             }}
           >
-            <Typography sx={{ fontSize: "16px", fontWeight: "bold" }}>
-              Connection Details
-            </Typography>
-            <TextField
-              disabled={disabled ? true : false}
-              id="outlined-basic"
-              label="Username"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)} // variant="outlined"
-              size={"small"}
-              sx={{ marginTop: "5px" }}
-            />
+            <Box>
+              <Typography
+                sx={{
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                  marginBottom: "15px",
+                }}
+              >
+                Credentials
+              </Typography>
+              <TextField
+                disabled={disabled ? true : false}
+                id="outlined-basic"
+                label="Username"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)} // variant="outlined"
+                size={"small"}
+                sx={{ marginTop: "5px" }}
+              />
+            </Box>
             <TextField
               disabled={disabled ? true : false}
               id="outlined-basic"
@@ -141,57 +150,86 @@ const ExtractPsqlModal = ({
               onChange={(e) => setPassword(e.target.value)} // variant="outlined"
               size={"small"}
             />
-            <TextField
-              disabled={disabled ? true : false}
-              id="outlined-basic"
-              label="Host"
-              value={host}
-              onChange={(e) => setHost(e.target.value)} // variant="outlined"
-              size={"small"}
-            />
-            <TextField
-              disabled={disabled ? true : false}
-              id="outlined-basic"
-              label="Port"
-              value={port}
-              onChange={(e) => setPort(e.target.value)} // variant="outlined"
-              size={"small"}
-            />
-            <TextField
-              disabled={disabled ? true : false}
-              id="outlined-basic"
-              label="Database Name"
-              value={dbName}
-              onChange={(e) => setDBName(e.target.value)} // variant="outlined"
-              size={"small"}
-            />
+            <Box>
+              <Typography
+                sx={{
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                  marginBottom: "15px",
+                }}
+              >
+                Connection Details
+              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "30px",
+                }}
+              >
+                <TextField
+                  disabled={disabled ? true : false}
+                  id="outlined-basic"
+                  label="Host"
+                  value={host}
+                  onChange={(e) => setHost(e.target.value)} // variant="outlined"
+                  size={"small"}
+                />
+                <TextField
+                  disabled={disabled ? true : false}
+                  id="outlined-basic"
+                  label="Port"
+                  value={port}
+                  onChange={(e) => setPort(e.target.value)} // variant="outlined"
+                  size={"small"}
+                />
+                <TextField
+                  disabled={disabled ? true : false}
+                  id="outlined-basic"
+                  label="Database Name"
+                  value={dbName}
+                  onChange={(e) => setDBName(e.target.value)} // variant="outlined"
+                  size={"small"}
+                />
+              </Box>
+            </Box>
           </Box>
-          <Typography sx={{ color: "#00000099", marginBottom: "10px" }}>
-            Query
-          </Typography>
-          <CodeMirror
-            readOnly={disabled ? true : false}
-            value={code}
-            height="200px"
-            extensions={[sql(config), EditorView.lineWrapping]}
-            onChange={handleChange}
-            size={"small"}
-          />
+          <Box>
+            <Typography sx={{ color: "#797979", marginBottom: "10px" }}>
+              Query
+            </Typography>
+            <Box sx={{ fontSize: "14px" }}>
+              <CodeMirror
+                readOnly={disabled ? true : false}
+                value={code}
+                height="400px"
+                extensions={[sql(config), EditorView.lineWrapping]}
+                onChange={handleChange}
+                size={"small"}
+              />
+            </Box>
+          </Box>
         </Box>
-        <Stack direction="row">
-          <Button
-            variant="contained"
-            color="primary"
+        <Stack
+          direction="row"
+          sx={{
+            paddingTop: "30px",
+            justifyContent: "space-between",
+          }}
+        >
+          <IconButton
+            aria-label="delete"
             onClick={handleDelete}
             disabled={disabled ? true : false}
           >
-            Delete
-          </Button>
+            <Trash2 color="#555" size={26} strokeWidth={1.5} />
+            {/* // #d32f2f */}
+          </IconButton>
           <Button
             variant="contained"
             color="primary"
             type="submit"
-            disabled={disabled || !formsPopulated() ? true : false}
+            // disabled={disabled || !formsPopulated() ? true : false}
           >
             Save and Execute
           </Button>

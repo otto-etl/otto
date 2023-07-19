@@ -33,7 +33,6 @@ const ScheduleModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          // gap: "30px",
           height: "calc(100% - 100px)",
         }}
         action=""
@@ -62,7 +61,7 @@ const ScheduleModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
               value={name}
               onChange={(e) => setName(e.target.value)} // variant="outlined"
               sx={{ width: "100%" }}
-              size={"small"}
+              size="small"
             />
           </Box>
           <Box>
@@ -72,11 +71,11 @@ const ScheduleModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DemoContainer components={["DateTimePicker", "DateTimePicker"]}>
                 <DateTimePicker
-                  size={"small"}
                   disabled={disabled ? true : false}
                   label="Date and Time"
                   value={dateAndTime}
                   onChange={(dateAndTime) => setDateAndTime(dateAndTime)}
+                  slotProps={{ textField: { size: "small" } }}
                 />
               </DemoContainer>
             </LocalizationProvider>
@@ -90,7 +89,7 @@ const ScheduleModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
               type={"number"}
               value={interval}
               onChange={(e) => setInterval(e.target.value)} // variant="outlined"
-              size={"small"}
+              size="small"
             />
           </Box>
         </Box>
@@ -101,7 +100,6 @@ const ScheduleModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
             disabled={disabled ? true : false}
           >
             <Trash2 color="#555" size={26} strokeWidth={1.5} />
-            {/* // #d32f2f */}
           </IconButton>
           <Button
             variant="contained"
