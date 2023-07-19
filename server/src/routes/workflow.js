@@ -5,6 +5,7 @@ import {
   getWorkflow,
   updateNodesEdges,
   insertNewWF,
+  deleteWorkflow,
 } from "../models/workflowsService.js";
 
 //get one workflow data
@@ -50,6 +51,16 @@ router.post("/", async (req, res, next) => {
     const nodes = JSON.stringify([]);
     const dbData = await insertNewWF(name, nodes, edges);
     res.status(200).json(dbData);
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.delete("/:id", async (req, res, next) => {
+  const id = req.params.id;
+  try {
+    await deleteWorkflow(id);
+    res.status(200).json(id);
   } catch (e) {
     next(e);
   }

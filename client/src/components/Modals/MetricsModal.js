@@ -79,20 +79,25 @@ const MetricsModal = ({ metrics, metricsModalOpen, handleCloseMetricsModal, work
 	  nodeData.metrics = {name: data.avg_milliseconds_to_complete_node[id].name, type: data.avg_milliseconds_to_complete_node[id].type, avg_time: data.avg_milliseconds_to_complete_node[id].avg_time};
 	  nodes.push(nodeData);
 	});
-	Object.keys(data.node_failure_count).forEach(id => {
-	  let currentNode = nodes.find(node => node.id === id);
-      currentNode.metrics.failures = data.node_failure_count[id];	  
-	});
 	Object.keys(data.avg_volume_extracted_data).forEach(id => {
 	  let currentNode = nodes.find(node => node.id === id);
 	  currentNode.metrics.avg_volume = data.avg_volume_extracted_data[id].avg_volume;
+	});
+	Object.keys(data.node_failure_count).forEach(id => {
+	  let currentNode = nodes.find(node => node.id === id);
+	  if (!currentNode) { // If a node has failed upon the first execution it will not be in the above JSON so we have to add it
+	    currentNode = {};
+		currentNode.id = id;
+	    currentNode.metrics = {name: data.node_failure_count[id].name, type: data.node_failure_count[id].type, avg_time: "N/A", avg_volume: "N/A" };
+	  }
+      currentNode.metrics.failures = data.node_failure_count[id].failures;	  
+	  nodes.push(currentNode);
 	});
     return nodes;
   };
 
   useEffect(() => {
     metrics.then(metricData => {
-	  console.log(metricData);
 	  setNewMetrics(metricData);
 	  setTotalExecutions(metricData.total_executions);
 	  setSuccessRate(metricData.success_rate === -1 ? "N/A" : `${metricData.success_rate}%`);
@@ -100,7 +105,7 @@ const MetricsModal = ({ metrics, metricsModalOpen, handleCloseMetricsModal, work
 	  setNodeMetrics(parseNodeMetrics(metricData));
 	});
   }, [metrics]);
-  
+    
   if (!newMetrics) {
     return;
   }
@@ -119,11 +124,11 @@ const MetricsModal = ({ metrics, metricsModalOpen, handleCloseMetricsModal, work
           </Typography>
           <Stack direction="row" sx={{ height: "100%" }}>
 		    <Container sx={containerStyle}>
-			  <Box sx={{position: "relative", right: "85px", top: "-18px"}}>
+			  <Box sx={{position: "relative", right: "66px", top: "-18px"}}>
 			    <Play/>
 			  </Box>
 			  <Stack>
-		        <Box sx={metricHeaderStyle}>Total Executions</Box>
+		        <Box sx={metricHeaderStyle}>Successful Executions</Box>
 				<Box sx={metricStyle}>{totalExecutions}</Box>
 			  </Stack>
 			</Container>

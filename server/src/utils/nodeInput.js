@@ -1,11 +1,14 @@
-import { throwNDErrorAndUpdateDB } from "./errors.js";
+import { throwNDErrorAndUpdateDB, throwWFErrorAndUpdateDB } from "./errors.js";
+import { getScheduleNode } from "./node.js";
 // all node needs to have a data field
 // no need to check data inside data field because other error handles handles it
 
 export const nodeInputvalidation = async (workflowObj, nodeObj) => {
   await dataNonEmptyCheck(workflowObj, nodeObj);
   await lableUniqueCheck(workflowObj, nodeObj);
-  await apiNodeCheck(workflowObj, nodeObj);
+  if (nodeObj.type === "extractApi") {
+    await apiNodeCheck(workflowObj, nodeObj);
+  }
 };
 
 //just need to make sure data property is not null and is an object
@@ -55,5 +58,14 @@ const apiNodeCheck = async (workflowObj, nodeObj) => {
   } catch (e) {
     const message = `Unable to parse body/header JSON :${e.message}`;
     await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
+  }
+};
+
+export const scheduleNodeCheck = (workflowObj) => {
+  const scheduleNode = getScheduleNode(workflowObj);
+
+  if (!scheduleNode.data.startTime || !scheduleNode.data.intervalInMinutes) {
+    const message = "Schedule node doesn't have valid data";
+    throw new Error(message);
   }
 };

@@ -94,7 +94,7 @@ const NodeMetric = ( {nodeName, nodeType, avgTime, avgVolume, failures } ) => {
 	  </TableCell>
 	  <TableCell sx={{fontSize: "14px", fontWeight: "400", width:"18%"}}>
 	  <Box>
-	    {avgVolume} bytes extracted (avg)
+	    {avgVolume} bytes processed (avg)
 	  </Box>
 	  </TableCell>
 	  </Table>
