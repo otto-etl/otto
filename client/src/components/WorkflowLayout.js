@@ -235,7 +235,7 @@ const WorkflowLayout = () => {
     //   currentNode.data.output = executionResult;
     // }
     let executionResult = await saveAndExecuteNode(payload);
-    // console.log("execution result", executionResult.nodes);	
+    // console.log("execution result", executionResult.nodes);
     setNodes(executionResult.nodes);
     setEdges(executionResult.edges);
   };
@@ -470,7 +470,7 @@ const WorkflowLayout = () => {
             <AlertTitle sx={{ marginBottom: 0 }}>{wfError}</AlertTitle>
           </Alert>
         ) : null}
-        <Sidebar 
+        <Sidebar
           workflowID={wfID}
           handleExecutionListItemClick={handleExecutionListItemClick}
           handleEditWorkflowListItemClick={handleEditWorkflowListItemClick}

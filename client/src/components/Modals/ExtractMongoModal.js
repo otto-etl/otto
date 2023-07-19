@@ -130,7 +130,7 @@ const ExtractMongoModal = ({
             sx={{
               display: "flex",
               flexDirection: "column",
-              gap: "10px",
+              gap: "15px",
             }}
           >
             <Typography sx={{ fontSize: "16px", fontWeight: "bold" }}>
@@ -170,7 +170,7 @@ const ExtractMongoModal = ({
             sx={{
               display: "flex",
               flexDirection: "column",
-              gap: "10px",
+              gap: "15px",
             }}
           >
             <Typography sx={{ fontSize: "16px", fontWeight: "bold" }}>
@@ -192,6 +192,7 @@ const ExtractMongoModal = ({
                 Connection Format
               </FormLabel>
               <RadioGroup
+                sx={{ flexDirection: "row" }}
                 aria-labelledby="demo-controlled-radio-buttons-group"
                 name="controlled-radio-buttons-group"
                 value={connectionFormat}
@@ -201,7 +202,11 @@ const ExtractMongoModal = ({
                   value="Standard"
                   control={<Radio />}
                   label="Standard (mongodb)"
-                  sx={{ fontSize: "30px" }}
+                  sx={{
+                    "& .MuiRadio-root": {
+                      padding: "4px 9px",
+                    },
+                  }}
                   componentsProps={{ typography: { fontSize: "14px" } }}
                 />
                 <FormControlLabel
@@ -209,6 +214,11 @@ const ExtractMongoModal = ({
                   control={<Radio />}
                   label="DNS seed list (mongodb+srv)"
                   componentsProps={{ typography: { fontSize: "14px" } }}
+                  sx={{
+                    "& .MuiRadio-root": {
+                      padding: "4px 9px",
+                    },
+                  }}
                 />
               </RadioGroup>
             </FormControl>
@@ -229,6 +239,7 @@ const ExtractMongoModal = ({
             id="outlined-basic"
             label="Database"
             value={defaultDatabase}
+            sx={{ marginTop: "5px" }}
             onChange={(e) => setDefaultDatabase(e.target.value)}
             // sx={{ width: "100%", marginTop: "5px" }}
             size={"small"}

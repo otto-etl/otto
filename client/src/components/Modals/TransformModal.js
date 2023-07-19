@@ -96,7 +96,7 @@ const TransformModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
               <CodeMirror
                 readOnly={disabled ? true : false}
                 value={code}
-                height="500px"
+                height="calc(100vh - 360px)"
                 extensions={[
                   javascript({ jsx: true }),
                   EditorView.lineWrapping,

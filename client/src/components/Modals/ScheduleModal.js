@@ -61,6 +61,7 @@ const ScheduleModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
               value={name}
               onChange={(e) => setName(e.target.value)} // variant="outlined"
               sx={{ width: "100%" }}
+              size="small"
             />
           </Box>
           <Box>
@@ -74,6 +75,7 @@ const ScheduleModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
                   label="Date and Time"
                   value={dateAndTime}
                   onChange={(dateAndTime) => setDateAndTime(dateAndTime)}
+                  slotProps={{ textField: { size: "small" } }}
                 />
               </DemoContainer>
             </LocalizationProvider>
@@ -87,6 +89,7 @@ const ScheduleModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
               type={"number"}
               value={interval}
               onChange={(e) => setInterval(e.target.value)} // variant="outlined"
+              size="small"
             />
           </Box>
         </Box>
