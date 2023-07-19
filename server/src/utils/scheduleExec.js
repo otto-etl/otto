@@ -55,7 +55,8 @@ export const startCron = async (workflowObj) => {
   }
 
   let startTimeInMilsec;
-  if (typeof startTime === "string") {
+  console.log(startTime, typeof startTime);
+  if (typeof startTime === "object") {
     startTimeInMilsec = Date.parse(startTime);
   } else {
     startTimeInMilsec = startTime;
