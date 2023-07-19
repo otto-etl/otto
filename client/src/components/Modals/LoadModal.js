@@ -17,7 +17,14 @@ import { sql, SQLConfig, StandardSQL } from "@codemirror/lang-sql";
 import { EditorView } from "@codemirror/view";
 import { Trash2 } from "lucide-react";
 
-const LoadModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
+const LoadModal = ({
+  nodeObj,
+  handleSubmit,
+  disabled,
+  handleDelete,
+  handleClose,
+  error,
+}) => {
   const [name, setName] = useState(nodeObj.data.label);
   const [code, setCode] = useState(nodeObj.data.sqlCode);
   const [userName, setUserName] = useState(nodeObj.data.userName);
@@ -30,7 +37,6 @@ const LoadModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
   const [hostPD, setHostPD] = useState(nodeObj.data.hostPD);
   const [portPD, setPortPD] = useState(nodeObj.data.portPD);
   const [dbNamePD, setDBNamePD] = useState(nodeObj.data.dbNamePD);
-  const [error, setError] = useState(nodeObj.data.error);
   const [tab, setTab] = useState(0);
 
   const handleChange = React.useCallback((value, viewupdate) => {
@@ -269,17 +275,37 @@ const LoadModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
             onClick={handleDelete}
             disabled={disabled ? true : false}
           >
-            <Trash2 color="#555" size={26} strokeWidth={1.5} />
+            <Trash2 color="#555" size={24} strokeWidth={1.5} />
           </IconButton>
-
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            disabled={disabled || !formsPopulated() ? true : false}
+          <Box
+            sx={{
+              display: "flex",
+              gap: "20px",
+            }}
           >
-            Save and Execute
-          </Button>
+            <Button
+              variant="text"
+              onClick={handleClose}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: "16px",
+                color: "#3c4bcb",
+                "&:hover": {
+                  backgroundColor: "#EBEDFE",
+                },
+              }}
+            >
+              Close
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={disabled || !formsPopulated() ? true : false}
+            >
+              Save and Execute
+            </Button>
+          </Box>
         </Stack>
       </form>
     </Box>

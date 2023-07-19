@@ -11,7 +11,13 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { Trash2 } from "lucide-react";
 
-const ScheduleModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
+const ScheduleModal = ({
+  nodeObj,
+  handleSubmit,
+  disabled,
+  handleDelete,
+  handleClose,
+}) => {
   const [name, setName] = useState(nodeObj.data.label);
   const [dateAndTime, setDateAndTime] = useState(dayjs(nodeObj.data.startTime));
   const [interval, setInterval] = useState(
@@ -99,16 +105,37 @@ const ScheduleModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
             onClick={handleDelete}
             disabled={disabled ? true : false}
           >
-            <Trash2 color="#555" size={26} strokeWidth={1.5} />
+            <Trash2 color="#555" size={24} strokeWidth={1.5} />
           </IconButton>
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            disabled={disabled || !formsPopulated() ? true : false}
+          <Box
+            sx={{
+              display: "flex",
+              gap: "20px",
+            }}
           >
-            Save
-          </Button>
+            <Button
+              variant="text"
+              onClick={handleClose}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: "16px",
+                color: "#3c4bcb",
+                "&:hover": {
+                  backgroundColor: "#EBEDFE",
+                },
+              }}
+            >
+              Close
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={disabled || !formsPopulated() ? true : false}
+            >
+              Save
+            </Button>
+          </Box>
         </Stack>
       </form>
     </Box>

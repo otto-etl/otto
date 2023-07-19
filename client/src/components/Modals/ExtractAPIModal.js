@@ -18,7 +18,14 @@ import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { EditorView } from "@codemirror/view";
 
-const ExtractModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
+const ExtractModal = ({
+  nodeObj,
+  handleSubmit,
+  disabled,
+  handleDelete,
+  handleClose,
+  error,
+}) => {
   const [name, setName] = useState(nodeObj.data.label);
   const [url, setURL] = useState(nodeObj.data.url);
   const [actionType, setActionType] = useState(nodeObj.data.httpVerb);
@@ -37,7 +44,6 @@ const ExtractModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
   const [clientID, setClientID] = useState(nodeObj.data.clientID);
   const [clientSecret, setClientSecret] = useState(nodeObj.data.clientSecret);
   const [scope, setScope] = useState(nodeObj.data.scope);
-  const [error] = useState(nodeObj.data.error);
 
   const formsPopulated = () => {
     return name && url && actionType; // do we need json populated too?
@@ -305,17 +311,38 @@ const ExtractModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
             onClick={handleDelete}
             disabled={disabled ? true : false}
           >
-            <Trash2 color="#555" size={26} strokeWidth={1.5} />
+            <Trash2 color="#555" size={24} strokeWidth={1.5} />
             {/* // #d32f2f */}
           </IconButton>
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            disabled={disabled || !formsPopulated() ? true : false}
+          <Box
+            sx={{
+              display: "flex",
+              gap: "20px",
+            }}
           >
-            Save and Execute
-          </Button>
+            <Button
+              variant="text"
+              onClick={handleClose}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: "16px",
+                color: "#3c4bcb",
+                "&:hover": {
+                  backgroundColor: "#EBEDFE",
+                },
+              }}
+            >
+              Close
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={disabled || !formsPopulated() ? true : false}
+            >
+              Save and Execute
+            </Button>
+          </Box>
         </Stack>
       </form>
       {/* </Box> */}

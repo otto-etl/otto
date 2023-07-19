@@ -24,6 +24,8 @@ const ExtractMongoModal = ({
   handleSubmit,
   disabled,
   handleDelete,
+  handleClose,
+  error,
 }) => {
   const [name, setName] = useState(nodeObj.data.label);
   const [host, setHost] = useState(nodeObj.data.host);
@@ -290,17 +292,38 @@ const ExtractMongoModal = ({
             onClick={handleDelete}
             disabled={disabled ? true : false}
           >
-            <Trash2 color="#555" size={26} strokeWidth={1.5} />
+            <Trash2 color="#555" size={24} strokeWidth={1.5} />
             {/* // #d32f2f */}
           </IconButton>
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            // disabled={disabled || !formsPopulated() ? true : false}
+          <Box
+            sx={{
+              display: "flex",
+              gap: "20px",
+            }}
           >
-            Save and Execute
-          </Button>
+            <Button
+              variant="text"
+              onClick={handleClose}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: "16px",
+                color: "#3c4bcb",
+                "&:hover": {
+                  backgroundColor: "#EBEDFE",
+                },
+              }}
+            >
+              Close
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              // disabled={disabled || !formsPopulated() ? true : false}
+            >
+              Save and Execute
+            </Button>
+          </Box>
         </Stack>
       </form>
     </Box>
