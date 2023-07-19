@@ -7,7 +7,7 @@ export const runAPI = async (workflowObj, nodeObj) => {
   await nodeInputvalidation(workflowObj, nodeObj);
   let data;
   if (!nodeObj.data.oAuthChecked) {
-    data = await sendAPIWithoutOAuth(workflowObj, nodeObj);
+    data = await sendAPIWithoutOAuth(nodeObj, workflowObj);
   } else {
     data = await sendAPIWithOAuth(nodeObj, workflowObj);
   }
@@ -80,7 +80,7 @@ const sendAPIWithOAuth = async (nodeObj, workflowObj) => {
   return data;
 };
 
-const sendAPIWithoutOAuth = async (workflowObj, nodeObj) => {
+const sendAPIWithoutOAuth = async (nodeObj, workflowObj) => {
   let { httpVerb, url, header, jsonBody } = nodeObj.data;
   return await sendAPI({
     method: httpVerb,

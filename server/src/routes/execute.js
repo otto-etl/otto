@@ -54,6 +54,7 @@ executeRouter.post("/node", async (req, res, next) => {
     //get workflow object
     const workflowObj = await getWorkflow(workflowID);
     const nodeObj = getNode(workflowObj, nodeID);
+
     await executeNode(workflowObj, nodeObj);
     res
       .status(200)
@@ -75,6 +76,7 @@ executeRouter.post("/workflow/:id", async (req, res, next) => {
       edges: JSON.stringify(edges),
     });
     const workflowObj = await getWorkflow(workflowID);
+    console.log(workflowObj.nodes);
     await runWorkflow(workflowObj);
     const workflowObjNew = await getWorkflow(String(workflowID));
     res
