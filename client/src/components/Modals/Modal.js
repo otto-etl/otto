@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Modal from "@mui/material/Modal";
-import Stack from "@mui/material/Stack";
+import {
+  Box,
+  IconButton,
+  Modal,
+  Stack,
+  Tab,
+  Tabs,
+  Typography,
+} from "@mui/material";
 import JsonView from "react18-json-view";
 import "react18-json-view/src/style.css";
 import ScheduleModal from "./ScheduleModal";
@@ -11,10 +16,8 @@ import ExtractMongoModal from "./ExtractMongoModal";
 import ExtractPsqlModal from "./ExtractPsqlModal";
 import TransformModal from "./TransformModal";
 import LoadModal from "./LoadModal";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
 import CustomTabPanel from "../CustomTabPanel";
-import { Typography } from "@mui/material";
+import { X } from "lucide-react";
 
 const TRUNCATE_LENGTH = 51;
 
@@ -29,9 +32,11 @@ function BasicModal({
   disabled,
   getPrevNodesOutput,
   getPrevNodeOutput,
+  error,
 }) {
   const [input, setInput] = useState({});
   const [tab, setTab] = useState(0);
+
   useEffect(() => {
     if (nodeObj.type === "transform" || nodeObj.type === "load") {
       setInput(getPrevNodesOutput(nodeObj.id));
@@ -44,7 +49,6 @@ function BasicModal({
   const handleSaveExecuteNode = (event, formValues) => {
     event.preventDefault();
     handleSaveNode(formValues);
-    handleClose();
   };
 
   const handleSaveNode = (formValues) => {
@@ -78,7 +82,6 @@ function BasicModal({
 
   return (
     <div>
-      <Button onClick={handleOpen}>Open modal</Button>
       <Modal
         open={modalIsOpen}
         onClose={handleClose}
@@ -101,10 +104,16 @@ function BasicModal({
             bgcolor: "background.paper",
             boxShadow: 24,
             boxSizing: "border-box",
-            // p: 4,
             overflowY: "scroll",
           }}
         >
+          <IconButton
+            aria-label="delete"
+            sx={{ position: "absolute", top: "5px", right: "5px" }}
+            onClick={handleClose}
+          >
+            <X color="#555" size={26} strokeWidth={1.5} />
+          </IconButton>
           <Stack direction="row" sx={{ height: "100%" }}>
             {/* LEFT COLUMN */}
 
@@ -197,6 +206,7 @@ function BasicModal({
                   handleSubmit={handleSaveExecuteNode}
                   handleDelete={handleDelete}
                   disabled={disabled}
+                  handleClose={handleClose}
                 />
               ) : null}
               {nodeObj.type === "extractApi" ? (
@@ -205,6 +215,8 @@ function BasicModal({
                   handleSubmit={handleSaveExecuteNode}
                   handleDelete={handleDelete}
                   disabled={disabled}
+                  handleClose={handleClose}
+                  error={error}
                 />
               ) : null}
               {nodeObj.type === "extractMongo" ? (
@@ -213,6 +225,8 @@ function BasicModal({
                   handleSubmit={handleSaveExecuteNode}
                   handleDelete={handleDelete}
                   disabled={disabled}
+                  handleClose={handleClose}
+                  error={error}
                 />
               ) : null}
               {nodeObj.type === "extractPsql" ? (
@@ -221,6 +235,8 @@ function BasicModal({
                   handleSubmit={handleSaveExecuteNode}
                   handleDelete={handleDelete}
                   disabled={disabled}
+                  handleClose={handleClose}
+                  error={error}
                 />
               ) : null}
               {nodeObj.type === "transform" ? (
@@ -229,6 +245,8 @@ function BasicModal({
                   handleSubmit={handleSaveExecuteNode}
                   handleDelete={handleDelete}
                   disabled={disabled}
+                  handleClose={handleClose}
+                  error={error}
                 />
               ) : null}
               {nodeObj.type === "load" ? (
@@ -237,6 +255,8 @@ function BasicModal({
                   handleSubmit={handleSaveExecuteNode}
                   handleDelete={handleDelete}
                   disabled={disabled}
+                  handleClose={handleClose}
+                  error={error}
                 />
               ) : null}
             </Box>

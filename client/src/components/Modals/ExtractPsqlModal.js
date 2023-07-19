@@ -22,6 +22,8 @@ const ExtractPsqlModal = ({
   handleSubmit,
   disabled,
   handleDelete,
+  handleClose,
+  error,
 }) => {
   console.log(nodeObj);
   const [name, setName] = useState(nodeObj.data.label);
@@ -31,7 +33,6 @@ const ExtractPsqlModal = ({
   const [host, setHost] = useState(nodeObj.data.host);
   const [port, setPort] = useState(nodeObj.data.port);
   const [dbName, setDBName] = useState(nodeObj.data.dbName);
-  const [error, setError] = useState(nodeObj.data.error);
 
   const handleChange = React.useCallback((value, viewupdate) => {
     setCode(value);
@@ -222,17 +223,34 @@ const ExtractPsqlModal = ({
             onClick={handleDelete}
             disabled={disabled ? true : false}
           >
-            <Trash2 color="#555" size={26} strokeWidth={1.5} />
+            <Trash2 color="#555" size={24} strokeWidth={1.5} />
             {/* // #d32f2f */}
           </IconButton>
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            // disabled={disabled || !formsPopulated() ? true : false}
+          <Box
+            sx={{
+              display: "flex",
+              gap: "20px",
+            }}
           >
-            Save and Execute
-          </Button>
+            <Button
+              variant="text"
+              onClick={handleClose}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: "16px",
+                color: "#3c4bcb",
+                "&:hover": {
+                  backgroundColor: "#EBEDFE",
+                },
+              }}
+              // disabled={disabled || !formsPopulated() ? true : false}
+            >
+              Close
+            </Button>
+            <Button variant="contained" color="primary" type="submit">
+              Save and Execute
+            </Button>
+          </Box>
         </Stack>
       </form>
     </Box>

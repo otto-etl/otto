@@ -71,12 +71,12 @@ const WorkflowLayout = () => {
   // Reset editNodes and editEdges
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalData, setModalData] = useState("");
+  const [error, setError] = useState(null);
   const [active, setActive] = useState(false);
   const [hasOrphans, setHasOrphans] = useState(false);
   const [wfName, setWfName] = useState("");
   const [wfError, setWfError] = useState();
   const [message, setMessage] = useState("");
-  const [currentDB, setCurrentDB] = useState("");
   const [logView, setLogView] = useState(false);
   const wfID = useParams().id;
 
@@ -102,7 +102,6 @@ const WorkflowLayout = () => {
       setEdges(response.edges);
       setActive(response.active);
       setWfName(response.name);
-      getCurrentDB(response.nodes, response.active);
     };
     getWorkflow();
   }, [setNodes, setEdges, setActive, setWfName, wfID]);
@@ -137,6 +136,7 @@ const WorkflowLayout = () => {
     setModalIsOpen(true);
     console.log("openModal", nodeData);
     setModalData(nodeData);
+    setError(nodeData.data.error);
   };
 
   const onEdgeUpdate = useCallback(
@@ -224,20 +224,17 @@ const WorkflowLayout = () => {
       nodes: newNodesArray,
       edges: edges,
     };
-    //on successfull execution returns output data
-    //on execution failure returns error node object
-    // let executionResult = await saveAndExecuteNode(payload);
-    // let currentNode = newNodesArray.find((node) => node.id === currentId);
 
-    // if (executionResult.data && executionResult.data.error) {
-    //   currentNode.data = executionResult.data;
-    // } else {
-    //   currentNode.data.output = executionResult;
-    // }
     let executionResult = await saveAndExecuteNode(payload);
-    // console.log("execution result", executionResult.nodes);
     setNodes(executionResult.nodes);
     setEdges(executionResult.edges);
+
+    const returnedNodeObj = executionResult.nodes.find(
+      (node) => node.id === currentId
+    );
+
+    setModalData(returnedNodeObj);
+    setError(returnedNodeObj.data.error);
   };
 
   const onCreateNode = async (nodeType) => {
@@ -363,13 +360,10 @@ const WorkflowLayout = () => {
     setActive(e.target.checked);
     await toggleWorkflowStatus(wfID, e.target.checked);
     if (e.target.checked) {
-      // handleMessage(`Workflow ${wfName} is now active!`, null, 2000, null);
       handleMessage(`Workflow is now active!`, null, 2000, null);
     } else {
-      // handleMessage(`Workflow ${wfName} is now inactive!`, null, 2000, null);
       handleMessage(`Workflow is now inactive!`, null, 2000, null);
     }
-    getCurrentDB(nodes, e.target.checked);
   };
 
   const handleSaveWorkflow = async (e) => {
@@ -395,24 +389,6 @@ const WorkflowLayout = () => {
     };
 
     setTimeout(handleMessage1, laps1);
-  };
-
-  const getCurrentDB = (nodes, active) => {
-    // console.log(nodes, active);
-    const loadNode = nodes.find((node) => node.type === "load");
-    // console.log(loadNode);
-
-    if (loadNode && !active) {
-      setCurrentDB(
-        `host:${loadNode.data.host} db:${loadNode.data.dbName} user:${loadNode.data.userName}`
-      );
-    } else if (loadNode && active) {
-      setCurrentDB(
-        `host:${loadNode.data.hostPD} db:${loadNode.data.dbNamePD} user:${loadNode.data.userNamePD}`
-      );
-    } else {
-      setCurrentDB("No load node yet");
-    }
   };
 
   const getPrevNodesOutput = (currentNodeID) => {
@@ -530,6 +506,7 @@ const WorkflowLayout = () => {
               nodeObj={modalData}
               disabled={logView || active}
               getPrevNodesOutput={getPrevNodesOutput}
+              error={error}
             />
           ) : null}
         </ReactFlow>
