@@ -3,7 +3,6 @@ import ReactDOM from "react-dom/client";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "./index.css";
 import App from "./App";
-import { capitalize } from "@mui/material";
 
 const theme = createTheme({
   breakpoints: {
@@ -58,17 +57,6 @@ const theme = createTheme({
         },
       ],
     },
-    // MuiAppBar: {
-    //   variants: [
-    //     {
-    //       props: { variant: "ottoPrimary" },
-    //       style: {
-    //         boxShadow: "none",
-    //         backgroundColor: "#3c4bcb",
-    //       },
-    //     },
-    //   ],
-    // },
   },
 });
 

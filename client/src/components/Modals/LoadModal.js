@@ -15,6 +15,7 @@ import {
 import CodeMirror from "@uiw/react-codemirror";
 import { sql, SQLConfig, StandardSQL } from "@codemirror/lang-sql";
 import { EditorView } from "@codemirror/view";
+import { Trash2 } from "lucide-react";
 
 const LoadModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
   const [name, setName] = useState(nodeObj.data.label);
@@ -137,8 +138,16 @@ const LoadModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
                 onChange={handleTabChange}
                 aria-label="basic tabs example"
               >
-                <Tab label="Test Database" {...a11yProps(0)} />
-                <Tab label="Production Database" {...a11yProps(1)} />
+                <Tab
+                  label="Test Database"
+                  {...a11yProps(0)}
+                  sx={{ textTransform: "capitalize" }}
+                />
+                <Tab
+                  label="Production Database"
+                  {...a11yProps(1)}
+                  sx={{ textTransform: "capitalize" }}
+                />
               </Tabs>
             </Box>
             <CustomTabPanel value={tab} index={0}>
@@ -190,66 +199,79 @@ const LoadModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
             </CustomTabPanel>
 
             <CustomTabPanel value={tab} index={1}>
-              <TextField
-                disabled={disabled ? true : false}
-                id="outlined-basic"
-                label="Username"
-                value={userNamePD}
-                onChange={(e) => setUserNamePD(e.target.value)} // variant="outlined"
-                size={"small"}
-              />
-              <TextField
-                disabled={disabled ? true : false}
-                id="outlined-basic"
-                label="Password"
-                value={passwordPD}
-                onChange={(e) => setPasswordPD(e.target.value)} // variant="outlined"
-                size={"small"}
-              />
-              <TextField
-                disabled={disabled ? true : false}
-                id="outlined-basic"
-                label="Host"
-                value={hostPD}
-                onChange={(e) => setHostPD(e.target.value)} // variant="outlined"
-                size={"small"}
-              />
-              <TextField
-                disabled={disabled ? true : false}
-                id="outlined-basic"
-                label="Port"
-                value={portPD}
-                onChange={(e) => setPortPD(e.target.value)} // variant="outlined"
-                size={"small"}
-              />
-              <TextField
-                disabled={disabled ? true : false}
-                id="outlined-basic"
-                label="Database Name"
-                value={dbNamePD}
-                onChange={(e) => setDBNamePD(e.target.value)} // variant="outlined"
-                size={"small"}
-              />
+              <Box
+                sx={{ display: "flex", flexDirection: "column", gap: "30px" }}
+              >
+                <TextField
+                  disabled={disabled ? true : false}
+                  id="outlined-basic"
+                  label="Username"
+                  value={userNamePD}
+                  onChange={(e) => setUserNamePD(e.target.value)} // variant="outlined"
+                  size={"small"}
+                  sx={{ marginTop: "5px" }}
+                />
+                <TextField
+                  disabled={disabled ? true : false}
+                  id="outlined-basic"
+                  label="Password"
+                  value={passwordPD}
+                  onChange={(e) => setPasswordPD(e.target.value)} // variant="outlined"
+                  size={"small"}
+                />
+                <TextField
+                  disabled={disabled ? true : false}
+                  id="outlined-basic"
+                  label="Host"
+                  value={hostPD}
+                  onChange={(e) => setHostPD(e.target.value)} // variant="outlined"
+                  size={"small"}
+                />
+                <TextField
+                  disabled={disabled ? true : false}
+                  id="outlined-basic"
+                  label="Port"
+                  value={portPD}
+                  onChange={(e) => setPortPD(e.target.value)} // variant="outlined"
+                  size={"small"}
+                />
+                <TextField
+                  disabled={disabled ? true : false}
+                  id="outlined-basic"
+                  label="Database Name"
+                  value={dbNamePD}
+                  onChange={(e) => setDBNamePD(e.target.value)} // variant="outlined"
+                  size={"small"}
+                />
+              </Box>
             </CustomTabPanel>
           </Box>
-          <CodeMirror
-            readOnly={disabled ? true : false}
-            value={code}
-            height="200px"
-            extensions={[sql(config), EditorView.lineWrapping]}
-            onChange={handleChange}
-            size={"small"}
-          />
+          <Box sx={{ fontSize: "14px" }}>
+            <CodeMirror
+              readOnly={disabled ? true : false}
+              value={code}
+              height="400px"
+              extensions={[sql(config), EditorView.lineWrapping]}
+              onChange={handleChange}
+              size={"small"}
+            />
+          </Box>
         </Box>
-        <Stack direction="row">
-          <Button
-            variant="contained"
-            color="primary"
+        <Stack
+          direction="row"
+          sx={{
+            paddingTop: "30px",
+            justifyContent: "space-between",
+          }}
+        >
+          <IconButton
+            aria-label="delete"
             onClick={handleDelete}
             disabled={disabled ? true : false}
           >
-            Delete
-          </Button>
+            <Trash2 color="#555" size={26} strokeWidth={1.5} />
+          </IconButton>
+
           <Button
             variant="contained"
             color="primary"

@@ -61,6 +61,9 @@ export const runWorkflow = async (workflowObj) => {
   await Promise.all(promises);
   completedNodes = {};
   console.log("workflow completed", workflowObj.id);
+  if (workflowObj.active) {
+    updateMetrics(workflowObj, new Date(Date.now()).toISOString());
+  }
   await updateWorkflowError(workflowObj.id, null);
   workflowObj.error = null;
   executionSuccess = "TRUE";
@@ -92,9 +95,11 @@ export const runWorkflowCron = async (workflowObj) => {
     await Promise.all(promises);
     completedNodes = {};
     console.log("workflow completed", workflowObj.id);
+
     if (workflowObj.active) {
       updateMetrics(workflowObj, new Date(Date.now()).toISOString());
     }
+
     await updateWorkflowError(workflowObj.id, null);
     workflowObj.error = null;
     executionSuccess = "TRUE";

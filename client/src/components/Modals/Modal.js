@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
-import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import JsonView from "react18-json-view";
 import "react18-json-view/src/style.css";
@@ -49,7 +48,6 @@ function BasicModal({
   };
 
   const handleSaveNode = (formValues) => {
-    // console.log(formValues);
     onSaveExecute(nodeObj.id, formValues);
   };
 
@@ -93,7 +91,6 @@ function BasicModal({
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            // width: "97%",
             width: {
               xs: 900,
               sm: 1200,
@@ -101,7 +98,6 @@ function BasicModal({
               lg: 1800,
               xl: 2100,
             },
-            // height: "95%",
             bgcolor: "background.paper",
             boxShadow: 24,
             boxSizing: "border-box",
@@ -143,11 +139,20 @@ function BasicModal({
                     sx={{
                       borderBottom: 1,
                       borderColor: "divider",
+                      maxWidth: {
+                        xs: 300,
+                        sm: 359,
+                        md: 459,
+                        lg: 559,
+                        xl: 659,
+                      },
                     }}
                   >
                     <Tabs
                       value={tab}
                       onChange={handleTabChange}
+                      variant="scrollable"
+                      scrollButtons="auto"
                       aria-label="basic tabs example"
                     >
                       {Object.keys(input).map((key) => {
@@ -195,7 +200,6 @@ function BasicModal({
                 />
               ) : null}
               {nodeObj.type === "extractApi" ? (
-                // if nodeObj.type.subtype === "api" / "mongo" / "postgres"
                 <ExtractAPIModal
                   nodeObj={nodeObj}
                   handleSubmit={handleSaveExecuteNode}
@@ -250,13 +254,6 @@ function BasicModal({
               >
                 Output
               </Typography>
-              {/* {nodeObj.type === "schedule" ? (
-                <div>
-                  <Typography sx={{ marginLeft: "20px", color: "#555" }}>
-                    No output
-                  </Typography>
-                </div>
-              ) : null} */}
               <Box
                 sx={{
                   height: "calc(100vh - 159px)",
