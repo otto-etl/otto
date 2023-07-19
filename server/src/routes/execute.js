@@ -4,7 +4,7 @@ import { getNode, resetSubsequentOutputs } from "../utils/node.js";
 import { getWorkflow, updateNodesEdges } from "../models/workflowsService.js";
 import { runWorkflow } from "../utils/workflowExec.js";
 import { executeNode } from "../utils/nodeExec.js";
-
+import { scheduleNodeCheck } from "../utils/nodeInput.js";
 const executeRouter = express.Router();
 
 //start cron job
@@ -12,6 +12,7 @@ executeRouter.put("/workflow/:id", async (req, res, next) => {
   const workflowID = req.params.id;
   try {
     const workflowObj = await getWorkflow(workflowID);
+    scheduleNodeCheck(workflowObj);
     if (workflowObj.active === true) {
       throw new Error("workflow already active");
     }
@@ -76,7 +77,6 @@ executeRouter.post("/workflow/:id", async (req, res, next) => {
       edges: JSON.stringify(edges),
     });
     const workflowObj = await getWorkflow(workflowID);
-    console.log(workflowObj.nodes);
     await runWorkflow(workflowObj);
     const workflowObjNew = await getWorkflow(String(workflowID));
     res

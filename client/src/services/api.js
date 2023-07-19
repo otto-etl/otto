@@ -89,3 +89,8 @@ export const getMetrics = async (workflowID) => {
   console.log(res);
   return res.data;
 };
+
+export const deleteWorkflow = async (workflowID) => {
+  console.log(workflowID);
+  await axios.delete(`${host}/workflows/${workflowID}`);
+};
