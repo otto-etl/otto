@@ -54,7 +54,12 @@ export const startCron = async (workflowObj) => {
     await activateWorkflow(workflowID);
   }
 
-  let startTimeInMilsec = Date.parse(startTime);
+  let startTimeInMilsec;
+  if (typeof startTime === "string") {
+    startTimeInMilsec = Date.parse(startTime);
+  } else {
+    startTimeInMilsec = startTime;
+  }
   //if server is down for long period of time and start time is less than current time,
   //calculate & reset the next start time
   if (startTimeInMilsec < currentTimeInMilsec) {

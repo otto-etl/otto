@@ -360,16 +360,25 @@ const WorkflowLayout = () => {
   };
 
   const handleToggleActive = async (e) => {
-    setActive(e.target.checked);
-    await toggleWorkflowStatus(wfID, e.target.checked);
-    if (e.target.checked) {
+    const checked = e.target.checked;
+    try {
+      await toggleWorkflowStatus(wfID, checked);
+      setActive(checked);
+    } catch (e) {
+      setWfError(e.response.data.errMessage);
+      // setActive(!checked);
+      setTimeout(() => {
+        setWfError(null);
+      }, 3000);
+    }
+    if (checked) {
       // handleMessage(`Workflow ${wfName} is now active!`, null, 2000, null);
       handleMessage(`Workflow is now active!`, null, 2000, null);
     } else {
       // handleMessage(`Workflow ${wfName} is now inactive!`, null, 2000, null);
       handleMessage(`Workflow is now inactive!`, null, 2000, null);
     }
-    getCurrentDB(nodes, e.target.checked);
+    getCurrentDB(nodes, checked);
   };
 
   const handleSaveWorkflow = async (e) => {
