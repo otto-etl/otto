@@ -35,6 +35,8 @@ const Workflows = () => {
   const [workflows, setWorkflows] = useState([]);
   const [newWFVisible, setNewWFVisible] = useState(false);
 
+  // console.log("workflows", workflows);
+
   const columns = [
     { field: "name", headerName: "Name", width: 550 },
     {
@@ -62,7 +64,8 @@ const Workflows = () => {
       renderCell: (params) => {
         return (
           <IconButton
-            data-delete-icon={true}
+            data-delete-icon
+            aria-label={`Delete workflow ${params.value}`}
             sx={{
               display: "flex",
               justifyContent: "center",
@@ -148,6 +151,19 @@ const Workflows = () => {
               pagination: {
                 paginationModel: { page: 0, pageSize: 10 },
               },
+            }}
+            slots={{
+              noRowsOverlay: () => (
+                <Typography
+                  sx={{
+                    textAlign: "center",
+                    paddingTop: "50px",
+                    color: "#555",
+                  }}
+                >
+                  No rows
+                </Typography>
+              ),
             }}
           />
         </div>
