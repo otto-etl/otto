@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express from "express";
-// import https from "https";
-// import fs from "fs";
+import https from "https";
+import fs from "fs";
 import cors from "cors";
 import mockRoutes from "./routes/mock.js";
 import workflowRoutes from "./routes/workflow.js";
@@ -23,24 +23,12 @@ app.use(errorHandler);
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("build"));
 }
+console.log("port", process.env.PORT);
 const PORT = process.env.PORT || 3001;
 
-// if (process.env.NODE_ENV === "production") {
-//   https
-//     .createServer(
-//       {
-//         key: fs.readFileSync(process.env.KEY_PATH),
-//         cert: fs.readFileSync(process.env.CERT_PATH),
-//       },
-//       app
-//     )
-//     .listen(PORT, () => {
-//       console.log(`Production mode, listening on port ${PORT}`);
-//     });
+app.listen(PORT, () => {
+  console.log(`${process.env.NODE_ENV} mode, listening on port ${PORT}`);
+});
 // }
-// if (process.env.NODE_ENV === "development") {
 
-  app.listen(PORT, () => {
-    console.log(`${process.env.NODE_ENV} mode, listening on port ${PORT}`);
-  });
-// }
+export default app;
