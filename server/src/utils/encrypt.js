@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import fs from "fs";
 const algorithm = "aes-256-cbc";
-console.log("env", process.env.ENCRYPT_PATH);
+
 if (fs.existsSync(`${process.env.ENCRYPT_PATH}/key.txt`)) {
   console.log("use existing key");
 } else {

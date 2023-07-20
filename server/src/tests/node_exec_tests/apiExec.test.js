@@ -1,4 +1,5 @@
-// import { updateNodes } from "../../models/workflowsService.js";
+import "dotenv/config";
+import { updateNodes } from "../../models/workflowsService.js";
 import {
   throwNDErrorAndUpdateDB,
   throwEXErrorAndUpdateDB,
@@ -10,7 +11,9 @@ import {
   sendAPIWithoutOAuth,
   sendAPIWithOAuth,
 } from "../../utils/apiExec.js";
-jest.mock("../../models/workflowService.js");
+
+
+jest.mock("../../models/workflowsService.js");
 
 const mockWorkflowObjNoOAuth = {
   id: 20,
@@ -53,12 +56,12 @@ const mockWorkflowObjNoOAuth = {
   },
 };
 
-const mockApiNodeNoOAuth = mockWorkflowObj.nodes[0];
+const mockApiNodeNoOAuth = mockWorkflowObjNoOAuth.nodes[0];
 
 test("get data from api endpoint without oauth", async () => {
   const res = await sendAPIWithoutOAuth(
     mockApiNodeNoOAuth,
     mockWorkflowObjNoOAuth
   );
-  expect(res.status).toBe(200);
+  expect(res.status).toBe("success");
 });
