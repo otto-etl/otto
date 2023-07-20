@@ -11,15 +11,7 @@ if (fs.existsSync(`${process.env.ENCRYPT_PATH}/key.txt`)) {
   );
 }
 
-// fs.writeFile(
-//   `${process.env.ENCRYPT_PATH}/iv.txt`,
-//   crypto.randomBytes(16),
-//   function (err) {
-//     console.log("iv already exists");
-//   }
-// );
 const key = fs.readFileSync(`${process.env.ENCRYPT_PATH}/key.txt`);
-// const iv = fs.readFileSync(`${process.env.ENCRYPT_PATH}/iv.txt`);
 
 export const encrypt = (data) => {
   const iv = crypto.randomBytes(16);

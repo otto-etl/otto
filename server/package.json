@@ -1,12 +1,12 @@
 {
-  "name": "server",
+  "name": "otto",
   "type": "module",
   "version": "1.0.0",
-  "description": "",
+  "description": "A light ETL workflow automation tool",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV=DEVELOPMENT nodemon src/index.js",
-    "start": "NODE_ENV=PRODUCTION node src/index.js",
+    "dev": "NODE_ENV=development nodemon src/index.js",
+    "start": "NODE_ENV=production node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

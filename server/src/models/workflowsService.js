@@ -2,17 +2,25 @@ import pgPromise from "pg-promise";
 import { encrypt, decrypt } from "../utils/encrypt.js";
 const pgp = pgPromise();
 
-const db = pgp(
-  `postgres://${process.env.PGUSER}:${process.env.PGPASSWORD}@localhost:5432/${process.env.WORKFLOW_DBNAME}`
-);
+const cnStr =
+  process.env.NODE_ENV === "production"
+    ? `postgres://${process.env.PGPDUSER}:${process.env.PGPDPASSWORD}@${process.env.PGPDHOST}:5432/${process.env.PGPDDATABASE}`
+    : `postgres://${process.env.PGUSER}:${process.env.PGPASSWORD}@localhost:5432/${process.env.WORKFLOW_DBNAME}`;
 
-try {
-  const connection = await db.connect();
-  console.log("workflow db connection success");
-  connection.done();
-} catch (e) {
-  throw new Error(`Unable to connect to workflow db with error ${e.message}`);
+const db = pgp(cnStr);
+
+const testConnection = async (db) => {
+  try {
+    const connection = await db.connect();
+    connection.done();
+    console.log("workflow db connection success");
+  } catch (e) {
+    throw new Error(`Unable to connect to workflow db with error ${e.message}`);
+  }
 }
+
+testConnection(db)
+
 
 export const getAllWorkflows = async () => {
   const workflowObjs = await db.any("SELECT * FROM workflow");
@@ -178,9 +186,11 @@ export const instantiateWorkflowMetrics = async (workflowID) => {
 
 export const resetWorkflowMetrics = async (workflowID) => {
   console.log("reset called", workflowID);
-  await db.any("DELETE FROM metric WHERE workflow_id = ${workflowID}", { workflowID: workflowID});
+  await db.any("DELETE FROM metric WHERE workflow_id = ${workflowID}", {
+    workflowID: workflowID,
+  });
   instantiateWorkflowMetrics(workflowID);
-}
+};
 
 export const updateTotalExecutions = async (workflowID) => {
   return await db.any(
@@ -331,14 +341,20 @@ export const updateAverageNodeData = async (
   );
 };
 
-
-export const updateNodeFailureMetrics = async (workflowID, nodeID, nodeName, nodeType) => {
-  const nodeFailureMetrics = await db.one("SELECT node_failure_count FROM metric WHERE workflow_id = ${workflowID}", { workflowID: workflowID, });
-  let nodeFailureObj = nodeFailureMetrics.node_failure_count; 
+export const updateNodeFailureMetrics = async (
+  workflowID,
+  nodeID,
+  nodeName,
+  nodeType
+) => {
+  const nodeFailureMetrics = await db.one(
+    "SELECT node_failure_count FROM metric WHERE workflow_id = ${workflowID}",
+    { workflowID: workflowID }
+  );
+  let nodeFailureObj = nodeFailureMetrics.node_failure_count;
   if (!nodeFailureObj[nodeID]) {
-    nodeFailureObj[nodeID] = {failures: 1 };
-  }
-  else {
+    nodeFailureObj[nodeID] = { failures: 1 };
+  } else {
     nodeFailureObj[nodeID].failures += 1;
   }
   nodeFailureObj[nodeID].name = nodeName;
