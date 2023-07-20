@@ -11,7 +11,6 @@ const NewWFModal = ({ newWFVisible, handleCloseNewWFModal }) => {
     e.preventDefault();
     const data = await createNewWF({ name: newWfName });
     navigate(`/workflow/${data.id}`);
-    // handleCloseNewWFModal();
   };
 
   const formsPopulated = () => {

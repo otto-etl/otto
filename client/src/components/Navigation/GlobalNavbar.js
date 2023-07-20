@@ -1,7 +1,7 @@
 import React from "react";
 import { AppBar, Button, Toolbar, Typography } from "@mui/material";
 import ottoLogo from "../../assets/otto.svg";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 
 const GlobalNavbar = ({ onHomePage }) => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const GlobalNavbar = ({ onHomePage }) => {
           backgroundColor: "#3c4bcb",
         }}
       >
-        {/* <Link
+        {/* <NavLink
           to="/"
           style={{
             display: "flex",
@@ -49,7 +49,7 @@ const GlobalNavbar = ({ onHomePage }) => {
           >
             otto
           </Typography>
-        </Link> */}
+        </NavLink> */}
         {!onHomePage ? (
           <Button
             variant="text"

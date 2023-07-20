@@ -58,7 +58,7 @@ describe("Workflows", () => {
     render(<Workflows />);
     await waitFor(() => screen.getByText("Workflow 1"));
     const deleteIcon = screen.getByLabelText("Delete workflow 1");
-    userEvent.click(deleteIcon);
+    await userEvent.click(deleteIcon);
     expect(deleteWorkflow).toHaveBeenCalledWith("1");
     await waitFor(() =>
       expect(screen.queryByText("Workflow 1")).not.toBeInTheDocument()
@@ -71,7 +71,7 @@ describe("Workflows", () => {
     render(<Workflows />);
     await waitFor(() => screen.getByText("Workflow 1"));
     const workflow = screen.getByText("Workflow 1");
-    userEvent.click(workflow);
+    await userEvent.click(workflow);
     expect(navigate).toHaveBeenCalledWith("/workflow/1");
   });
 });
@@ -82,7 +82,7 @@ describe("Create Workflow Modal", () => {
 
     await waitFor(() => screen.getByText("Workflow 1"));
     const newWFButton = screen.getByText(/Create workflow/i);
-    userEvent.click(newWFButton);
+    await userEvent.click(newWFButton);
     await waitFor(() => {
       expect(
         screen.getByText("Please provide a workflow name:")
@@ -95,49 +95,20 @@ describe("Create Workflow Modal", () => {
 
     await waitFor(() => screen.getByText("Workflow 1"));
     const newWFButton = screen.getByText(/Create workflow/i);
-    userEvent.click(newWFButton);
+    await userEvent.click(newWFButton);
     await waitFor(() => {
       const modalText = screen.getByText("Please provide a workflow name:");
       expect(modalText).toBeInTheDocument();
     });
 
     const cancelButton = screen.getByText("Cancel");
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
     await waitFor(() => {
       expect(
         screen.queryByText("Please provide a workflow name:")
       ).not.toBeInTheDocument();
     });
   });
-
-  // test("clicking the Create modal button hides modal", async () => {
-  //   render(<Workflows />);
-
-  //   await waitFor(() => screen.getByText("Workflow 1"));
-  //   const newWFButton = screen.getByText(/Create workflow/i);
-  //   await userEvent.click(newWFButton);
-  //   await waitFor(() => {
-  //     const modalText = screen.getByText("Please provide a workflow name:");
-  //     expect(modalText).toBeInTheDocument();
-  //   });
-
-  //   const modalInput = screen.getByRole("textbox");
-  //   await userEvent.type(modalInput, "New Workflow");
-  //   const createButton = screen.getByText("Create");
-  //   await userEvent.click(createButton);
-  //   screen.debug(undefined, 300000);
-
-  //   // await waitFor(() => {
-  //   //   const modalText = screen.getByText("Please provide a workflow name:");
-  //   //   expect(modalText).not.toBeInTheDocument();
-  //   // });
-
-  //   //   // const createButton = screen.getByText("Create");
-  //   //   // userEvent.click(createButton);
-  //   //   // await waitFor(() => {
-  //   //   //   expect(getAllWorkflows).toHaveBeenCalledTimes(2);
-  //   //   // });
-  // });
 });
 
 // screen.debug(undefined, 300000);

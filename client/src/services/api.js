@@ -3,7 +3,7 @@ const host =
   process.env.NODE_ENV === "PRODUCTION"
     ? process.env.REACT_APP_PRODUCTION_URL
     : process.env.REACT_APP_DEVELOPMENT_URL;
-console.log(host);
+// console.log(host);
 export const getWorkflowAPI = async (id) => {
   const res = await axios.get(`${host}/workflows/${id}`);
   return res.data;
@@ -86,11 +86,11 @@ export const getExecutions = async (workflowID) => {
 
 export const getMetrics = async (workflowID) => {
   const res = await axios.get(`${host}/metrics/${workflowID}`);
-  console.log(res);
+  // console.log(res);
   return res.data;
 };
 
 export const deleteWorkflow = async (workflowID) => {
-  console.log(workflowID);
+  // console.log(workflowID);
   await axios.delete(`${host}/workflows/${workflowID}`);
 };

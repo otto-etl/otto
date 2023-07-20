@@ -35,8 +35,6 @@ const Workflows = () => {
   const [workflows, setWorkflows] = useState([]);
   const [newWFVisible, setNewWFVisible] = useState(false);
 
-  // console.log("workflows", workflows);
-
   const columns = [
     { field: "name", headerName: "Name", width: 550 },
     {
@@ -95,16 +93,11 @@ const Workflows = () => {
     getInitialData();
   }, [setWorkflows]);
 
-  const handleRowClick = (params, event, details) => {
+  const handleRowClick = (params) => {
     navigate(`/workflow/${params.row.id}`);
   };
 
   const handleCloseNewWFModal = (e) => {
-    e.preventDefault();
-    setNewWFVisible(false);
-  };
-
-  const handleSaveNewWF = (e) => {
     e.preventDefault();
     setNewWFVisible(false);
   };
@@ -172,7 +165,7 @@ const Workflows = () => {
         <NewWFModal
           newWFVisible={newWFVisible}
           handleCloseNewWFModal={handleCloseNewWFModal}
-          handleSaveNewWF={handleSaveNewWF}
+          // handleSaveNewWF={handleSaveNewWF}
         />
       ) : null}
     </>
