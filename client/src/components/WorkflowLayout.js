@@ -422,13 +422,13 @@ const WorkflowLayout = () => {
   };
 
   const handleMetricsButtonClick = (event) => {
-	  event.preventDefault();
-	  setMetricsModalOpen(true);
+    event.preventDefault();
+    setMetricsModalOpen(true);
   };
-  
+
   const parseMetrics = async () => {
     const metricsData = await getMetrics(wfID);
-	  return metricsData;
+    return metricsData;
   };
 
   const handleCloseMetricsModal = (e) => {
@@ -502,19 +502,35 @@ const WorkflowLayout = () => {
         >
           <Controls />
           <Background color={"#a7a7ae"} style={{ background: "#f3f4f6" }} />
-          <Panel position="top-right">
-            <NodeCreationMenu
-              onCreateNode={onCreateNode}
-              logView={logView}
-              active={active}
-            />
-	        <Button variant="outlined" sx={{ textTransform: "capitalize", display: "flex", gap: "10px", margin: "6px 0 0 0" }} onClick={handleMetricsButtonClick}
-	          >
-			  <BarChartBig size={18} />
-			  Active Metrics</Button>
+          <Panel position="top-right" style={{ marginRight: "24px" }}>
+            <Box
+              sx={{
+                display: "flex",
+                gap: "20px",
+              }}
+            >
+              <NodeCreationMenu
+                onCreateNode={onCreateNode}
+                logView={logView}
+                active={active}
+              />
+              <Button
+                variant="outlined"
+                sx={{
+                  textTransform: "capitalize",
+                  display: "flex",
+                  gap: "10px",
+                  margin: "0",
+                }}
+                onClick={handleMetricsButtonClick}
+              >
+                <BarChartBig size={18} />
+                Active Metrics
+              </Button>
+            </Box>
             {metricsModalOpen ? (
               <MetricsModal
-		        metrics={parseMetrics()}
+                metrics={parseMetrics()}
                 metricsModalOpen={metricsModalOpen}
                 handleCloseMetricsModal={handleCloseMetricsModal}
                 workflowID={wfID}
