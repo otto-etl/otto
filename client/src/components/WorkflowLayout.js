@@ -1,7 +1,7 @@
 import "./Workflow.css";
 import "reactflow/dist/style.css";
 import "../index.css";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import ReactFlow, {
   useNodesState,
   useEdgesState,
@@ -84,6 +84,7 @@ const WorkflowLayout = () => {
   const [wfError, setWfError] = useState();
   const [message, setMessage] = useState("");
   const [logView, setLogView] = useState(false);
+  const lastNodePosition = useRef({ x: 0, y: 0 });
   const wfID = useParams().id;
 
   const nodeColor = (node) => {
@@ -247,13 +248,15 @@ const WorkflowLayout = () => {
     let newNode = {
       id: newNodeId,
       type: nodeType,
-      position: { x: 650, y: -125 }, // Arbitrary hardcoded location, below menu
+      position: {...lastNodePosition.current},
       data: {
         label: formatNodeLabel(nodeType),
         output: "",
       },
     };
     addExtraNodeProperties(newNode);
+	lastNodePosition.current.x += 120;
+	lastNodePosition.current.y += 40;
     // console.log(newNode);
 
     let newNodes = [...nodes, newNode];
