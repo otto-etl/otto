@@ -38,9 +38,6 @@ const ExtractMongoModal = ({
   const [password, setPassword] = useState(nodeObj.data.password);
   const [query, setQuery] = useState(nodeObj.data.query);
   const [limit, setLimit] = useState(nodeObj.data.limit);
-  // const [connectionFormat, setConnectionFormat] = useState(
-  //   nodeObj.data.connectionFormat
-  // );
   const [connectionFormat, setConnectionFormat] = useState(
     nodeObj.data.connectionFormat
   );
@@ -91,10 +88,9 @@ const ExtractMongoModal = ({
           height: "calc(100vh - 155px)",
         }}
       >
-        {nodeObj.data.error ? (
+        {error ? (
           <Alert
             sx={{
-              // margin: "10px 0 10px 0",
               border: "2px solid #B99",
               whiteSpace: "pre-line",
               marginBottom: "20px",
@@ -114,7 +110,7 @@ const ExtractMongoModal = ({
             display: "flex",
             flexDirection: "column",
             gap: "30px",
-            overflow: "scroll",
+            overflow: "auto",
           }}
         >
           <TextField
@@ -123,7 +119,6 @@ const ExtractMongoModal = ({
             label="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            // sx={{ width: "100%", marginTop: "5px" }}
             size={"small"}
             sx={{ marginTop: "5px" }}
           />
