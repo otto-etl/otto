@@ -20,13 +20,29 @@ const ScheduleModal = ({
 }) => {
   const [name, setName] = useState(nodeObj.data.label);
   const [dateAndTime, setDateAndTime] = useState(dayjs(nodeObj.data.startTime));
-  const [interval, setInterval] = useState(
+  const [intervalDays, setIntervalDays] = useState(
     nodeObj.data.intervalInMinutes / 24 / 60
   );
+  const [changesMade, setChangesMade] = useState(false);
 
   const formsPopulated = () => {
-    return name && dateAndTime && interval;
+    return name && dateAndTime && intervalDays;
   };
+  
+  const onDateTimeChange = (dateAndTime) => {
+	setDateAndTime(dateAndTime);
+	setChangesMade(true);
+  }
+  
+  const onIntervalChange = (event) => {
+	if (!/^[\d.]+$/.test(event.target.value)) {
+	  setIntervalDays("");
+	}
+    else {
+	  setIntervalDays(event.target.value);
+	}
+	setChangesMade(true);
+  }
 
   return (
     <Box sx={{ height: "100%" }}>
@@ -47,8 +63,9 @@ const ScheduleModal = ({
           const newData = {
             label: name,
             startTime: dateAndTime.$d,
-            intervalInMinutes: Number(interval) * 24 * 60,
+            intervalInMinutes: Number(intervalDays) * 24 * 60,
           };
+		  setChangesMade(false);
           handleSubmit(e, newData);
         }}
       >
@@ -80,7 +97,7 @@ const ScheduleModal = ({
                   disabled={disabled ? true : false}
                   label="Date and Time"
                   value={dateAndTime}
-                  onChange={(dateAndTime) => setDateAndTime(dateAndTime)}
+                  onChange={onDateTimeChange}
                   slotProps={{ textField: { size: "small" } }}
                 />
               </DemoContainer>
@@ -92,9 +109,8 @@ const ScheduleModal = ({
               disabled={disabled ? true : false}
               id="outlined-basic"
               label="Frequency of Execution (days)"
-              type={"number"}
-              value={interval}
-              onChange={(e) => setInterval(e.target.value)} // variant="outlined"
+              value={intervalDays}
+              onChange={onIntervalChange} // variant="outlined"
               size="small"
             />
           </Box>
@@ -131,7 +147,7 @@ const ScheduleModal = ({
               variant="contained"
               color="primary"
               type="submit"
-              disabled={disabled || !formsPopulated() ? true : false}
+              disabled={disabled || !formsPopulated() || !changesMade ? true : false}
             >
               Save
             </Button>

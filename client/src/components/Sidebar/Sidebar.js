@@ -22,9 +22,9 @@ const Sidebar = ({
     const getLogs = async () => {
       // const executions = await getExecutions(workflowID);
       const baseURL =
-        process.env.NODE_ENV === "PRODUCTION"
-          ? process.env.REACT_APP_PRODUCTION_URL
-          : process.env.REACT_APP_DEVELOPMENT_URL;
+        process.env.NODE_ENV === "production"
+          ? "/api"
+          : "http://localhost:3001/api";
       executionSource = new EventSource(`${baseURL}/executions/${workflowID}`);
 
       executionSource.onmessage = (event) => {
@@ -38,8 +38,6 @@ const Sidebar = ({
         }
 
         if (executions) {
-
-
           executions
             .sort((a, b) => b.start_time.localeCompare(a.start_time))
             .forEach((execution) => {
@@ -51,9 +49,12 @@ const Sidebar = ({
             });
         }
 
-        setTestExecutions((prev) => uniqueNewExecutions(prev, test).concat(prev));
-        setActiveExecutions((prev) => uniqueNewExecutions(prev, active).concat(prev));
-
+        setTestExecutions((prev) =>
+          uniqueNewExecutions(prev, test).concat(prev)
+        );
+        setActiveExecutions((prev) =>
+          uniqueNewExecutions(prev, active).concat(prev)
+        );
       };
     };
     getLogs();
@@ -106,6 +107,7 @@ const Sidebar = ({
         handleEditListItemClick={handleEditListItemClick}
         active={active}
       />
+
       <Divider sx={{ mb: "20px" }} />
       <ExecutionLogs
         testExecutions={testExecutions}

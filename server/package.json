@@ -1,13 +1,13 @@
 {
-  "name": "server",
+  "name": "otto",
   "type": "module",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A light ETL workflow automation tool",
+  "main": "src/index.js",
   "scripts": {
-    "dev": "NODE_ENV=DEVELOPMENT nodemon src/index.js",
-    "start": "NODE_ENV=PRODUCTION node src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "NODE_ENV=development nodemon src/index.js",
+    "start": "NODE_ENV=production node src/index.js",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -19,10 +19,13 @@
     "express": "^4.18.2",
     "mongodb": "^5.7.0",
     "node-cron": "^3.0.2",
-    "pg-promise": "^11.5.0"
+    "pg-promise": "^11.5.0",
+    "supertest": "^6.3.3"
   },
   "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.22.5",
     "cors": "^2.8.5",
+    "jest": "^29.6.1",
     "nodemon": "^2.0.22",
     "oauth2-mock-server": "^6.0.0"
   }

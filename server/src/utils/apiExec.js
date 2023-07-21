@@ -44,7 +44,7 @@ const getAccessToken = async (nodeObj, workflowObj) => {
   }
 };
 
-const sendAPIWithOAuth = async (nodeObj, workflowObj) => {
+export const sendAPIWithOAuth = async (nodeObj, workflowObj) => {
   let { httpVerb, url, header, jsonBody } = nodeObj.data;
   let headerToSend;
 
@@ -80,7 +80,7 @@ const sendAPIWithOAuth = async (nodeObj, workflowObj) => {
   return data;
 };
 
-const sendAPIWithoutOAuth = async (nodeObj, workflowObj) => {
+export const sendAPIWithoutOAuth = async (nodeObj, workflowObj) => {
   let { httpVerb, url, header, jsonBody } = nodeObj.data;
   return await sendAPI({
     method: httpVerb,
