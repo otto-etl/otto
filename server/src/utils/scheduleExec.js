@@ -44,11 +44,11 @@ export const startCron = async (workflowObj) => {
   const intervalInMinutes = scheduleNodeObj.data.intervalInMinutes;
   let startTime;
 
-  //if workflow is already active and we've recalculated start time, use start time in workflow start_time field ind the db
+  //if workflow is already active and we've recalculated start time, use start time in workflow start_time field in the db
   if (workflowObj.active && workflowObj.start_time) {
     startTime = workflowObj.start_time;
   } else {
-    //if workflow is not active, use start time from the schedule node
+    // if workflow is not active, or a cron job is still pending, use start time from the schedule node
     startTime = scheduleNodeObj.data.startTime;
     workflowObj.active = true;
     await activateWorkflow(workflowID);
