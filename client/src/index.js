@@ -87,9 +87,6 @@ const theme = createTheme({
           style: {
             textTransform: "capitalize",
             fontSize: "16px",
-            "&:hover": {
-              backgroundColor: "#EBEDFE",
-            },
           },
         },
         {

@@ -58,7 +58,13 @@ const NewWFModal = ({ newWFVisible, handleCloseNewWFModal }) => {
           <Box sx={{ display: "flex", gap: "20px", justifyContent: "end" }}>
             <Button
               variant="text"
-              sx={{ textTransform: "capitalize", fontSize: "16px" }}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: "16px",
+                "&:hover": {
+                  backgroundColor: "#EBEDFE",
+                },
+              }}
               onClick={handleCloseNewWFModal}
             >
               Cancel

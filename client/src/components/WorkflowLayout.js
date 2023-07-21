@@ -17,7 +17,9 @@ import { useParams } from "react-router-dom";
 import ViewAlert from "./Alert/ViewAlert";
 import Modal from "./Modals/Modal";
 import ScheduleNode from "./Nodes/ScheduleNode";
-import ExtractNode from "./Nodes/ExtractNode";
+import ExtractPsqlNode from "./Nodes/ExtractPsqlNode";
+import ExtractApiNode from "./Nodes/ExtractApiNode";
+import ExtractMongoNode from "./Nodes/ExtractMongoNode";
 import TransformNode from "./Nodes/TransformNode";
 import LoadNode from "./Nodes/LoadNode";
 import NodeCreationMenu from "./NodeCreationMenu";
@@ -51,9 +53,9 @@ const snapGrid = [20, 20];
 // See comment below about React Flow nodeTypes warning
 const nodeTypes = {
   schedule: ScheduleNode,
-  extractApi: ExtractNode,
-  extractPsql: ExtractNode,
-  extractMongo: ExtractNode,
+  extractApi: ExtractApiNode,
+  extractPsql: ExtractPsqlNode,
+  extractMongo: ExtractMongoNode,
   transform: TransformNode,
   load: LoadNode,
 };
@@ -138,7 +140,6 @@ const WorkflowLayout = () => {
 
   const openModal = (nodeData) => {
     setModalIsOpen(true);
-    console.log("openModal", nodeData);
     setModalData(nodeData);
     setError(nodeData.data.error);
   };
@@ -242,7 +243,6 @@ const WorkflowLayout = () => {
   };
 
   const onCreateNode = async (nodeType) => {
-    console.log("nodeType", nodeType);
     let newNodeId = crypto.randomUUID();
     let newNode = {
       id: newNodeId,
@@ -422,13 +422,13 @@ const WorkflowLayout = () => {
   };
 
   const handleMetricsButtonClick = (event) => {
-	  event.preventDefault();
-	  setMetricsModalOpen(true);
+    event.preventDefault();
+    setMetricsModalOpen(true);
   };
-  
+
   const parseMetrics = async () => {
     const metricsData = await getMetrics(wfID);
-	  return metricsData;
+    return metricsData;
   };
 
   const handleCloseMetricsModal = (e) => {
@@ -502,19 +502,35 @@ const WorkflowLayout = () => {
         >
           <Controls />
           <Background color={"#a7a7ae"} style={{ background: "#f3f4f6" }} />
-          <Panel position="top-right">
-            <NodeCreationMenu
-              onCreateNode={onCreateNode}
-              logView={logView}
-              active={active}
-            />
-	        <Button variant="outlined" sx={{ textTransform: "capitalize", display: "flex", gap: "10px", margin: "6px 0 0 0" }} onClick={handleMetricsButtonClick}
-	          >
-			  <BarChartBig size={18} />
-			  Active Metrics</Button>
+          <Panel position="top-right" style={{ marginRight: "24px" }}>
+            <Box
+              sx={{
+                display: "flex",
+                gap: "20px",
+              }}
+            >
+              <NodeCreationMenu
+                onCreateNode={onCreateNode}
+                logView={logView}
+                active={active}
+              />
+              <Button
+                variant="outlined"
+                sx={{
+                  textTransform: "capitalize",
+                  display: "flex",
+                  gap: "10px",
+                  margin: "0",
+                }}
+                onClick={handleMetricsButtonClick}
+              >
+                <BarChartBig size={18} />
+                Active Metrics
+              </Button>
+            </Box>
             {metricsModalOpen ? (
               <MetricsModal
-		        metrics={parseMetrics()}
+                metrics={parseMetrics()}
                 metricsModalOpen={metricsModalOpen}
                 handleCloseMetricsModal={handleCloseMetricsModal}
                 workflowID={wfID}
