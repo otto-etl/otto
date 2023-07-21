@@ -35,9 +35,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "build": "NODE_ENV=PRODUCTION HTTPS=true SSL_CRT_FILE=../server/otto_cert/cert.pem SSL_KEY_FILE=../server/otto_cert/key.pem react-scripts build",
-    "start": "NODE_ENV=DEVELOPMENT react-scripts start",
-    "test": "react-scripts test",
+    "build": "react-scripts build",
+    "start": "react-scripts start",
+    "test": "react-scripts test --transformIgnorePatterns 'node_modules/(?!my-library-dir)/'",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -57,5 +57,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "homepage": "./"
 }
