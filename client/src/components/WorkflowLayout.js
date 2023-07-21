@@ -264,11 +264,11 @@ const WorkflowLayout = () => {
     const nodeWidthOffset = NODE_WIDTH / 2;
     const nodeHeightOffset = NODE_HEIGHT / 2;
 
-    const currentYOverlapOffset = -400;
+    const currentYOverlapOffset = 300;
 
     const position = {
       x: centerX - nodeWidthOffset,
-      y: centerY - nodeHeightOffset + currentYOverlapOffset,
+      y: centerY - nodeHeightOffset - currentYOverlapOffset,
     };
 
     return position;
