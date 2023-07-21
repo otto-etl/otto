@@ -11,11 +11,17 @@ import { EditorView } from "@codemirror/view";
 import { Typography, IconButton } from "@mui/material";
 import { Trash2 } from "lucide-react";
 
-const TransformModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
+const TransformModal = ({
+  nodeObj,
+  handleSubmit,
+  disabled,
+  handleDelete,
+  handleClose,
+  error,
+}) => {
   console.log("transform", nodeObj.data);
   const [name, setName] = useState(nodeObj.data.label);
   const [code, setCode] = useState(nodeObj.data.jsCode);
-  const [error, setError] = useState(nodeObj.data.error);
   const [tab, setTab] = useState(0);
 
   const formsPopulated = () => {
@@ -56,7 +62,7 @@ const TransformModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
             display: "flex",
             flexDirection: "column",
             gap: "30px",
-            overflow: "scroll",
+            overflow: "auto",
           }}
         >
           {error ? (
@@ -119,17 +125,37 @@ const TransformModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
             onClick={handleDelete}
             disabled={disabled ? true : false}
           >
-            <Trash2 color="#555" size={26} strokeWidth={1.5} />
+            <Trash2 color="#555" size={24} strokeWidth={1.5} />
           </IconButton>
-
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            disabled={disabled || !formsPopulated() ? true : false}
+          <Box
+            sx={{
+              display: "flex",
+              gap: "20px",
+            }}
           >
-            Save and Execute
-          </Button>
+            <Button
+              variant="text"
+              onClick={handleClose}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: "16px",
+                color: "#3c4bcb",
+                "&:hover": {
+                  backgroundColor: "#EBEDFE",
+                },
+              }}
+            >
+              Close
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={disabled || !formsPopulated() ? true : false}
+            >
+              Save and Execute
+            </Button>
+          </Box>
         </Stack>
       </form>
     </Box>

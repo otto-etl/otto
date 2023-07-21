@@ -99,7 +99,7 @@ const ExecutionLogs = ({
         {/* ACTIVE EXECUTION TAB */}
         <TabPanel
           value="1"
-          sx={{ p: 0, height: "calc(100vh - 329px)", overflow: "scroll" }}
+          sx={{ p: 0, height: "calc(100vh - 329px)", overflow: "auto" }}
         >
           {testExecutions.length === 0 ? (
             <Typography
@@ -118,7 +118,7 @@ const ExecutionLogs = ({
         </TabPanel>
         <TabPanel
           value="2"
-          sx={{ p: 0, height: "calc(100vh - 329px)", overflow: "scroll" }}
+          sx={{ p: 0, height: "calc(100vh - 329px)", overflow: "auto" }}
         >
           {activeExecutions.length === 0 ? (
             <Typography

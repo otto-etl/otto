@@ -11,16 +11,38 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { Trash2 } from "lucide-react";
 
-const ScheduleModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
+const ScheduleModal = ({
+  nodeObj,
+  handleSubmit,
+  disabled,
+  handleDelete,
+  handleClose,
+}) => {
   const [name, setName] = useState(nodeObj.data.label);
   const [dateAndTime, setDateAndTime] = useState(dayjs(nodeObj.data.startTime));
-  const [interval, setInterval] = useState(
+  const [intervalDays, setIntervalDays] = useState(
     nodeObj.data.intervalInMinutes / 24 / 60
   );
+  const [changesMade, setChangesMade] = useState(false);
 
   const formsPopulated = () => {
-    return name && dateAndTime && interval;
+    return name && dateAndTime && intervalDays;
   };
+  
+  const onDateTimeChange = (dateAndTime) => {
+	setDateAndTime(dateAndTime);
+	setChangesMade(true);
+  }
+  
+  const onIntervalChange = (event) => {
+	if (!/^[\d.]+$/.test(event.target.value)) {
+	  setIntervalDays("");
+	}
+    else {
+	  setIntervalDays(event.target.value);
+	}
+	setChangesMade(true);
+  }
 
   return (
     <Box sx={{ height: "100%" }}>
@@ -41,8 +63,9 @@ const ScheduleModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
           const newData = {
             label: name,
             startTime: dateAndTime.$d,
-            intervalInMinutes: Number(interval) * 24 * 60,
+            intervalInMinutes: Number(intervalDays) * 24 * 60,
           };
+		  setChangesMade(false);
           handleSubmit(e, newData);
         }}
       >
@@ -74,7 +97,7 @@ const ScheduleModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
                   disabled={disabled ? true : false}
                   label="Date and Time"
                   value={dateAndTime}
-                  onChange={(dateAndTime) => setDateAndTime(dateAndTime)}
+                  onChange={onDateTimeChange}
                   slotProps={{ textField: { size: "small" } }}
                 />
               </DemoContainer>
@@ -86,9 +109,8 @@ const ScheduleModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
               disabled={disabled ? true : false}
               id="outlined-basic"
               label="Frequency of Execution (days)"
-              type={"number"}
-              value={interval}
-              onChange={(e) => setInterval(e.target.value)} // variant="outlined"
+              value={intervalDays}
+              onChange={onIntervalChange} // variant="outlined"
               size="small"
             />
           </Box>
@@ -99,16 +121,37 @@ const ScheduleModal = ({ nodeObj, handleSubmit, disabled, handleDelete }) => {
             onClick={handleDelete}
             disabled={disabled ? true : false}
           >
-            <Trash2 color="#555" size={26} strokeWidth={1.5} />
+            <Trash2 color="#555" size={24} strokeWidth={1.5} />
           </IconButton>
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            disabled={disabled || !formsPopulated() ? true : false}
+          <Box
+            sx={{
+              display: "flex",
+              gap: "20px",
+            }}
           >
-            Save
-          </Button>
+            <Button
+              variant="text"
+              onClick={handleClose}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: "16px",
+                color: "#3c4bcb",
+                "&:hover": {
+                  backgroundColor: "#EBEDFE",
+                },
+              }}
+            >
+              Close
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={disabled || !formsPopulated() || !changesMade ? true : false}
+            >
+              Save
+            </Button>
+          </Box>
         </Stack>
       </form>
     </Box>

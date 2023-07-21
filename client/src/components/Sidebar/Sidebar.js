@@ -1,9 +1,8 @@
 import React from "react";
 import ExecutionLogs from "./ExecutionLogs";
 import EditWorkflow from "./EditWorkflow";
-import MetricsModal from "../Modals/MetricsModal.js";
 import { Box, Button, Divider, Modal } from "@mui/material";
-import { getExecutions, getMetrics } from "../../services/api";
+import { getExecutions } from "../../services/api";
 import { uniqueNewExecutions } from "../../utils/utils";
 
 const Sidebar = ({
@@ -15,7 +14,6 @@ const Sidebar = ({
   const [selectedEditIndex, setSelectedEditIndex] = React.useState(0);
   const [selectedTestIndex, setSelectedTestIndex] = React.useState(null);
   const [selectedActiveIndex, setSelectedActiveIndex] = React.useState(null);
-  const [metricsModalOpen, setMetricsModalOpen] = React.useState(false);
   const [testExecutions, setTestExecutions] = React.useState([]);
   const [activeExecutions, setActiveExecutions] = React.useState([]);
 
@@ -95,6 +93,7 @@ const Sidebar = ({
     console.log("UPDATE REACT FLOW STATE");
   };
 
+<<<<<<< HEAD
   const handleMetricsButtonClick = (event) => {
     event.preventDefault();
     setMetricsModalOpen(true);
@@ -110,6 +109,8 @@ const Sidebar = ({
     setMetricsModalOpen(false);
   };
 
+=======
+>>>>>>> main
   return (
     <Box
       sx={{
@@ -124,6 +125,7 @@ const Sidebar = ({
         handleEditListItemClick={handleEditListItemClick}
         active={active}
       />
+<<<<<<< HEAD
       <Button
         className="css-1jqvl0s-MuiButtonBase-root-MuiListItemButton-root MuiTypography-root"
         onClick={handleMetricsButtonClick}
@@ -148,6 +150,9 @@ const Sidebar = ({
           workflowID={workflowID}
         />
       ) : null}
+=======
+
+>>>>>>> main
       <Divider sx={{ mb: "20px" }} />
       <ExecutionLogs
         testExecutions={testExecutions}
