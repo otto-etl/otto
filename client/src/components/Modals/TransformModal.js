@@ -62,7 +62,7 @@ const TransformModal = ({
             display: "flex",
             flexDirection: "column",
             gap: "30px",
-            overflow: "scroll",
+            overflow: "auto",
           }}
         >
           {error ? (

@@ -277,7 +277,7 @@ function BasicModal({
               <Box
                 sx={{
                   height: "calc(100vh - 159px)",
-                  overflow: "scroll",
+                  overflow: "auto",
                   margin: "0 20px 24px",
                 }}
               >
