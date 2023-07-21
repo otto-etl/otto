@@ -38,10 +38,6 @@ const getExtractNode = (workflowObj) => {
   return workflowObj.nodes.find((node) => node.type === "extract");
 };
 
-export const getNodeByID = (workflowObj, id) => {
-  return workflowObj.nodes.find((node) => node.id === id);
-};
-
 const getTargetNodeObj = (workflowObj, sourceNodeObj) => {
   const edgeObj = workflowObj.edges.find((edge) => {
     return edge.source === sourceNodeObj.id;
