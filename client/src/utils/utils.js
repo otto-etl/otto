@@ -64,10 +64,9 @@ export const workflowHasOrphanNodes = (nodes, edges) => {
     ) {
       hasOrphans = true;
     } else if (
-      (nodeEdgeTracker[node].type === "extract" ||
-        nodeEdgeTracker[node].type === "transform") &&
-      (!nodeEdgeTracker[node].hasSource || !nodeEdgeTracker[node].hasTarget)
-    ) {
+       (nodeEdgeTracker[node].type === "extractApi" || nodeEdgeTracker[node].type === "extractPsql" ||
+	    nodeEdgeTracker[node].type === "extractMongo" || nodeEdgeTracker[node].type === "transform") &&
+         (!nodeEdgeTracker[node].hasSource || !nodeEdgeTracker[node].hasTarget)) {
       hasOrphans = true;
     }
   });
