@@ -17,7 +17,9 @@ import { useParams } from "react-router-dom";
 import ViewAlert from "./Alert/ViewAlert";
 import Modal from "./Modals/Modal";
 import ScheduleNode from "./Nodes/ScheduleNode";
-import ExtractNode from "./Nodes/ExtractNode";
+import ExtractPsqlNode from "./Nodes/ExtractPsqlNode";
+import ExtractApiNode from "./Nodes/ExtractApiNode";
+import ExtractMongoNode from "./Nodes/ExtractMongoNode";
 import TransformNode from "./Nodes/TransformNode";
 import LoadNode from "./Nodes/LoadNode";
 import NodeCreationMenu from "./NodeCreationMenu";
@@ -48,9 +50,9 @@ const snapGrid = [20, 20];
 // See comment below about React Flow nodeTypes warning
 const nodeTypes = {
   schedule: ScheduleNode,
-  extractApi: ExtractNode,
-  extractPsql: ExtractNode,
-  extractMongo: ExtractNode,
+  extractApi: ExtractApiNode,
+  extractPsql: ExtractPsqlNode,
+  extractMongo: ExtractMongoNode,
   transform: TransformNode,
   load: LoadNode,
 };
@@ -134,7 +136,6 @@ const WorkflowLayout = () => {
 
   const openModal = (nodeData) => {
     setModalIsOpen(true);
-    console.log("openModal", nodeData);
     setModalData(nodeData);
     setError(nodeData.data.error);
   };
@@ -238,7 +239,6 @@ const WorkflowLayout = () => {
   };
 
   const onCreateNode = async (nodeType) => {
-    console.log("nodeType", nodeType);
     let newNodeId = crypto.randomUUID();
     let newNode = {
       id: newNodeId,

@@ -25,7 +25,6 @@ const ExtractPsqlModal = ({
   handleClose,
   error,
 }) => {
-  console.log(nodeObj);
   const [name, setName] = useState(nodeObj.data.label);
   const [code, setCode] = useState(nodeObj.data.sqlCode);
   const [userName, setUserName] = useState(nodeObj.data.userName);

@@ -8,29 +8,19 @@ export default memo(({ data, isConnectable }) => {
       <Handle
         type="target"
         position={Position.Left}
-        onConnect={(params) =>
-          console.log(
-            "handle onConnect on extract node from target handle",
-            params
-          )
-        }
+        onConnect={(params) => {}}
         isConnectable={isConnectable}
       />
       <NodeBody
         data={data}
         nodeAbbreviation={"Ex"}
-        nodeName={"Extract"}
+        nodeName={"Extract MongoDB"}
         bgColor={"#5D92F5"}
       />
       <Handle
         type="source"
         position={Position.Right}
-        onConnect={(params) =>
-          console.log(
-            "handle onConnect on extract node from source handle",
-            params
-          )
-        }
+        onConnect={(params) => {}}
         isConnectable={isConnectable}
       />
     </>
