@@ -10,6 +10,7 @@ import ReactFlow, {
   Panel,
   Controls,
   MiniMap,
+  useStoreApi,
 } from "reactflow";
 import { Background } from "@reactflow/background";
 import { useParams } from "react-router-dom";
@@ -85,6 +86,7 @@ const WorkflowLayout = () => {
   const [message, setMessage] = useState("");
   const [logView, setLogView] = useState(false);
   const wfID = useParams().id;
+  const store = useStoreApi();
 
   const nodeColor = (node) => {
     switch (node.type) {
@@ -242,12 +244,40 @@ const WorkflowLayout = () => {
     setError(returnedNodeObj.data.error);
   };
 
+  const calculateNewNodePosition = () => {
+    const {
+      height,
+      width,
+      transform: [transformX, transformY, zoomLevel],
+    } = store.getState();
+
+    const zoomMultiplier = 1 / zoomLevel;
+
+    // Figure out the center of the current viewport
+    const centerX = -transformX * zoomMultiplier + (width * zoomMultiplier) / 2;
+    const centerY =
+      -transformY * zoomMultiplier + (height * zoomMultiplier) / 2;
+
+    const NODE_WIDTH = 300;
+    const NODE_HEIGHT = 67;
+
+    const nodeWidthOffset = NODE_WIDTH / 2;
+    const nodeHeightOffset = NODE_HEIGHT / 2;
+
+    const currentYOverlapOffset = -400;
+
+    return {
+      x: centerX - nodeWidthOffset,
+      y: centerY - nodeHeightOffset + currentYOverlapOffset,
+    };
+  };
+
   const onCreateNode = async (nodeType) => {
     let newNodeId = crypto.randomUUID();
     let newNode = {
       id: newNodeId,
       type: nodeType,
-      position: { x: 650, y: -125 }, // Arbitrary hardcoded location, below menu
+      position: calculateNewNodePosition(),
       data: {
         label: formatNodeLabel(nodeType),
         output: "",
@@ -481,6 +511,7 @@ const WorkflowLayout = () => {
           handleEditWorkflowListItemClick={handleEditWorkflowListItemClick}
           active={active}
         />
+
         <ReactFlow
           style={{ flex: 1 }}
           nodes={nodes}
