@@ -23,6 +23,7 @@ import ExtractMongoNode from "./Nodes/ExtractMongoNode";
 import TransformNode from "./Nodes/TransformNode";
 import LoadNode from "./Nodes/LoadNode";
 import NodeCreationMenu from "./NodeCreationMenu";
+import MetricsModal from "./Modals/MetricsModal.js";
 import WorkflowNavbar from "./Navigation/WorkflowNavbar";
 import GlobalNavbar from "./Navigation/GlobalNavbar";
 import Sidebar from "./Sidebar/Sidebar";
@@ -41,9 +42,11 @@ import {
   saveWorkflow,
   saveAndExecuteWorkflow,
   toggleWorkflowStatus,
+  getMetrics,
 } from "../services/api";
 
-import { Alert, AlertTitle, Box } from "@mui/material";
+import { Alert, AlertTitle, Box, Button } from "@mui/material";
+import { BarChartBig } from "lucide-react";
 
 const connectionLineStyle = { stroke: "#fff" };
 const snapGrid = [20, 20];
@@ -73,6 +76,7 @@ const WorkflowLayout = () => {
   // Reset editNodes and editEdges
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalData, setModalData] = useState("");
+  const [metricsModalOpen, setMetricsModalOpen] = React.useState(false);
   const [error, setError] = useState(null);
   const [active, setActive] = useState(false);
   const [hasOrphans, setHasOrphans] = useState(false);
@@ -417,6 +421,21 @@ const WorkflowLayout = () => {
     return input;
   };
 
+  const handleMetricsButtonClick = (event) => {
+	  event.preventDefault();
+	  setMetricsModalOpen(true);
+  };
+  
+  const parseMetrics = async () => {
+    const metricsData = await getMetrics(wfID);
+	  return metricsData;
+  };
+
+  const handleCloseMetricsModal = (e) => {
+    e.preventDefault();
+    setMetricsModalOpen(false);
+  };
+
   /* ReactFlow throws a console warning here:
   
   It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them.
@@ -489,6 +508,18 @@ const WorkflowLayout = () => {
               logView={logView}
               active={active}
             />
+	        <Button variant="outlined" sx={{ textTransform: "capitalize", display: "flex", gap: "10px", margin: "6px 0 0 0" }} onClick={handleMetricsButtonClick}
+	          >
+			  <BarChartBig size={18} />
+			  Active Metrics</Button>
+            {metricsModalOpen ? (
+              <MetricsModal
+		        metrics={parseMetrics()}
+                metricsModalOpen={metricsModalOpen}
+                handleCloseMetricsModal={handleCloseMetricsModal}
+                workflowID={wfID}
+              />
+            ) : null}
           </Panel>
           <Panel position="top-center">
             {logView && !active ? <ViewAlert message={"Log View"} /> : null}

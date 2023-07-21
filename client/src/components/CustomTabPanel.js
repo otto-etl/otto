@@ -17,7 +17,7 @@ const CustomTabPanel = (props) => {
             // m: 3,
             marginTop: "20px",
             height: `calc(100vh - ${scrollOffset})`,
-            overflow: "scroll",
+            overflow: "auto",
           }}
         >
           {children}

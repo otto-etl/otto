@@ -11,7 +11,6 @@ const NewWFModal = ({ newWFVisible, handleCloseNewWFModal }) => {
     e.preventDefault();
     const data = await createNewWF({ name: newWfName });
     navigate(`/workflow/${data.id}`);
-    // handleCloseNewWFModal();
   };
 
   const formsPopulated = () => {
@@ -56,20 +55,20 @@ const NewWFModal = ({ newWFVisible, handleCloseNewWFModal }) => {
             onChange={(e) => setNewWfName(e.target.value)}
           />
 
-          <Box sx={{ display: "flex", gap: "20px" }}>
-            <Button
-              variant="contained"
-              disabled={formsPopulated() ? false : true}
-              onClick={handleSaveNewWF}
-            >
-              Create
-            </Button>
+          <Box sx={{ display: "flex", gap: "20px", justifyContent: "end" }}>
             <Button
               variant="text"
               sx={{ textTransform: "capitalize", fontSize: "16px" }}
               onClick={handleCloseNewWFModal}
             >
               Cancel
+            </Button>
+            <Button
+              variant="contained"
+              disabled={formsPopulated() ? false : true}
+              onClick={handleSaveNewWF}
+            >
+              Create
             </Button>
           </Box>
         </Box>
