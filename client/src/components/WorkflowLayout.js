@@ -85,7 +85,6 @@ const WorkflowLayout = () => {
   const [wfError, setWfError] = useState();
   const [message, setMessage] = useState("");
   const [logView, setLogView] = useState(false);
-  const lastNodePosition = useRef({ x: 0, y: 0 });
   const wfID = useParams().id;
   const store = useStoreApi();
 
@@ -267,10 +266,12 @@ const WorkflowLayout = () => {
 
     const currentYOverlapOffset = -400;
 
-    return {
+    const position = {
       x: centerX - nodeWidthOffset,
       y: centerY - nodeHeightOffset + currentYOverlapOffset,
     };
+
+    return position;
   };
 
   const onCreateNode = async (nodeType) => {
@@ -278,18 +279,14 @@ const WorkflowLayout = () => {
     let newNode = {
       id: newNodeId,
       type: nodeType,
-      // position: calculatezNewNodePosition(),
-      position: { ...lastNodePosition.current },
+      position: calculateNewNodePosition(),
       data: {
         label: formatNodeLabel(nodeType),
         output: "",
       },
     };
-    addExtraNodeProperties(newNode);
-    lastNodePosition.current.x += 120;
-    lastNodePosition.current.y += 40;
-    // console.log(newNode);
 
+    addExtraNodeProperties(newNode);
     let newNodes = [...nodes, newNode];
     await saveWorkflow(1, { nodes: newNodes, edges });
     setNodes(newNodes);
