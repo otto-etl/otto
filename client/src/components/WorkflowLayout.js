@@ -17,10 +17,13 @@ import { useParams } from "react-router-dom";
 import ViewAlert from "./Alert/ViewAlert";
 import Modal from "./Modals/Modal";
 import ScheduleNode from "./Nodes/ScheduleNode";
-import ExtractNode from "./Nodes/ExtractNode";
+import ExtractPsqlNode from "./Nodes/ExtractPsqlNode";
+import ExtractApiNode from "./Nodes/ExtractApiNode";
+import ExtractMongoNode from "./Nodes/ExtractMongoNode";
 import TransformNode from "./Nodes/TransformNode";
 import LoadNode from "./Nodes/LoadNode";
 import NodeCreationMenu from "./NodeCreationMenu";
+import MetricsModal from "./Modals/MetricsModal.js";
 import WorkflowNavbar from "./Navigation/WorkflowNavbar";
 import GlobalNavbar from "./Navigation/GlobalNavbar";
 import Sidebar from "./Sidebar/Sidebar";
@@ -39,18 +42,20 @@ import {
   saveWorkflow,
   saveAndExecuteWorkflow,
   toggleWorkflowStatus,
+  getMetrics,
 } from "../services/api";
 
-import { Alert, AlertTitle, Box } from "@mui/material";
+import { Alert, AlertTitle, Box, Button } from "@mui/material";
+import { BarChartBig } from "lucide-react";
 
 const connectionLineStyle = { stroke: "#fff" };
 const snapGrid = [20, 20];
 // See comment below about React Flow nodeTypes warning
 const nodeTypes = {
   schedule: ScheduleNode,
-  extractApi: ExtractNode,
-  extractPsql: ExtractNode,
-  extractMongo: ExtractNode,
+  extractApi: ExtractApiNode,
+  extractPsql: ExtractPsqlNode,
+  extractMongo: ExtractMongoNode,
   transform: TransformNode,
   load: LoadNode,
 };
@@ -71,12 +76,13 @@ const WorkflowLayout = () => {
   // Reset editNodes and editEdges
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalData, setModalData] = useState("");
+  const [metricsModalOpen, setMetricsModalOpen] = React.useState(false);
+  const [error, setError] = useState(null);
   const [active, setActive] = useState(false);
   const [hasOrphans, setHasOrphans] = useState(false);
   const [wfName, setWfName] = useState("");
   const [wfError, setWfError] = useState();
   const [message, setMessage] = useState("");
-  const [currentDB, setCurrentDB] = useState("");
   const [logView, setLogView] = useState(false);
   const wfID = useParams().id;
 
@@ -102,7 +108,6 @@ const WorkflowLayout = () => {
       setEdges(response.edges);
       setActive(response.active);
       setWfName(response.name);
-      getCurrentDB(response.nodes, response.active);
     };
     getWorkflow();
   }, [setNodes, setEdges, setActive, setWfName, wfID]);
@@ -135,8 +140,8 @@ const WorkflowLayout = () => {
 
   const openModal = (nodeData) => {
     setModalIsOpen(true);
-    console.log("openModal", nodeData);
     setModalData(nodeData);
+    setError(nodeData.data.error);
   };
 
   const onEdgeUpdate = useCallback(
@@ -224,24 +229,20 @@ const WorkflowLayout = () => {
       nodes: newNodesArray,
       edges: edges,
     };
-    //on successfull execution returns output data
-    //on execution failure returns error node object
-    // let executionResult = await saveAndExecuteNode(payload);
-    // let currentNode = newNodesArray.find((node) => node.id === currentId);
 
-    // if (executionResult.data && executionResult.data.error) {
-    //   currentNode.data = executionResult.data;
-    // } else {
-    //   currentNode.data.output = executionResult;
-    // }
     let executionResult = await saveAndExecuteNode(payload);
-    // console.log("execution result", executionResult.nodes);
     setNodes(executionResult.nodes);
     setEdges(executionResult.edges);
+
+    const returnedNodeObj = executionResult.nodes.find(
+      (node) => node.id === currentId
+    );
+
+    setModalData(returnedNodeObj);
+    setError(returnedNodeObj.data.error);
   };
 
   const onCreateNode = async (nodeType) => {
-    console.log("nodeType", nodeType);
     let newNodeId = crypto.randomUUID();
     let newNode = {
       id: newNodeId,
@@ -375,10 +376,8 @@ const WorkflowLayout = () => {
       // handleMessage(`Workflow ${wfName} is now active!`, null, 2000, null);
       handleMessage(`Workflow is now active!`, null, 2000, null);
     } else {
-      // handleMessage(`Workflow ${wfName} is now inactive!`, null, 2000, null);
       handleMessage(`Workflow is now inactive!`, null, 2000, null);
     }
-    getCurrentDB(nodes, checked);
   };
 
   const handleSaveWorkflow = async (e) => {
@@ -406,24 +405,6 @@ const WorkflowLayout = () => {
     setTimeout(handleMessage1, laps1);
   };
 
-  const getCurrentDB = (nodes, active) => {
-    // console.log(nodes, active);
-    const loadNode = nodes.find((node) => node.type === "load");
-    // console.log(loadNode);
-
-    if (loadNode && !active) {
-      setCurrentDB(
-        `host:${loadNode.data.host} db:${loadNode.data.dbName} user:${loadNode.data.userName}`
-      );
-    } else if (loadNode && active) {
-      setCurrentDB(
-        `host:${loadNode.data.hostPD} db:${loadNode.data.dbNamePD} user:${loadNode.data.userNamePD}`
-      );
-    } else {
-      setCurrentDB("No load node yet");
-    }
-  };
-
   const getPrevNodesOutput = (currentNodeID) => {
     const sourceEdges = edges.filter((edge) => edge.target === currentNodeID);
     const input = {};
@@ -438,6 +419,21 @@ const WorkflowLayout = () => {
       idx++;
     });
     return input;
+  };
+
+  const handleMetricsButtonClick = (event) => {
+    event.preventDefault();
+    setMetricsModalOpen(true);
+  };
+
+  const parseMetrics = async () => {
+    const metricsData = await getMetrics(wfID);
+    return metricsData;
+  };
+
+  const handleCloseMetricsModal = (e) => {
+    e.preventDefault();
+    setMetricsModalOpen(false);
   };
 
   /* ReactFlow throws a console warning here:
@@ -506,12 +502,40 @@ const WorkflowLayout = () => {
         >
           <Controls />
           <Background color={"#a7a7ae"} style={{ background: "#f3f4f6" }} />
-          <Panel position="top-right">
-            <NodeCreationMenu
-              onCreateNode={onCreateNode}
-              logView={logView}
-              active={active}
-            />
+          <Panel position="top-right" style={{ marginRight: "24px" }}>
+            <Box
+              sx={{
+                display: "flex",
+                gap: "20px",
+              }}
+            >
+              <NodeCreationMenu
+                onCreateNode={onCreateNode}
+                logView={logView}
+                active={active}
+              />
+              <Button
+                variant="outlined"
+                sx={{
+                  textTransform: "capitalize",
+                  display: "flex",
+                  gap: "10px",
+                  margin: "0",
+                }}
+                onClick={handleMetricsButtonClick}
+              >
+                <BarChartBig size={18} />
+                Active Metrics
+              </Button>
+            </Box>
+            {metricsModalOpen ? (
+              <MetricsModal
+                metrics={parseMetrics()}
+                metricsModalOpen={metricsModalOpen}
+                handleCloseMetricsModal={handleCloseMetricsModal}
+                workflowID={wfID}
+              />
+            ) : null}
           </Panel>
           <Panel position="top-center">
             {logView && !active ? <ViewAlert message={"Log View"} /> : null}
@@ -539,6 +563,7 @@ const WorkflowLayout = () => {
               nodeObj={modalData}
               disabled={logView || active}
               getPrevNodesOutput={getPrevNodesOutput}
+              error={error}
             />
           ) : null}
         </ReactFlow>

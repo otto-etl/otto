@@ -24,6 +24,8 @@ const ExtractMongoModal = ({
   handleSubmit,
   disabled,
   handleDelete,
+  handleClose,
+  error,
 }) => {
   const [name, setName] = useState(nodeObj.data.label);
   const [host, setHost] = useState(nodeObj.data.host);
@@ -36,9 +38,6 @@ const ExtractMongoModal = ({
   const [password, setPassword] = useState(nodeObj.data.password);
   const [query, setQuery] = useState(nodeObj.data.query);
   const [limit, setLimit] = useState(nodeObj.data.limit);
-  // const [connectionFormat, setConnectionFormat] = useState(
-  //   nodeObj.data.connectionFormat
-  // );
   const [connectionFormat, setConnectionFormat] = useState(
     nodeObj.data.connectionFormat
   );
@@ -89,10 +88,9 @@ const ExtractMongoModal = ({
           height: "calc(100vh - 155px)",
         }}
       >
-        {nodeObj.data.error ? (
+        {error ? (
           <Alert
             sx={{
-              // margin: "10px 0 10px 0",
               border: "2px solid #B99",
               whiteSpace: "pre-line",
               marginBottom: "20px",
@@ -112,7 +110,7 @@ const ExtractMongoModal = ({
             display: "flex",
             flexDirection: "column",
             gap: "30px",
-            overflow: "scroll",
+            overflow: "auto",
           }}
         >
           <TextField
@@ -121,7 +119,6 @@ const ExtractMongoModal = ({
             label="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            // sx={{ width: "100%", marginTop: "5px" }}
             size={"small"}
             sx={{ marginTop: "5px" }}
           />
@@ -290,17 +287,38 @@ const ExtractMongoModal = ({
             onClick={handleDelete}
             disabled={disabled ? true : false}
           >
-            <Trash2 color="#555" size={26} strokeWidth={1.5} />
+            <Trash2 color="#555" size={24} strokeWidth={1.5} />
             {/* // #d32f2f */}
           </IconButton>
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            // disabled={disabled || !formsPopulated() ? true : false}
+          <Box
+            sx={{
+              display: "flex",
+              gap: "20px",
+            }}
           >
-            Save and Execute
-          </Button>
+            <Button
+              variant="text"
+              onClick={handleClose}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: "16px",
+                color: "#3c4bcb",
+                "&:hover": {
+                  backgroundColor: "#EBEDFE",
+                },
+              }}
+            >
+              Close
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              // disabled={disabled || !formsPopulated() ? true : false}
+            >
+              Save and Execute
+            </Button>
+          </Box>
         </Stack>
       </form>
     </Box>

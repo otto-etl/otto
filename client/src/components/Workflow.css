@@ -4,6 +4,10 @@
   display: flex;
 }
 
+.MuiTabs-indicator {
+  background-color: #3c4bcb !important;
+}
+
 .react-flow__renderer {
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
     "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",

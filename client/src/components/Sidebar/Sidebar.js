@@ -1,9 +1,8 @@
 import React from "react";
 import ExecutionLogs from "./ExecutionLogs";
 import EditWorkflow from "./EditWorkflow";
-import MetricsModal from "../Modals/MetricsModal.js";
 import { Box, Button, Divider, Modal } from "@mui/material";
-import { getExecutions, getMetrics } from "../../services/api";
+import { getExecutions } from "../../services/api";
 import { uniqueNewExecutions } from "../../utils/utils";
 
 const Sidebar = ({
@@ -15,7 +14,6 @@ const Sidebar = ({
   const [selectedEditIndex, setSelectedEditIndex] = React.useState(0);
   const [selectedTestIndex, setSelectedTestIndex] = React.useState(null);
   const [selectedActiveIndex, setSelectedActiveIndex] = React.useState(null);
-  const [metricsModalOpen, setMetricsModalOpen] = React.useState(false);
   const [testExecutions, setTestExecutions] = React.useState([]);
   const [activeExecutions, setActiveExecutions] = React.useState([]);
 
@@ -95,21 +93,6 @@ const Sidebar = ({
     console.log("UPDATE REACT FLOW STATE");
   };
 
-  const handleMetricsButtonClick = (event) => {
-    event.preventDefault();
-    setMetricsModalOpen(true);
-  };
-
-  const parseMetrics = async () => {
-    const metricsData = await getMetrics(workflowID);
-    return metricsData;
-  };
-
-  const handleCloseMetricsModal = (e) => {
-    e.preventDefault();
-    setMetricsModalOpen(false);
-  };
-
   return (
     <Box
       sx={{
@@ -124,30 +107,7 @@ const Sidebar = ({
         handleEditListItemClick={handleEditListItemClick}
         active={active}
       />
-      <Button
-        className="css-1jqvl0s-MuiButtonBase-root-MuiListItemButton-root MuiTypography-root"
-        onClick={handleMetricsButtonClick}
-        sx={{
-          width: 250,
-          height: 45,
-          color: "#000000",
-          backgroundColor: "rgb(235, 237, 254, 0.4)",
-          margin: "0 0 22px 0",
-          textTransform: "none",
-          fontSize: "1rem",
-          fontWeight: "400",
-        }}
-      >
-        Active Metrics
-      </Button>
-      {metricsModalOpen ? (
-        <MetricsModal
-          metrics={parseMetrics()}
-          metricsModalOpen={metricsModalOpen}
-          handleCloseMetricsModal={handleCloseMetricsModal}
-          workflowID={workflowID}
-        />
-      ) : null}
+
       <Divider sx={{ mb: "20px" }} />
       <ExecutionLogs
         testExecutions={testExecutions}
