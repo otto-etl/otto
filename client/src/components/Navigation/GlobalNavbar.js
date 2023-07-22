@@ -1,10 +1,7 @@
 import React from "react";
 import { AppBar, Button, Toolbar, Typography } from "@mui/material";
-
-// import ottoLogo from "../../assets/otto.png";
 import ottoLogo from "../../assets/otto.svg";
-// import ottoLogo from "../../assets/otto.svg";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const GlobalNavbar = ({ onHomePage }) => {
   const navigate = useNavigate();
@@ -25,15 +22,17 @@ const GlobalNavbar = ({ onHomePage }) => {
           backgroundColor: "#3c4bcb",
         }}
       >
-        <Link
-          to="/"
-          style={{
-            display: "flex",
-            alignItems: "center",
+        <Button
+          variant="text"
+          sx={{
             color: "white",
-            textDecoration: "none",
-            justifyContent: "space-between",
+            fontSize: "16px",
+            display: "flex",
             gap: "10px",
+          }}
+          onClick={(e) => {
+            e.preventDefault();
+            navigate("/");
           }}
         >
           <img
@@ -48,11 +47,12 @@ const GlobalNavbar = ({ onHomePage }) => {
               fontSize: "32px",
               fontWeight: "700",
               marginTop: "-6px",
+              textTransform: "lowercase",
             }}
           >
             otto
           </Typography>
-        </Link>
+        </Button>
         {!onHomePage ? (
           <Button
             variant="text"

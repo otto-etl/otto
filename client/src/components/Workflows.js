@@ -62,7 +62,8 @@ const Workflows = () => {
       renderCell: (params) => {
         return (
           <IconButton
-            data-delete-icon={true}
+            data-delete-icon
+            aria-label={`Delete workflow ${params.value}`}
             sx={{
               display: "flex",
               justifyContent: "center",
@@ -92,16 +93,11 @@ const Workflows = () => {
     getInitialData();
   }, [setWorkflows]);
 
-  const handleRowClick = (params, event, details) => {
+  const handleRowClick = (params) => {
     navigate(`/workflow/${params.row.id}`);
   };
 
   const handleCloseNewWFModal = (e) => {
-    e.preventDefault();
-    setNewWFVisible(false);
-  };
-
-  const handleSaveNewWF = (e) => {
     e.preventDefault();
     setNewWFVisible(false);
   };
@@ -149,6 +145,19 @@ const Workflows = () => {
                 paginationModel: { page: 0, pageSize: 10 },
               },
             }}
+            slots={{
+              noRowsOverlay: () => (
+                <Typography
+                  sx={{
+                    textAlign: "center",
+                    paddingTop: "50px",
+                    color: "#555",
+                  }}
+                >
+                  No rows
+                </Typography>
+              ),
+            }}
           />
         </div>
       </Container>
@@ -156,7 +165,7 @@ const Workflows = () => {
         <NewWFModal
           newWFVisible={newWFVisible}
           handleCloseNewWFModal={handleCloseNewWFModal}
-          handleSaveNewWF={handleSaveNewWF}
+          // handleSaveNewWF={handleSaveNewWF}
         />
       ) : null}
     </>
