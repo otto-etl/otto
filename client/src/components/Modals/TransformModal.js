@@ -62,7 +62,7 @@ const TransformModal = ({
             display: "flex",
             flexDirection: "column",
             gap: "30px",
-            overflow: "scroll",
+            overflow: "auto",
           }}
         >
           {error ? (
@@ -125,7 +125,7 @@ const TransformModal = ({
             onClick={handleDelete}
             disabled={disabled ? true : false}
           >
-            <Trash2 color="#555" size={224} strokeWidth={1.5} />
+            <Trash2 color="#555" size={24} strokeWidth={1.5} />
           </IconButton>
           <Box
             sx={{

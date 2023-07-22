@@ -1,7 +1,7 @@
 import "./Workflow.css";
 import "reactflow/dist/style.css";
 import "../index.css";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import ReactFlow, {
   useNodesState,
   useEdgesState,
@@ -10,6 +10,7 @@ import ReactFlow, {
   Panel,
   Controls,
   MiniMap,
+  useStoreApi,
 } from "reactflow";
 import { Background } from "@reactflow/background";
 import { useParams } from "react-router-dom";
@@ -17,10 +18,13 @@ import { useParams } from "react-router-dom";
 import ViewAlert from "./Alert/ViewAlert";
 import Modal from "./Modals/Modal";
 import ScheduleNode from "./Nodes/ScheduleNode";
-import ExtractNode from "./Nodes/ExtractNode";
+import ExtractPsqlNode from "./Nodes/ExtractPsqlNode";
+import ExtractApiNode from "./Nodes/ExtractApiNode";
+import ExtractMongoNode from "./Nodes/ExtractMongoNode";
 import TransformNode from "./Nodes/TransformNode";
 import LoadNode from "./Nodes/LoadNode";
 import NodeCreationMenu from "./NodeCreationMenu";
+import MetricsModal from "./Modals/MetricsModal.js";
 import WorkflowNavbar from "./Navigation/WorkflowNavbar";
 import GlobalNavbar from "./Navigation/GlobalNavbar";
 import Sidebar from "./Sidebar/Sidebar";
@@ -39,18 +43,20 @@ import {
   saveWorkflow,
   saveAndExecuteWorkflow,
   toggleWorkflowStatus,
+  getMetrics,
 } from "../services/api";
 
-import { Alert, AlertTitle, Box } from "@mui/material";
+import { Alert, AlertTitle, Box, Button } from "@mui/material";
+import { BarChartBig } from "lucide-react";
 
 const connectionLineStyle = { stroke: "#fff" };
 const snapGrid = [20, 20];
 // See comment below about React Flow nodeTypes warning
 const nodeTypes = {
   schedule: ScheduleNode,
-  extractApi: ExtractNode,
-  extractPsql: ExtractNode,
-  extractMongo: ExtractNode,
+  extractApi: ExtractApiNode,
+  extractPsql: ExtractPsqlNode,
+  extractMongo: ExtractMongoNode,
   transform: TransformNode,
   load: LoadNode,
 };
@@ -71,6 +77,7 @@ const WorkflowLayout = () => {
   // Reset editNodes and editEdges
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalData, setModalData] = useState("");
+  const [metricsModalOpen, setMetricsModalOpen] = React.useState(false);
   const [error, setError] = useState(null);
   const [active, setActive] = useState(false);
   const [hasOrphans, setHasOrphans] = useState(false);
@@ -79,6 +86,7 @@ const WorkflowLayout = () => {
   const [message, setMessage] = useState("");
   const [logView, setLogView] = useState(false);
   const wfID = useParams().id;
+  const store = useStoreApi();
 
   const nodeColor = (node) => {
     switch (node.type) {
@@ -134,7 +142,6 @@ const WorkflowLayout = () => {
 
   const openModal = (nodeData) => {
     setModalIsOpen(true);
-    console.log("openModal", nodeData);
     setModalData(nodeData);
     setError(nodeData.data.error);
   };
@@ -237,21 +244,49 @@ const WorkflowLayout = () => {
     setError(returnedNodeObj.data.error);
   };
 
+  const calculateNewNodePosition = () => {
+    const {
+      height,
+      width,
+      transform: [transformX, transformY, zoomLevel],
+    } = store.getState();
+
+    const zoomMultiplier = 1 / zoomLevel;
+
+    // Figure out the center of the current viewport
+    const centerX = -transformX * zoomMultiplier + (width * zoomMultiplier) / 2;
+    const centerY =
+      -transformY * zoomMultiplier + (height * zoomMultiplier) / 2;
+
+    const NODE_WIDTH = 300;
+    const NODE_HEIGHT = 67;
+
+    const nodeWidthOffset = NODE_WIDTH / 2;
+    const nodeHeightOffset = NODE_HEIGHT / 2;
+
+    const currentYOverlapOffset = 300;
+
+    const position = {
+      x: centerX - nodeWidthOffset,
+      y: centerY - nodeHeightOffset - currentYOverlapOffset,
+    };
+
+    return position;
+  };
+
   const onCreateNode = async (nodeType) => {
-    console.log("nodeType", nodeType);
     let newNodeId = crypto.randomUUID();
     let newNode = {
       id: newNodeId,
       type: nodeType,
-      position: { x: 650, y: -125 }, // Arbitrary hardcoded location, below menu
+      position: calculateNewNodePosition(),
       data: {
         label: formatNodeLabel(nodeType),
         output: "",
       },
     };
-    addExtraNodeProperties(newNode);
-    // console.log(newNode);
 
+    addExtraNodeProperties(newNode);
     let newNodes = [...nodes, newNode];
     await saveWorkflow(1, { nodes: newNodes, edges });
     setNodes(newNodes);
@@ -417,6 +452,21 @@ const WorkflowLayout = () => {
     return input;
   };
 
+  const handleMetricsButtonClick = (event) => {
+    event.preventDefault();
+    setMetricsModalOpen(true);
+  };
+
+  const parseMetrics = async () => {
+    const metricsData = await getMetrics(wfID);
+    return metricsData;
+  };
+
+  const handleCloseMetricsModal = (e) => {
+    e.preventDefault();
+    setMetricsModalOpen(false);
+  };
+
   /* ReactFlow throws a console warning here:
   
   It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them.
@@ -462,6 +512,7 @@ const WorkflowLayout = () => {
           handleEditWorkflowListItemClick={handleEditWorkflowListItemClick}
           active={active}
         />
+
         <ReactFlow
           style={{ flex: 1 }}
           nodes={nodes}
@@ -483,12 +534,40 @@ const WorkflowLayout = () => {
         >
           <Controls />
           <Background color={"#a7a7ae"} style={{ background: "#f3f4f6" }} />
-          <Panel position="top-right">
-            <NodeCreationMenu
-              onCreateNode={onCreateNode}
-              logView={logView}
-              active={active}
-            />
+          <Panel position="top-right" style={{ marginRight: "24px" }}>
+            <Box
+              sx={{
+                display: "flex",
+                gap: "20px",
+              }}
+            >
+              <NodeCreationMenu
+                onCreateNode={onCreateNode}
+                logView={logView}
+                active={active}
+              />
+              <Button
+                variant="outlined"
+                sx={{
+                  textTransform: "capitalize",
+                  display: "flex",
+                  gap: "10px",
+                  margin: "0",
+                }}
+                onClick={handleMetricsButtonClick}
+              >
+                <BarChartBig size={18} />
+                Active Metrics
+              </Button>
+            </Box>
+            {metricsModalOpen ? (
+              <MetricsModal
+                metrics={parseMetrics()}
+                metricsModalOpen={metricsModalOpen}
+                handleCloseMetricsModal={handleCloseMetricsModal}
+                workflowID={wfID}
+              />
+            ) : null}
           </Panel>
           <Panel position="top-center">
             {logView && !active ? <ViewAlert message={"Log View"} /> : null}
