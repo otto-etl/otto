@@ -10,6 +10,7 @@ import ReactFlow, {
   Panel,
   Controls,
   MiniMap,
+  useStoreApi,
 } from "reactflow";
 import { Background } from "@reactflow/background";
 import { useParams } from "react-router-dom";
@@ -84,8 +85,8 @@ const WorkflowLayout = () => {
   const [wfError, setWfError] = useState();
   const [message, setMessage] = useState("");
   const [logView, setLogView] = useState(false);
-  const lastNodePosition = useRef({ x: 0, y: 0 });
   const wfID = useParams().id;
+  const store = useStoreApi();
 
   const nodeColor = (node) => {
     switch (node.type) {
@@ -243,22 +244,49 @@ const WorkflowLayout = () => {
     setError(returnedNodeObj.data.error);
   };
 
+  const calculateNewNodePosition = () => {
+    const {
+      height,
+      width,
+      transform: [transformX, transformY, zoomLevel],
+    } = store.getState();
+
+    const zoomMultiplier = 1 / zoomLevel;
+
+    // Figure out the center of the current viewport
+    const centerX = -transformX * zoomMultiplier + (width * zoomMultiplier) / 2;
+    const centerY =
+      -transformY * zoomMultiplier + (height * zoomMultiplier) / 2;
+
+    const NODE_WIDTH = 300;
+    const NODE_HEIGHT = 67;
+
+    const nodeWidthOffset = NODE_WIDTH / 2;
+    const nodeHeightOffset = NODE_HEIGHT / 2;
+
+    const currentYOverlapOffset = 300;
+
+    const position = {
+      x: centerX - nodeWidthOffset,
+      y: centerY - nodeHeightOffset - currentYOverlapOffset,
+    };
+
+    return position;
+  };
+
   const onCreateNode = async (nodeType) => {
     let newNodeId = crypto.randomUUID();
     let newNode = {
       id: newNodeId,
       type: nodeType,
-      position: {...lastNodePosition.current},
+      position: calculateNewNodePosition(),
       data: {
         label: formatNodeLabel(nodeType),
         output: "",
       },
     };
-    addExtraNodeProperties(newNode);
-	lastNodePosition.current.x += 120;
-	lastNodePosition.current.y += 40;
-    // console.log(newNode);
 
+    addExtraNodeProperties(newNode);
     let newNodes = [...nodes, newNode];
     await saveWorkflow(1, { nodes: newNodes, edges });
     setNodes(newNodes);
@@ -484,6 +512,7 @@ const WorkflowLayout = () => {
           handleEditWorkflowListItemClick={handleEditWorkflowListItemClick}
           active={active}
         />
+
         <ReactFlow
           style={{ flex: 1 }}
           nodes={nodes}
