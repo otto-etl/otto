@@ -90,6 +90,7 @@ function BasicModal({
       >
         <Box
           sx={{
+            outline: "none",
             position: "absolute",
             top: "50%",
             left: "50%",
@@ -105,6 +106,7 @@ function BasicModal({
             boxShadow: 24,
             boxSizing: "border-box",
             overflowY: "scroll",
+            borderRadius: "4px",
           }}
         >
           <IconButton
