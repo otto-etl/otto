@@ -135,7 +135,7 @@ export const runWorkflowCron = async (workflowObj) => {
 
       console.log("retrying done, resting retry data");
     } else if (
-      e.name === "NodeError" &&
+      e.name === "ExternalError" &&
       retries[workflowObj.id].times < retryMax
     ) {
       console.log(
