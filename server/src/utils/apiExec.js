@@ -131,7 +131,6 @@ const sendAPI = async ({
   workflowObj,
 }) => {
   try {
-    console.log("calling", url, headers);
     const response = await axios({ method, url, data, headers });
 
     return response.data;
