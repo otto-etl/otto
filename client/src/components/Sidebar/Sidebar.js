@@ -93,24 +93,6 @@ const Sidebar = ({
     console.log("UPDATE REACT FLOW STATE");
   };
 
-<<<<<<< HEAD
-  const handleMetricsButtonClick = (event) => {
-    event.preventDefault();
-    setMetricsModalOpen(true);
-  };
-
-  const parseMetrics = async () => {
-    const metricsData = await getMetrics(workflowID);
-    return metricsData;
-  };
-
-  const handleCloseMetricsModal = (e) => {
-    e.preventDefault();
-    setMetricsModalOpen(false);
-  };
-
-=======
->>>>>>> main
   return (
     <Box
       sx={{
@@ -125,34 +107,7 @@ const Sidebar = ({
         handleEditListItemClick={handleEditListItemClick}
         active={active}
       />
-<<<<<<< HEAD
-      <Button
-        className="css-1jqvl0s-MuiButtonBase-root-MuiListItemButton-root MuiTypography-root"
-        onClick={handleMetricsButtonClick}
-        sx={{
-          width: 250,
-          height: 45,
-          color: "#000000",
-          backgroundColor: "rgb(235, 237, 254, 0.4)",
-          margin: "0 0 22px 0",
-          textTransform: "none",
-          fontSize: "1rem",
-          fontWeight: "400",
-        }}
-      >
-        Active Metrics
-      </Button>
-      {metricsModalOpen ? (
-        <MetricsModal
-          metrics={parseMetrics()}
-          metricsModalOpen={metricsModalOpen}
-          handleCloseMetricsModal={handleCloseMetricsModal}
-          workflowID={workflowID}
-        />
-      ) : null}
-=======
 
->>>>>>> main
       <Divider sx={{ mb: "20px" }} />
       <ExecutionLogs
         testExecutions={testExecutions}

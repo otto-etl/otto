@@ -10,9 +10,12 @@ import { getSSERes } from "../routes/executionRoutes.js";
 let completedNodes = {};
 let retries = {};
 const retryMax = 3;
+const initialRetryIntervalInMilSec = 1000;
 
 const activateNode = async (workflowObj, nodeObj) => {
-  nodeObj.data.output = {};
+  if (!completedNodes[nodeObj.id]) {
+    nodeObj.data.output = {};
+  }
   const edges = workflowObj.edges.filter((edge) => edge.target === nodeObj.id);
 
   if (edges.length === 0 && nodeObj.type !== "schedule") {
@@ -31,10 +34,13 @@ const activateNode = async (workflowObj, nodeObj) => {
     await Promise.all(promises);
 
     if (completedNodes[nodeObj.id]) {
+      await completedNodes[nodeObj.id];
       return;
     } else {
       let nodeStartTime = new Date(Date.now()).toISOString();
-      await executeNode(workflowObj, nodeObj);
+      const nodeExecution = executeNode(workflowObj, nodeObj);
+      completedNodes[nodeObj.id] = nodeExecution;
+      await nodeExecution;
       if (workflowObj.active) {
         updateNodeMetrics(workflowObj, nodeObj, nodeStartTime);
       }
@@ -43,6 +49,7 @@ const activateNode = async (workflowObj, nodeObj) => {
 };
 
 export const runWorkflow = async (workflowObj) => {
+  completedNodes = {};
   let executionSuccess = "";
   workflowObj.startTime = new Date(Date.now()).toISOString();
 
@@ -59,7 +66,6 @@ export const runWorkflow = async (workflowObj) => {
     });
   });
   await Promise.all(promises);
-  completedNodes = {};
   console.log("workflow completed", workflowObj.id);
   if (workflowObj.active) {
     updateMetrics(workflowObj, new Date(Date.now()).toISOString());
@@ -75,6 +81,7 @@ export const runWorkflow = async (workflowObj) => {
 };
 
 export const runWorkflowCron = async (workflowObj) => {
+  completedNodes = {};
   let executionSuccess = "";
   const SSERes = getSSERes();
   try {
@@ -93,7 +100,6 @@ export const runWorkflowCron = async (workflowObj) => {
       });
     });
     await Promise.all(promises);
-    completedNodes = {};
     console.log("workflow completed", workflowObj.id);
 
     if (workflowObj.active) {
@@ -103,6 +109,7 @@ export const runWorkflowCron = async (workflowObj) => {
     await updateWorkflowError(workflowObj.id, null);
     workflowObj.error = null;
     executionSuccess = "TRUE";
+
     const newExecution = await insertNewExecution(
       executionSuccess,
       workflowObj
@@ -118,17 +125,33 @@ export const runWorkflowCron = async (workflowObj) => {
     );
     SSERes.write("data:" + JSON.stringify(newExecution));
     SSERes.write("\n\n");
-    if (retries[workflowObj.id] >= 0) {
-      retries[workflowObj.id] = retries[workflowObj.id] + 1;
-    } else {
-      retries[workflowObj.id] = 0;
+    if (!retries[workflowObj.id]) {
+      retries[workflowObj.id] = { times: 0, lap: initialRetryIntervalInMilSec };
     }
 
-    if (retries[workflowObj.id] === retryMax) {
-      retries[workflowObj.id] = 0;
-    } else if (e.name === "NodeError" && retries[workflowObj.id] <= retryMax) {
-      console.log(`retrying ${retries[workflowObj.id]}`);
-      await runWorkflowCron(workflowObj);
+    if (retries[workflowObj.id].times === retryMax) {
+      retries[workflowObj.id].times = 0;
+      retries[workflowObj.id].lap = initialRetryIntervalInMilSec;
+
+      console.log("retrying done, resting retry data");
+    } else if (
+      e.name === "NodeError" &&
+      retries[workflowObj.id].times < retryMax
+    ) {
+      console.log(
+        `retrying:times:${retries[workflowObj.id].times} lap:${
+          retries[workflowObj.id].lap
+        }`
+      );
+
+      setTimeout(async () => {
+        await runWorkflowCron(workflowObj);
+      }, retries[workflowObj.id].lap);
+
+      retries[workflowObj.id] = {
+        times: retries[workflowObj.id].times + 1,
+        lap: retries[workflowObj.id].lap * 10,
+      };
     }
   }
 };
