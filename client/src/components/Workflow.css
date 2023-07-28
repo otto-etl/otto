@@ -1,5 +1,5 @@
 .grid {
-  height: calc(100vh - 112px);
+  height: calc(100vh - 121px);
   position: relative;
   display: flex;
 }
