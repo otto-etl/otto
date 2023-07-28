@@ -97,7 +97,7 @@ const Sidebar = ({
     <Box
       sx={{
         width: 250,
-        height: "calc(100vh - 160px)",
+        height: "calc(100vh - 168px)",
         borderRight: "2px solid #E4E4E4",
         padding: "24px",
       }}
