@@ -28,21 +28,20 @@ const ScheduleModal = ({
   const formsPopulated = () => {
     return name && dateAndTime && intervalDays;
   };
-  
+
   const onDateTimeChange = (dateAndTime) => {
-	setDateAndTime(dateAndTime);
-	setChangesMade(true);
-  }
-  
+    setDateAndTime(dateAndTime);
+    setChangesMade(true);
+  };
+
   const onIntervalChange = (event) => {
-	if (!/^[\d.]+$/.test(event.target.value)) {
-	  setIntervalDays("");
-	}
-    else {
-	  setIntervalDays(event.target.value);
-	}
-	setChangesMade(true);
-  }
+    if (!/^[\d.]+$/.test(event.target.value)) {
+      setIntervalDays("");
+    } else {
+      setIntervalDays(event.target.value);
+    }
+    setChangesMade(true);
+  };
 
   return (
     <Box sx={{ height: "100%" }}>
@@ -65,7 +64,7 @@ const ScheduleModal = ({
             startTime: dateAndTime.$d,
             intervalInMinutes: Number(intervalDays) * 24 * 60,
           };
-		  setChangesMade(false);
+          setChangesMade(false);
           handleSubmit(e, newData);
         }}
       >
@@ -147,7 +146,9 @@ const ScheduleModal = ({
               variant="contained"
               color="primary"
               type="submit"
-              disabled={disabled || !formsPopulated() || !changesMade ? true : false}
+              disabled={
+                disabled || !formsPopulated() || !changesMade ? true : false
+              }
             >
               Save
             </Button>

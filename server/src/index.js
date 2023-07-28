@@ -1,7 +1,5 @@
 import "dotenv/config";
 import express from "express";
-import https from "https";
-import fs from "fs";
 import cors from "cors";
 import mockRoutes from "./routes/mock.js";
 import workflowRoutes from "./routes/workflow.js";
@@ -23,7 +21,6 @@ app.use(errorHandler);
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("build"));
 }
-console.log("port", process.env.PORT);
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {

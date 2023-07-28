@@ -13,7 +13,7 @@ import {
   Tab,
 } from "@mui/material";
 import CodeMirror from "@uiw/react-codemirror";
-import { sql, SQLConfig, StandardSQL } from "@codemirror/lang-sql";
+import { sql, StandardSQL } from "@codemirror/lang-sql";
 import { EditorView } from "@codemirror/view";
 import { Trash2 } from "lucide-react";
 
@@ -39,7 +39,7 @@ const LoadModal = ({
   const [dbNamePD, setDBNamePD] = useState(nodeObj.data.dbNamePD);
   const [tab, setTab] = useState(0);
 
-  const handleChange = React.useCallback((value, viewupdate) => {
+  const handleChange = React.useCallback((value) => {
     setCode(value);
   }, []);
 
@@ -158,8 +158,17 @@ const LoadModal = ({
             </Box>
             <CustomTabPanel value={tab} index={0}>
               <Box
-                sx={{ display: "flex", flexDirection: "column", gap: "30px" }}
+                sx={{ display: "flex", flexDirection: "column", gap: "15px" }}
               >
+                <Typography
+                  sx={{
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    marginBottom: "5px",
+                  }}
+                >
+                  Credentials
+                </Typography>
                 <TextField
                   disabled={disabled ? true : false}
                   id="outlined-basic"
@@ -173,10 +182,20 @@ const LoadModal = ({
                   disabled={disabled ? true : false}
                   id="outlined-basic"
                   label="Password"
+                  type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)} // variant="outlined"
                   size={"small"}
                 />
+                <Typography
+                  sx={{
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    marginBottom: "5px",
+                  }}
+                >
+                  Connection Details
+                </Typography>
                 <TextField
                   disabled={disabled ? true : false}
                   id="outlined-basic"
@@ -192,6 +211,7 @@ const LoadModal = ({
                   value={port}
                   onChange={(e) => setPort(e.target.value)} // variant="outlined"
                   size={"small"}
+                  sx={{ width: "50%" }}
                 />
                 <TextField
                   disabled={disabled ? true : false}
@@ -206,8 +226,17 @@ const LoadModal = ({
 
             <CustomTabPanel value={tab} index={1}>
               <Box
-                sx={{ display: "flex", flexDirection: "column", gap: "30px" }}
+                sx={{ display: "flex", flexDirection: "column", gap: "15px" }}
               >
+                <Typography
+                  sx={{
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    marginBottom: "5px",
+                  }}
+                >
+                  Credentials
+                </Typography>
                 <TextField
                   disabled={disabled ? true : false}
                   id="outlined-basic"
@@ -221,10 +250,20 @@ const LoadModal = ({
                   disabled={disabled ? true : false}
                   id="outlined-basic"
                   label="Password"
+                  type="password"
                   value={passwordPD}
                   onChange={(e) => setPasswordPD(e.target.value)} // variant="outlined"
                   size={"small"}
                 />
+                <Typography
+                  sx={{
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    marginBottom: "5px",
+                  }}
+                >
+                  Connection Details
+                </Typography>
                 <TextField
                   disabled={disabled ? true : false}
                   id="outlined-basic"
@@ -240,6 +279,7 @@ const LoadModal = ({
                   value={portPD}
                   onChange={(e) => setPortPD(e.target.value)} // variant="outlined"
                   size={"small"}
+                  sx={{ width: "50%" }}
                 />
                 <TextField
                   disabled={disabled ? true : false}

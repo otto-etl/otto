@@ -23,12 +23,10 @@ const TRUNCATE_LENGTH = 51;
 
 function BasicModal({
   modalIsOpen,
-  handleOpen,
   handleClose,
   nodeObj,
   onSaveExecute,
   onDeleteNode,
-  runExecution,
   disabled,
   getPrevNodesOutput,
   getPrevNodeOutput,
@@ -167,9 +165,9 @@ function BasicModal({
                       aria-label="basic tabs example"
                     >
                       {Object.keys(input).map((key) => {
-                        // console.log(key);
                         return (
                           <Tab
+                            key={key}
                             sx={{
                               textTransform: "none",
                             }}
@@ -183,6 +181,7 @@ function BasicModal({
                   {Object.keys(input).map((key) => {
                     return (
                       <CustomTabPanel
+                        key={key}
                         value={tab}
                         index={Number(key)}
                         scrollOffset={"236px"}

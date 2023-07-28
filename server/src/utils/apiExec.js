@@ -27,7 +27,6 @@ const getAccessToken = async (nodeObj, workflowObj) => {
       "Content-Type": "application/x-www-form-urlencoded",
     };
     const data = { grant_type: "client_credentials", scope: scope };
-    console.log("getting token", accessTokenURL, headers);
     const response = await sendAPI({
       method: "POST",
       url: accessTokenURL,
@@ -65,7 +64,6 @@ export const sendAPIWithOAuth = async (nodeObj, workflowObj) => {
     });
   } catch (e) {
     // if api call failed re-get access token and reset headers and then send
-    console.log("get token again");
     await getAccessToken(nodeObj, workflowObj);
     headerToSend = setHeader(header, nodeObj);
     data = await sendAPI({

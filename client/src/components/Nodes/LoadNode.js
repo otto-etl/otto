@@ -2,15 +2,10 @@ import React, { memo } from "react";
 import NodeBody from "./NodeBody";
 import { Handle, Position } from "reactflow";
 
+/* eslint-disable */
 export default memo(({ data, isConnectable }) => {
   return (
     <>
-      {/* <div>
-        <strong>{data.label}</strong>
-        <p>Input: {data.input ? "Has input" : "No input"}</p>
-        <p>Output: {data.output ? "Has output" : "No output"}</p>
-        {data.error ? <p>ERROR</p> : null}
-      </div> */}
       <NodeBody
         data={data}
         nodeAbbreviation={"Lo"}

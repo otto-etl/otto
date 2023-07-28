@@ -1,5 +1,6 @@
 import axios from "axios";
 const host =
+  // eslint-disable-next-line no-undef
   process.env.NODE_ENV === "production" ? "/api" : "http://localhost:3001/api";
 
 export const getWorkflowAPI = async (id) => {
@@ -84,11 +85,9 @@ export const getExecutions = async (workflowID) => {
 
 export const getMetrics = async (workflowID) => {
   const res = await axios.get(`${host}/metrics/${workflowID}`);
-  // console.log(res);
   return res.data;
 };
 
 export const deleteWorkflow = async (workflowID) => {
-  // console.log(workflowID);
   await axios.delete(`${host}/workflows/${workflowID}`);
 };
