@@ -12,6 +12,7 @@ services:
       PGPDDATABASE: ottoDB
       PGPDHOST: postgres
       NODE_ENV: production
+      ENCRYPT_PATH: otto_keys
       PORT: 3001
     ports:
       - "3001:3001"
