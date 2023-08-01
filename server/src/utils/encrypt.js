@@ -4,6 +4,7 @@ const algorithm = "aes-256-cbc";
 
 if (fs.existsSync(`${process.env.ENCRYPT_PATH}/key.txt`)) {
 } else {
+  console.log("creating new key");
   fs.writeFileSync(
     `${process.env.ENCRYPT_PATH}/key.txt`,
     crypto.randomBytes(32)

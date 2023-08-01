@@ -18,8 +18,8 @@ services:
       - "3001:3001"
     command: npm start
     volumes:
+      - otto_keys:/app/otto_keys
       - init:/app/docker-entrypoint-initdb.d
-      - /app/node_modules
 
   postgres:
     image: postgres:11
@@ -37,3 +37,4 @@ services:
 volumes:
   pgdata: {}
   init: {}
+  otto_keys: {}
