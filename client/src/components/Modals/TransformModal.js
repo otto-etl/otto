@@ -19,7 +19,6 @@ const TransformModal = ({
   handleClose,
   error,
 }) => {
-  console.log("transform", nodeObj.data);
   const [name, setName] = useState(nodeObj.data.label);
   const [code, setCode] = useState(nodeObj.data.jsCode);
 
