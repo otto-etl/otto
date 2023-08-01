@@ -130,3 +130,4 @@ dist
 .pnp.*
 
 etl.sql
+.DS_Store
