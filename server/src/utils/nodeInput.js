@@ -1,8 +1,8 @@
 import { throwNDErrorAndUpdateDB, throwWFErrorAndUpdateDB } from "./errors.js";
 import { getScheduleNode } from "./node.js";
+
 // all node needs to have a data field
 // no need to check data inside data field because other error handles handles it
-
 export const nodeInputvalidation = async (workflowObj, nodeObj) => {
   await dataNonEmptyCheck(workflowObj, nodeObj);
   await lableUniqueCheck(workflowObj, nodeObj);

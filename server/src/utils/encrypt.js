@@ -3,7 +3,6 @@ import fs from "fs";
 const algorithm = "aes-256-cbc";
 
 if (fs.existsSync(`${process.env.ENCRYPT_PATH}/key.txt`)) {
-  console.log("use existing key");
 } else {
   console.log("creating new key");
   fs.writeFileSync(

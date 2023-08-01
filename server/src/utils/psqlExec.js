@@ -87,10 +87,8 @@ const connectPSQL = ({ userName, host, port, password, dbName }) => {
   const cnStr = `postgres://${userName}:${password}@${host}:${port}/${dbName}`;
   let db;
   if (dbs[cnStr]) {
-    console.log("use existing psql DB connection: ", cnStr);
     return dbs[cnStr];
   } else {
-    console.log("create new psql DB connection: ", cnStr);
     db = pgp(cnStr);
     dbs[cnStr] = db;
     return db;
@@ -119,7 +117,6 @@ const addReturnStr = (sqlCode) => {
 const testConnection = async (db, workflowObj, nodeObj) => {
   try {
     const connection = await db.connect();
-    console.log("psql db connection success");
     connection.done();
   } catch (e) {
     const message = `Unable to connect to psql database: ${e.message}`;

@@ -19,16 +19,14 @@ const TransformModal = ({
   handleClose,
   error,
 }) => {
-  console.log("transform", nodeObj.data);
   const [name, setName] = useState(nodeObj.data.label);
   const [code, setCode] = useState(nodeObj.data.jsCode);
-  const [tab, setTab] = useState(0);
 
   const formsPopulated = () => {
     return name && code;
   };
 
-  const handleChange = React.useCallback((value, viewupdate) => {
+  const handleChange = React.useCallback((value) => {
     setCode(value);
   }, []);
 

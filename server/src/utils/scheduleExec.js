@@ -55,7 +55,6 @@ export const startCron = async (workflowObj) => {
   }
 
   let startTimeInMilsec;
-  console.log(startTime, typeof startTime);
   if (typeof startTime === "object" || typeof startTime === "string") {
     startTimeInMilsec = Date.parse(startTime);
   } else {
@@ -69,7 +68,6 @@ export const startCron = async (workflowObj) => {
       currentTimeInMilsec,
       intervalInMinutes
     );
-    console.log("start time in the past new start time ", startTimeInMilsec);
     //update the db to reflect the next correct start time
     setStartTime(workflowID, new Date(startTimeInMilsec));
   }
@@ -93,7 +91,6 @@ export const startCron = async (workflowObj) => {
       const dbStartTime = nextStartTime(startTimeInMilsec, intervalInMinutes);
       //update the db to reflect the next correct start time
       setStartTime(workflowID, dbStartTime);
-      console.log("next start time set by cron", dbStartTime);
     });
     startedWorkflows[workflowID] = task;
     pendingWorkflows[workflowID] = null;

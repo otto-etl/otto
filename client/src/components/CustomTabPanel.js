@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-
+import React from "react";
 const CustomTabPanel = (props) => {
   const { children, value, index, scrollOffset, ...other } = props;
 
