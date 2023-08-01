@@ -287,7 +287,6 @@ const WorkflowLayout = () => {
   };
 
   const addExtraNodeProperties = (newNode) => {
-    // All of these values are hardcoded defaults, TODO: extract them to constants/decide what they are
     const TOTAL_MINUTES_IN_A_DAY = 1440;
 
     switch (newNode.type) {
@@ -328,8 +327,8 @@ const WorkflowLayout = () => {
       }
       case "transform": {
         newNode.data.jsCode =
-          "//you can access previous nodes' data through data.inputTabName." +
-          "Please assign your return value to data, do not write 'return' in your code";
+          "//You can access previous nodes' data through 'data.(name of input tab, lowerCamelCase)'/\n" +
+          "//Assign your return value to the variable 'data'; do not write 'return' in your code";
         break;
       }
       case "load": {
