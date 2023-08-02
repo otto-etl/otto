@@ -13,6 +13,7 @@ const containerStyle = {
   gap: "16px",
   height: 60,
   margin: "5px 10px 5px 10px",
+  width: "99%",
 };
 
 // todo: extract this out, duplicates NodeBody.js
@@ -81,7 +82,7 @@ const NodeMetric = ({ nodeName, nodeType, avgTime, avgVolume, failures }) => {
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
             <Hourglass size={20} />
-            Completed in {avgTime} ms (avg)
+            Completed in {Number(avgTime).toFixed(2)} ms (avg)
           </Box>
         </TableCell>
         <TableCell

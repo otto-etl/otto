@@ -13,7 +13,7 @@ const boxStyle = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 1200,
-  // height: 515,
+  maxHeight: "90%",
   backgroundColor: "#EDEEF0",
   border: "1px solid #E4E4E4",
   boxShadow: 24,
@@ -29,7 +29,10 @@ const containerStyle = {
   display: "flex",
   height: 80,
   justifyContent: "center",
-  margin: "0 10px 0 10px",
+  margin: "0 0 0 10px",
+  paddingTop: "10px",
+  width: "342px",
+  gap: "10px",
 };
 
 // there has to be a better way to do this
@@ -140,12 +143,20 @@ const MetricsModal = ({
       <Box sx={boxStyle}>
         <Container>
           <Typography
-            sx={{ fontSize: "20px", fontWeight: "500", padding: "20px" }}
+            sx={{
+              fontSize: "20px",
+              fontWeight: "500",
+              marginLeft: "10px",
+              marginBottom: "10px",
+            }}
           >
             Workflow Metrics
           </Typography>
-          <Stack direction="row" sx={{ height: "100%" }}>
-            <Container sx={containerStyle}>
+          <Stack
+            direction="row"
+            sx={{ height: "100%", marginBottom: "40px", gap: "12px" }}
+          >
+            <Box sx={containerStyle}>
               <Box sx={{ position: "relative", right: "66px", top: "-18px" }}>
                 <Play />
               </Box>
@@ -153,8 +164,8 @@ const MetricsModal = ({
                 <Box sx={metricHeaderStyle}>Successful Executions</Box>
                 <Box sx={metricStyle}>{totalExecutions}</Box>
               </Stack>
-            </Container>
-            <Container sx={containerStyle}>
+            </Box>
+            <Box sx={containerStyle}>
               <Box sx={{ position: "relative", right: "90px", top: "-18px" }}>
                 <CheckCircle2 />
               </Box>
@@ -162,8 +173,8 @@ const MetricsModal = ({
                 <Box sx={metricHeaderStyle}>Success Rate</Box>
                 <Box sx={metricStyle}>{successRate}</Box>
               </Stack>
-            </Container>
-            <Container sx={containerStyle}>
+            </Box>
+            <Box sx={containerStyle}>
               <Box sx={{ position: "relative", right: "55px", top: "-18px" }}>
                 <Hourglass />
               </Box>
@@ -171,10 +182,15 @@ const MetricsModal = ({
                 <Box sx={longMetricHeaderStyle}>Average Completion Time</Box>
                 <Box sx={longMetricStyle}>{completionTime}</Box>
               </Stack>
-            </Container>
+            </Box>
           </Stack>
           <Typography
-            sx={{ fontSize: "20px", fontWeight: "500", padding: "20px" }}
+            sx={{
+              fontSize: "20px",
+              fontWeight: "500",
+              marginLeft: "10px",
+              marginBottom: "10px",
+            }}
           >
             Node Metrics
           </Typography>
