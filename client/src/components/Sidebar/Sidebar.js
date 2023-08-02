@@ -1,8 +1,7 @@
 import React from "react";
 import ExecutionLogs from "./ExecutionLogs";
 import EditWorkflow from "./EditWorkflow";
-import { Box, Button, Divider, Modal } from "@mui/material";
-import { getExecutions } from "../../services/api";
+import { Box, Divider } from "@mui/material";
 import { uniqueNewExecutions } from "../../utils/utils";
 
 const Sidebar = ({
@@ -28,7 +27,6 @@ const Sidebar = ({
       executionSource = new EventSource(`${baseURL}/executions/${workflowID}`);
 
       executionSource.onmessage = (event) => {
-        console.log("on message triggered");
         const test = [];
         const active = [];
         let executions = JSON.parse(event.data);
@@ -90,7 +88,6 @@ const Sidebar = ({
     const nodes = activeExecutions[index].workflow.nodes;
     const edges = activeExecutions[index].workflow.edges;
     handleExecutionListItemClick(nodes, edges);
-    console.log("UPDATE REACT FLOW STATE");
   };
 
   return (

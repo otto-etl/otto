@@ -1,0 +1,40 @@
+# docker-compose.yml
+version: "3"
+services:
+  app:
+    restart: on-failure
+    image: otto2305/otto_etl
+    depends_on:
+      - postgres
+    environment:
+      PGPDUSER: ottoUser
+      PGPDPASSWORD: ottoPassword
+      PGPDDATABASE: ottoDB
+      PGPDHOST: postgres
+      NODE_ENV: production
+      ENCRYPT_PATH: otto_keys
+      PORT: 3001
+    ports:
+      - "3001:3001"
+    command: npm start
+    volumes:
+      - otto_keys:/app/otto_keys
+      - init:/app/docker-entrypoint-initdb.d
+
+  postgres:
+    image: postgres:11
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ottoUser
+      POSTGRES_PASSWORD: ottoPassword
+      POSTGRES_DB: ottoDB
+      PGHOST: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - init:/docker-entrypoint-initdb.d
+
+volumes:
+  pgdata: {}
+  init: {}
+  otto_keys: {}

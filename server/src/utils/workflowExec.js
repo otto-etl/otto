@@ -58,15 +58,14 @@ export const runWorkflow = async (workflowObj) => {
     (node) => node.type === "load"
   );
 
-  // workflowObj.startTime = Date.now();
-  console.log("Workflow start time:", workflowObj.startTime);
+  console.log(`workflow ${workflowObj.name} started`);
   const promises = finalLoadNodes.map((node) => {
     return new Promise((res, rej) => {
       res(activateNode(workflowObj, node));
     });
   });
   await Promise.all(promises);
-  console.log("workflow completed", workflowObj.id);
+  console.log(`workflow ${workflowObj.name} completed`);
   if (workflowObj.active) {
     updateMetrics(workflowObj, new Date(Date.now()).toISOString());
   }
@@ -91,16 +90,14 @@ export const runWorkflowCron = async (workflowObj) => {
     const finalLoadNodes = workflowObj.nodes.filter(
       (node) => node.type === "load"
     );
-
-    // workflowObj.startTime = Date.now();
-    console.log("Workflow start time:", workflowObj.startTime);
+    console.log(`workflow ${workflowObj.name} started`);
     const promises = finalLoadNodes.map((node) => {
       return new Promise((res, rej) => {
         res(activateNode(workflowObj, node));
       });
     });
     await Promise.all(promises);
-    console.log("workflow completed", workflowObj.id);
+    console.log(`workflow ${workflowObj.name} completed`);
 
     if (workflowObj.active) {
       updateMetrics(workflowObj, new Date(Date.now()).toISOString());
@@ -132,18 +129,10 @@ export const runWorkflowCron = async (workflowObj) => {
     if (retries[workflowObj.id].times === retryMax) {
       retries[workflowObj.id].times = 0;
       retries[workflowObj.id].lap = initialRetryIntervalInMilSec;
-
-      console.log("retrying done, resting retry data");
     } else if (
       e.name === "ExternalError" &&
       retries[workflowObj.id].times < retryMax
     ) {
-      console.log(
-        `retrying:times:${retries[workflowObj.id].times} lap:${
-          retries[workflowObj.id].lap
-        }`
-      );
-
       setTimeout(async () => {
         await runWorkflowCron(workflowObj);
       }, retries[workflowObj.id].lap);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { Hourglass, AlertTriangle, FileJson } from "lucide-react";
@@ -25,12 +25,8 @@ const nodeIconData = {
 };
 
 const NodeMetric = ({ nodeName, nodeType, avgTime, avgVolume, failures }) => {
-  const [nodeBgColor, setNodeBgColor] = useState(
-    nodeIconData[nodeType].bgColor
-  );
-  const [nodeAbbreviation, setNodeAbbreviation] = useState(
-    nodeIconData[nodeType].abbreviation
-  );
+  const nodeBgColor = nodeIconData[nodeType].bgColor;
+  const nodeAbbreviation = nodeIconData[nodeType].abbreviation;
 
   return (
     <div>
@@ -53,6 +49,7 @@ const NodeMetric = ({ nodeName, nodeType, avgTime, avgVolume, failures }) => {
             {nodeAbbreviation}
           </Typography>
         </TableCell>
+
         <TableCell
           sx={{
             border: "none",

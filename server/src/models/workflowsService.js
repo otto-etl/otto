@@ -17,10 +17,9 @@ const testConnection = async (db) => {
   } catch (e) {
     throw new Error(`Unable to connect to workflow db with error ${e.message}`);
   }
-}
+};
 
-testConnection(db)
-
+testConnection(db);
 
 export const getAllWorkflows = async () => {
   const workflowObjs = await db.any("SELECT * FROM workflow");
@@ -174,7 +173,6 @@ export const getExecutions = async (id) => {
 // Metrics db
 
 export const instantiateWorkflowMetrics = async (workflowID) => {
-  console.log("instantiate called", workflowID);
   return await db.any(
     "INSERT INTO metric (workflow_id, total_executions, success_rate, avg_milliseconds_to_complete_workflow, node_failure_count, avg_milliseconds_to_complete_node, avg_volume_extracted_data) VALUES " +
       "(${workflow_id}, 0, -1, -1, '{}', '{}', '{}');",
@@ -185,7 +183,7 @@ export const instantiateWorkflowMetrics = async (workflowID) => {
 };
 
 export const resetWorkflowMetrics = async (workflowID) => {
-  console.log("reset called", workflowID);
+  console.log("reseting active metrics", workflowID);
   await db.any("DELETE FROM metric WHERE workflow_id = ${workflowID}", {
     workflowID: workflowID,
   });

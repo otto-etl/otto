@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Modal from "@mui/material/Modal";
 import Container from "@mui/material/Container";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { CheckCircle2, Hourglass, Play } from "lucide-react";
 import NodeMetric from "./NodeMetric";
-import { getMetrics } from "../../services/api";
 
 const boxStyle = {
   position: "absolute",
@@ -69,7 +67,6 @@ const MetricsModal = ({
   metrics,
   metricsModalOpen,
   handleCloseMetricsModal,
-  workflowID,
 }) => {
   const [newMetrics, setNewMetrics] = useState();
   const [totalExecutions, setTotalExecutions] = useState();

@@ -147,18 +147,15 @@ const ExtractMongoModal = ({
                 label="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                // sx={{ width: "100%", marginTop: "5px" }}
                 size={"small"}
               />
               <TextField
                 disabled={disabled ? true : false}
                 id="outlined-basic"
                 label="Password"
-                // TURN TO PASSWORD BEFORE END OF PROJECT
-                // type="password"
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                // sx={{ width: "100%", marginTop: "5px" }}
                 size={"small"}
               />
             </Box>
@@ -179,7 +176,6 @@ const ExtractMongoModal = ({
               label="Host"
               value={host}
               onChange={(e) => setHost(e.target.value)}
-              // sx={{ width: "100%", marginTop: "5px" }}
               size={"small"}
             />
           </Box>
@@ -238,7 +234,6 @@ const ExtractMongoModal = ({
             value={defaultDatabase}
             sx={{ marginTop: "5px" }}
             onChange={(e) => setDefaultDatabase(e.target.value)}
-            // sx={{ width: "100%", marginTop: "5px" }}
             size={"small"}
           />
           <TextField
@@ -288,7 +283,6 @@ const ExtractMongoModal = ({
             disabled={disabled ? true : false}
           >
             <Trash2 color="#555" size={24} strokeWidth={1.5} />
-            {/* // #d32f2f */}
           </IconButton>
           <Box
             sx={{
@@ -310,12 +304,7 @@ const ExtractMongoModal = ({
             >
               Close
             </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              // disabled={disabled || !formsPopulated() ? true : false}
-            >
+            <Button variant="contained" color="primary" type="submit">
               Save and Execute
             </Button>
           </Box>

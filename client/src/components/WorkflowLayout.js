@@ -1,7 +1,7 @@
 import "./Workflow.css";
 import "reactflow/dist/style.css";
 import "../index.css";
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import ReactFlow, {
   useNodesState,
   useEdgesState,
@@ -45,7 +45,6 @@ import {
   toggleWorkflowStatus,
   getMetrics,
 } from "../services/api";
-
 import { Alert, AlertTitle, Box, Button } from "@mui/material";
 import { BarChartBig } from "lucide-react";
 
@@ -104,8 +103,6 @@ const WorkflowLayout = () => {
   useEffect(() => {
     const getWorkflow = async () => {
       const response = await getWorkflowAPI(wfID);
-      // console.log("active:", response.active);
-
       setNodes(response.nodes);
       setEdges(response.edges);
       setActive(response.active);
@@ -115,11 +112,8 @@ const WorkflowLayout = () => {
   }, [setNodes, setEdges, setActive, setWfName, wfID]);
 
   useEffect(() => {
-    //console.log("call to workflowHasOrphanNodes");
     let orphans = workflowHasOrphanNodes(nodes, edges);
     setHasOrphans(orphans);
-    if (orphans) {
-    }
   }, [edges]);
 
   const handleExecutionListItemClick = (executionNodes, executionEdges) => {
@@ -197,8 +191,7 @@ const WorkflowLayout = () => {
 
   const onSaveExecute = async (currentId, updatedNodeData) => {
     let newNodesArray = updateNodeObject(currentId, updatedNodeData);
-    await runExecution(currentId, newNodesArray); // mutates newNodesArray
-    // setNodes(newNodesArray);
+    await runExecution(currentId, newNodesArray);
   };
 
   const updateNodeObject = (currentId, updatedData) => {
@@ -294,7 +287,6 @@ const WorkflowLayout = () => {
   };
 
   const addExtraNodeProperties = (newNode) => {
-    // All of these values are hardcoded defaults, TODO: extract them to constants/decide what they are
     const TOTAL_MINUTES_IN_A_DAY = 1440;
 
     switch (newNode.type) {
@@ -306,43 +298,52 @@ const WorkflowLayout = () => {
         break;
       }
       case "extractApi": {
-        newNode.data.url = "https://dog.ceo/api/breeds/list/all";
+        newNode.data.url = "";
         newNode.data.json = {};
         newNode.data.httpVerb = "GET";
         break;
       }
       case "extractMongo": {
-        newNode.data.host = "cluster0.4opmjhz.mongodb.net";
+        newNode.data.host = "";
         newNode.data.port = "";
-        newNode.data.defaultDatabase = "test";
-        newNode.data.username = "joewebsta";
-        newNode.data.password = "MFEpWmcerh9Kjm3H";
-        newNode.data.collection = "users";
+        newNode.data.defaultDatabase = "";
+        newNode.data.username = "";
+        newNode.data.password = "";
+        newNode.data.collection = "";
         newNode.data.query = "{}";
         newNode.data.limit = "10";
         newNode.data.connectionFormat = "Standard";
 
         break;
       }
+      case "extractPsql": {
+        newNode.data.userName = "";
+        newNode.data.password = "";
+        newNode.data.host = "";
+        newNode.data.port = "";
+        newNode.data.dbName = "";
+        newNode.data.sqlCode = "SELECT * FROM table_name;";
+        break;
+      }
       case "transform": {
         newNode.data.jsCode =
-          "let array1 = []; \
-          let data1 = data.input1.message \
-          for(const prop in data1) { \
-              array1.push({breed:prop, num:data1[prop].length}) \
-          } \
-          data = array1";
+          "//You can access previous nodes' data through 'data.(name of input tab, lowerCamelCase)'/\n" +
+          "//Assign your return value to the variable 'data'; do not write 'return' in your code";
         break;
       }
       case "load": {
-        newNode.data.userName = "INSERT YOUR USERNAME HERE";
-        newNode.data.password = "INSERT YOUR PASSWORD HERE";
-        newNode.data.tableName = "dog";
-        newNode.data.host = "localhost";
-        newNode.data.port = "5432";
-        newNode.data.dbName = "dog";
+        newNode.data.userName = "";
+        newNode.data.password = "";
+        newNode.data.host = "";
+        newNode.data.port = "";
+        newNode.data.dbName = "";
+        newNode.data.userNamePD = "";
+        newNode.data.passwordPD = "";
+        newNode.data.hostPD = "";
+        newNode.data.portPD = "";
+        newNode.data.dbNamePD = "";
         newNode.data.sqlCode =
-          "INSERT INTO dog(breed, count) VALUES(${breed}, ${num})";
+          "INSERT INTO table_name(col_name1, col_name2) VALUES(${prop_name1}, ${prop_name2});";
         break;
       }
       default: {
@@ -404,7 +405,6 @@ const WorkflowLayout = () => {
       }, 3000);
     }
     if (checked) {
-      // handleMessage(`Workflow ${wfName} is now active!`, null, 2000, null);
       handleMessage(`Workflow is now active!`, null, 2000, null);
     } else {
       handleMessage(`Workflow is now inactive!`, null, 2000, null);
@@ -466,14 +466,6 @@ const WorkflowLayout = () => {
     e.preventDefault();
     setMetricsModalOpen(false);
   };
-
-  /* ReactFlow throws a console warning here:
-  
-  It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them.
-  The thing is we did define it outside of the component -- that was directly from the tutorial -- so I need to look into why this is still happening
-  */
-
-  // console.log(nodes);
 
   return (
     <>

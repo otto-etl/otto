@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { memo } from "react";
 import { Handle, Position } from "reactflow";
 import NodeBody from "./NodeBody";
@@ -15,9 +16,7 @@ export default memo(({ data, isConnectable }) => {
         type="source"
         position={Position.Right}
         id="a"
-        onConnect={(params) =>
-          console.log("handle onConnect on trigger node", params)
-        }
+        onConnect={(params) => {}}
         isConnectable={isConnectable}
       />
     </>

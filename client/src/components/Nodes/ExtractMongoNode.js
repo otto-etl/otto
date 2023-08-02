@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { memo } from "react";
 import NodeBody from "./NodeBody";
 import { Handle, Position } from "reactflow";
