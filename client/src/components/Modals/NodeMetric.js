@@ -10,8 +10,10 @@ const containerStyle = {
   backgroundColor: "#FFFFFF",
   border: "1px solid #CCC",
   display: "flex",
+  gap: "16px",
   height: 60,
   margin: "5px 10px 5px 10px",
+  width: "99%",
 };
 
 // todo: extract this out, duplicates NodeBody.js
@@ -26,10 +28,11 @@ const nodeIconData = {
 const NodeMetric = ({ nodeName, nodeType, avgTime, avgVolume, failures }) => {
   const nodeBgColor = nodeIconData[nodeType].bgColor;
   const nodeAbbreviation = nodeIconData[nodeType].abbreviation;
+
   return (
     <div>
       <Table sx={containerStyle}>
-        <TableCell sx={{ width: "6%" }}>
+        <TableCell sx={{ border: "none", padding: 0, "margin-left": "16px" }}>
           <Typography
             sx={{
               alignItems: "center",
@@ -40,39 +43,80 @@ const NodeMetric = ({ nodeName, nodeType, avgTime, avgVolume, failures }) => {
               fontWeight: "700",
               height: "22px",
               justifyContent: "space-around",
-              padding: "10px",
+              padding: "6px",
               width: "22px",
             }}
           >
             {nodeAbbreviation}
           </Typography>
         </TableCell>
-        <TableCell sx={{ width: "10%" }}>
-          <Box sx={{ fontSize: "16px", fontWeight: "500" }}>{nodeName}</Box>
-        </TableCell>
-        <TableCell sx={{ marginTop: "5px", width: "1%" }}>
-          <Box>
-            <Hourglass />
+
+        <TableCell
+          sx={{
+            border: "none",
+            padding: 0,
+          }}
+        >
+          <Box
+            sx={{
+              fontSize: "16px",
+              fontWeight: "500",
+              border: "none",
+              textOverflow: "ellipsis",
+              textWrap: "nowrap",
+              width: "260px",
+              overflow: "hidden",
+            }}
+          >
+            <span>{nodeName}</span>
           </Box>
         </TableCell>
-        <TableCell sx={{ fontSize: "14px", fontWeight: "400", width: "21%" }}>
-          <Box>Completed in {avgTime} ms (avg)</Box>
-        </TableCell>
-        <TableCell sx={{ marginTop: "5px", width: "1%" }}>
-          <Box>
-            <AlertTriangle />
+        <TableCell
+          sx={{
+            fontSize: "14px",
+            fontWeight: "400",
+            border: "none",
+            padding: 0,
+            width: "24%",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
+            <Hourglass size={20} />
+            Completed in {Number(avgTime).toFixed(2)} ms (avg)
           </Box>
         </TableCell>
-        <TableCell sx={{ fontSize: "14px", fontWeight: "400", width: "15%" }}>
-          <Box>Failed {failures ? failures : 0} times</Box>
-        </TableCell>
-        <TableCell sx={{ marginTop: "5px", width: "1%" }}>
-          <Box>
-            <FileJson />
+        <TableCell
+          sx={{
+            fontSize: "14px",
+            fontWeight: "400",
+            border: "none",
+            padding: 0,
+            width: "16%",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <AlertTriangle size={20} />
+            Failed {failures ? failures : 0} times
           </Box>
         </TableCell>
-        <TableCell sx={{ fontSize: "14px", fontWeight: "400", width: "18%" }}>
-          <Box>{avgVolume} bytes processed (avg)</Box>
+        <TableCell
+          sx={{
+            fontSize: "14px",
+            fontWeight: "400",
+            border: "none",
+            padding: 0,
+            width: "24%",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <FileJson size={20} /> {avgVolume} bytes processed (avg)
+          </Box>
         </TableCell>
       </Table>
     </div>
