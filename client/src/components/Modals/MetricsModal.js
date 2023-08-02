@@ -13,6 +13,7 @@ const boxStyle = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 1200,
+  minHeight: "515px",
   maxHeight: "90%",
   backgroundColor: "#EDEEF0",
   border: "1px solid #E4E4E4",
