@@ -1,7 +1,7 @@
 # Installing Otto
 
 - Install [docker](https://docs.docker.com/engine/install/) if you don't have it yet.
-- Download the `docker-compose.yml` file from [otto_docker](https://github.com/Runtime-Terrors-2305/otto_docker) repository (_need to update link once we change the org name_)
+- Download the `docker-compose.yml` file from [otto_docker](https://github.com/otto-etl/otto_docker)
 - Run `docker compose up` where the `docker-compose.yml` file is saved.
 - Enter http://localhost:3001 in your browser to access the page.
 
