@@ -1,5 +1,7 @@
 import pgPromise from "pg-promise";
 import { encrypt, decrypt } from "../utils/encrypt.js";
+import { getFileFromS3, uploadFileToS3 } from "./s3Service.js";
+import { v4 as uuidv4 } from "uuid";
 const pgp = pgPromise();
 
 const cnStr =
@@ -23,8 +25,10 @@ testConnection(db);
 
 export const getAllWorkflows = async () => {
   const workflowObjs = await db.any("SELECT * FROM workflow");
-  return workflowObjs.map((workflowObj) => {
-    return { ...workflowObj, nodes: JSON.parse(decrypt(workflowObj.nodes)) };
+  return workflowObjs.map(async (workflowObj) => {
+    const key = workflowObj.nodes.key;
+    const encryptedNodes = await getFileFromS3(key);
+    return { ...workflowObj, nodes: JSON.parse(decrypt(encryptedNodes)) };
   });
 };
 
@@ -32,24 +36,33 @@ export const getActiveWorkflows = async () => {
   const activeWorkflowObjs = await db.many(
     "SELECT * FROM workflow WHERE active = true"
   );
-  return activeWorkflowObjs.map((workflowObj) => {
-    return { ...workflowObj, nodes: JSON.parse(decrypt(workflowObj.nodes)) };
+  return activeWorkflowObjs.map(async (workflowObj) => {
+    const key = workflowObj.nodes.key;
+    const encryptedNodes = await getFileFromS3(key);
+    return { ...workflowObj, nodes: JSON.parse(decrypt(encryptedNodes)) };
   });
 };
 
 export const getWorkflow = async (id) => {
+  console.log("getnodes");
   const workflowObj = await db.one("SELECT * FROM workflow WHERE id = ${id}", {
     id,
   });
-
-  return { ...workflowObj, nodes: JSON.parse(decrypt(workflowObj.nodes)) };
+  const key = workflowObj.nodes.key;
+  const encryptedNodes = await getFileFromS3(key);
+  console.log("encrypted", encryptedNodes);
+  return { ...workflowObj, nodes: JSON.parse(decrypt(encryptedNodes)) };
 };
 
 export const updateNodes = async (workflowObj) => {
+  console.log("update nodes");
+  const key = "workflow" + workflowObj.id;
+  const data = encrypt(JSON.stringify(workflowObj.nodes));
+  await uploadFileToS3(key, data);
   return await db.any(
     "UPDATE workflow SET updated_at = NOW(), nodes=${nodes} WHERE id = ${workflowID}",
     {
-      nodes: encrypt(JSON.stringify(workflowObj.nodes)),
+      nodes: { key },
       workflowID: workflowObj.id,
     }
   );
@@ -75,11 +88,14 @@ export const deactivateWorkflow = async (workflowID) => {
 };
 
 export const updateNodesEdges = async ({ workflowID, nodes, edges }) => {
+  const key = "workflow" + workflowID;
+  const data = encrypt(nodes);
+  await uploadFileToS3(key, data);
   return await db.any(
     "UPDATE workflow SET nodes = ${nodes}, edges = ${edges}, updated_at = NOW() WHERE id = ${workflowID}",
     {
       workflowID: workflowID,
-      nodes: encrypt(nodes),
+      nodes: { key },
       edges: edges,
     }
   );
@@ -96,20 +112,19 @@ export const setStartTime = async (workflowID, startTime) => {
 };
 
 export const insertNewWF = async (name, nodes, edges) => {
+  console.log("create new wf");
   const newWorkflowObj = await db.one(
-    "INSERT INTO workflow (name, nodes, edges, created_at, updated_at, active) VALUES " +
+    "INSERT INTO workflow (name,nodes, edges, created_at, updated_at, active) VALUES " +
       "(${name}, ${nodes}, ${edges}, NOW(), NOW(), false) RETURNING *",
     {
       name: name,
-      nodes: encrypt(nodes),
+      nodes: nodes,
       edges: edges,
     }
   );
+  await updateNodes(newWorkflowObj);
   instantiateWorkflowMetrics(newWorkflowObj.id);
-  return {
-    ...newWorkflowObj,
-    nodes: JSON.parse(decrypt(newWorkflowObj.nodes)),
-  };
+  return { ...newWorkflowObj, nodes: nodes };
 };
 
 export const updateWorkflowError = async (workflowID, error) => {
@@ -129,10 +144,14 @@ export const deleteWorkflow = async (workflowID) => {
 };
 
 export const insertNewExecution = async (successful, workflowObj) => {
+  const key = uuidv4();
+  const data = encrypt(JSON.stringify(workflowObj.nodes));
+  await uploadFileToS3(key, data);
   const encryptedWorkflow = {
     ...workflowObj,
-    nodes: encrypt(JSON.stringify(workflowObj.nodes)),
+    nodes: { key },
   };
+
   const newExecution = await db.one(
     "INSERT INTO execution (start_time, end_time, successful, workflow_id, current_version, workflow) VALUES " +
       "(${start_time}, NOW(), ${successful}, ${workflow_id}, TRUE, ${workflowObj}) RETURNING *",
@@ -146,7 +165,7 @@ export const insertNewExecution = async (successful, workflowObj) => {
   const newWorkflowObj = newExecution.workflow;
   newExecution.workflow = {
     ...newWorkflowObj,
-    nodes: JSON.parse(decrypt(newWorkflowObj.nodes)),
+    nodes: workflowObj.nodes,
   };
   return newExecution;
 };
@@ -158,13 +177,15 @@ export const getExecutions = async (id) => {
       id,
     }
   );
-  return executions.map((execution) => {
+  return executions.map(async (execution) => {
     const workflowObj = execution.workflow;
+    const key = workflowObj.nodes.key;
+    const encryptedNodes = await getFileFromS3(key);
     return {
       ...execution,
       workflow: {
         ...workflowObj,
-        nodes: JSON.parse(decrypt(workflowObj.nodes)),
+        nodes: JSON.parse(decrypt(encryptedNodes)),
       },
     };
   });

@@ -281,7 +281,7 @@ const WorkflowLayout = () => {
 
     addExtraNodeProperties(newNode);
     let newNodes = [...nodes, newNode];
-    await saveWorkflow(1, { nodes: newNodes, edges });
+    await saveWorkflow(wfID, { nodes: newNodes, edges });
     setNodes(newNodes);
     setHasOrphans(true); // New nodes are always orphans
   };
@@ -358,7 +358,7 @@ const WorkflowLayout = () => {
       (edge) => nodeId !== edge.target && nodeId !== edge.source
     );
 
-    await saveWorkflow(1, { nodes: newNodes, edges: newEdges });
+    await saveWorkflow(wfID, { nodes: newNodes, edges: newEdges });
     setNodes(newNodes);
     setEdges(newEdges);
   };
