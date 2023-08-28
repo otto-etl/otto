@@ -2,6 +2,7 @@ import { updateNodes } from "../models/workflowsService.js";
 import { throwNDErrorAndUpdateDB, throwEXErrorAndUpdateDB } from "./errors.js";
 import { nodeInputvalidation } from "./nodeInput.js";
 import axios from "axios";
+import { uploadFileToS3 } from "../models/s3service.js";
 
 export const runAPI = async (workflowObj, nodeObj) => {
   await nodeInputvalidation(workflowObj, nodeObj);
@@ -11,10 +12,12 @@ export const runAPI = async (workflowObj, nodeObj) => {
   } else {
     data = await sendAPIWithOAuth(nodeObj, workflowObj);
   }
-  nodeObj.data.output = { data };
+  const uuid = await uploadFileToS3(workflowObj, nodeObj, data);
+  //set output to uuid and save to database
+  nodeObj.data.output = { uuid };
   nodeObj.data.error = null;
   await updateNodes(workflowObj);
-  return { data };
+  //set output to data to return to the frontend
 };
 
 const getAccessToken = async (nodeObj, workflowObj) => {

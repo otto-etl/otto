@@ -5,6 +5,8 @@ import { getWorkflow, updateNodesEdges } from "../models/workflowsService.js";
 import { runWorkflow } from "../utils/workflowExec.js";
 import { executeNode } from "../utils/nodeExec.js";
 import { scheduleNodeCheck } from "../utils/nodeInput.js";
+import { replaceFEOutputWithUUID } from "../utils/node.js";
+import { getFileFromS3 } from "../models/s3service.js";
 const executeRouter = express.Router();
 
 //start cron job
@@ -42,7 +44,11 @@ executeRouter.put("/stopworkflow/:id", async (req, res, next) => {
 executeRouter.post("/node", async (req, res, next) => {
   let { workflowID, nodeID, nodes, edges } = req.body;
   try {
-    resetSubsequentOutputs(nodes, edges, nodeID);
+    let workflowObj = await getWorkflow(workflowID);
+    replaceFEOutputWithUUID(nodes, workflowObj);
+    console.log("replace done");
+    await resetSubsequentOutputs(nodes, edges, nodeID, workflowObj);
+    console.log("reset done");
     nodes = JSON.stringify(nodes);
     edges = JSON.stringify(edges);
     //update nodes and edges in DB by workflowID
@@ -53,10 +59,16 @@ executeRouter.post("/node", async (req, res, next) => {
     });
 
     //get workflow object
-    const workflowObj = await getWorkflow(workflowID);
+    workflowObj = await getWorkflow(workflowID);
     const nodeObj = getNode(workflowObj, nodeID);
-
+    console.log("current node output before execution", nodeObj.data.output);
     await executeNode(workflowObj, nodeObj);
+    const newNodes = workflowObj.nodes;
+    for (const node in newNodes) {
+      console.log(node.data.output);
+      const s3Data = await getFileFromS3(workflowObj, node);
+      node.data.output = { data: s3Data };
+    }
     res
       .status(200)
       .json({ nodes: workflowObj.nodes, edges: workflowObj.edges });

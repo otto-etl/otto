@@ -7,12 +7,18 @@ import {
   insertNewWF,
   deleteWorkflow,
 } from "../models/workflowsService.js";
-
+import { getFileFromS3 } from "../models/s3Service.js";
+import { replaceFEOutputWithUUID } from "../utils/node.js";
 //get one workflow data
 router.get("/:id", async (req, res, next) => {
   const workflowID = req.params.id;
   try {
     const workflowObj = await getWorkflow(workflowID);
+    const nodes = workflowObj.nodes;
+    for (const nodeObj of nodes) {
+      const data = await getFileFromS3(workflowObj, nodeObj);
+      nodeObj.data.output = { data };
+    }
     res.status(200).send(workflowObj);
   } catch (e) {
     next(e);
@@ -33,6 +39,10 @@ router.put("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
     const { nodes, edges } = req.body;
+
+    const workflowObj = await getWorkflow(id);
+
+    replaceFEOutputWithUUID(nodes, workflowObj);
     await updateNodesEdges({
       workflowID: id,
       nodes: JSON.stringify(nodes),

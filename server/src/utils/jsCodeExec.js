@@ -3,15 +3,13 @@ import { updateNodes } from "../models/workflowsService.js";
 import { throwNDErrorAndUpdateDB } from "./errors.js";
 import { getMultipleInputData } from "./node.js";
 import { nodeInputvalidation } from "./nodeInput.js";
-
+import { uploadFileToS3 } from "../models/s3service.js";
 export const runJSCode = async (workflowObj, nodeObj) => {
   await nodeInputvalidation(workflowObj, nodeObj);
 
   const customCode = nodeObj.data.jsCode;
   //this function also throws NodeError if any previous node is missing input data
   let inputData = await getMultipleInputData(workflowObj, nodeObj);
-
-  inputData;
 
   try {
     vm.createContext(inputData);
@@ -21,8 +19,9 @@ export const runJSCode = async (workflowObj, nodeObj) => {
     await throwNDErrorAndUpdateDB(workflowObj, nodeObj, message);
   }
 
-  nodeObj.data.output = { data: inputData.data };
+  const uuid = await uploadFileToS3(workflowObj, nodeObj, inputData);
+  nodeObj.data.output = { uuid };
   nodeObj.data.error = null;
+
   await updateNodes(workflowObj);
-  return { data: inputData.data };
 };

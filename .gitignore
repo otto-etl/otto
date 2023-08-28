@@ -132,3 +132,5 @@ dist
 
 etl.sql
 .DS_Store
+
+temp
