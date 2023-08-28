@@ -68,10 +68,12 @@ export const resetSubsequentOutputs = async (
 };
 
 export const replaceFEOutputWithUUID = (fnNodes, workflowObj) => {
+  console.log("replacedwithUUID called");
   for (const fnNodeObj of fnNodes) {
     const dbNode = getNode(workflowObj, fnNodeObj.id);
-    if (dbNode.data && dbNode.data.output) {
+    if (dbNode && dbNode.data && dbNode.data.output) {
       fnNodeObj["data"]["output"] = dbNode.data.output;
     }
   }
+  console.log("replacedwithUUID finished");
 };

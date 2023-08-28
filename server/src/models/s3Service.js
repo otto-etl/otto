@@ -41,7 +41,7 @@ export const uploadFileToS3 = async (workflowObj, nodeObj, data) => {
 };
 
 export const getFileFromS3 = async (workflowObj, nodeObj) => {
-  if (!nodeObj.data || !nodeObj.data.output.uuid) {
+  if (!nodeObj.data || !nodeObj.data.output || !nodeObj.data.output.uuid) {
     return;
   }
   const command = new GetObjectCommand({

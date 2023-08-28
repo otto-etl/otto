@@ -38,10 +38,9 @@ router.get("/", async (req, res, next) => {
 router.put("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
+    console.log("id", id);
     const { nodes, edges } = req.body;
-
     const workflowObj = await getWorkflow(id);
-
     replaceFEOutputWithUUID(nodes, workflowObj);
     await updateNodesEdges({
       workflowID: id,

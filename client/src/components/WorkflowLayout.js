@@ -358,7 +358,7 @@ const WorkflowLayout = () => {
       (edge) => nodeId !== edge.target && nodeId !== edge.source
     );
 
-    await saveWorkflow(1, { nodes: newNodes, edges: newEdges });
+    await saveWorkflow(wfID, { nodes: newNodes, edges: newEdges });
     setNodes(newNodes);
     setEdges(newEdges);
   };

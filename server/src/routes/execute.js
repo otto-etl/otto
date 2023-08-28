@@ -46,9 +46,7 @@ executeRouter.post("/node", async (req, res, next) => {
   try {
     let workflowObj = await getWorkflow(workflowID);
     replaceFEOutputWithUUID(nodes, workflowObj);
-    console.log("replace done");
     await resetSubsequentOutputs(nodes, edges, nodeID, workflowObj);
-    console.log("reset done");
     nodes = JSON.stringify(nodes);
     edges = JSON.stringify(edges);
     //update nodes and edges in DB by workflowID
@@ -64,8 +62,7 @@ executeRouter.post("/node", async (req, res, next) => {
     console.log("current node output before execution", nodeObj.data.output);
     await executeNode(workflowObj, nodeObj);
     const newNodes = workflowObj.nodes;
-    for (const node in newNodes) {
-      console.log(node.data.output);
+    for (const node of newNodes) {
       const s3Data = await getFileFromS3(workflowObj, node);
       node.data.output = { data: s3Data };
     }
