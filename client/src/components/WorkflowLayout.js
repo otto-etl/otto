@@ -342,8 +342,7 @@ const WorkflowLayout = () => {
         newNode.data.hostPD = "";
         newNode.data.portPD = "";
         newNode.data.dbNamePD = "";
-        newNode.data.sqlCode =
-          "INSERT INTO table_name(col_name1, col_name2) VALUES(${prop_name1}, ${prop_name2});";
+        newNode.data.sqlCode = "";
         break;
       }
       default: {
